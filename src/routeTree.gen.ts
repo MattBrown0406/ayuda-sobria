@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestimoniosRouteImport } from './routes/testimonios'
 import { Route as TerminosSmsRouteImport } from './routes/terminos-sms'
 import { Route as TerminosRouteImport } from './routes/terminos'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
 import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as ProveedoresRouteImport } from './routes/proveedores'
@@ -48,6 +49,11 @@ const TerminosSmsRoute = TerminosSmsRouteImport.update({
 const TerminosRoute = TerminosRouteImport.update({
   id: '/terminos',
   path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
@@ -177,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
@@ -204,6 +211,7 @@ export interface FileRoutesByTo {
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
@@ -232,6 +240,7 @@ export interface FileRoutesById {
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
+    | '/sitemap.xml'
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
@@ -288,6 +298,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
+    | '/sitemap.xml'
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
+    | '/sitemap.xml'
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
@@ -343,6 +355,7 @@ export interface RootRouteChildren {
   ProveedoresRoute: typeof ProveedoresRoute
   RecursosRoute: typeof RecursosRouteWithChildren
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TerminosRoute: typeof TerminosRoute
   TerminosSmsRoute: typeof TerminosSmsRoute
   TestimoniosRoute: typeof TestimoniosRoute
@@ -369,6 +382,13 @@ declare module '@tanstack/react-router' {
       path: '/terminos'
       fullPath: '/terminos'
       preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/respuestas-familia': {
@@ -623,6 +643,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProveedoresRoute: ProveedoresRoute,
   RecursosRoute: RecursosRouteWithChildren,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TerminosRoute: TerminosRoute,
   TerminosSmsRoute: TerminosSmsRoute,
   TestimoniosRoute: TestimoniosRoute,
