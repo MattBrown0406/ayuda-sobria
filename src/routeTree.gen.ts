@@ -20,6 +20,7 @@ import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-f
 import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
 import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
 import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
+import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
 
@@ -78,6 +79,11 @@ const MapaSlugRoute = MapaSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => MapaRoute,
 } as any)
+const HerramientasIaSlugRoute = HerramientasIaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => HerramientasIaRoute,
+} as any)
 const ApoyoFamiliarStateRoute = ApoyoFamiliarStateRouteImport.update({
   id: '/$state',
   path: '/$state',
@@ -92,12 +98,13 @@ const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/herramientas-ia': typeof HerramientasIaRoute
+  '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -107,12 +114,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/herramientas-ia': typeof HerramientasIaRoute
+  '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -123,12 +131,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/herramientas-ia': typeof HerramientasIaRoute
+  '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/respuestas-familia'
     | '/apoyo-familiar/$state'
+    | '/herramientas-ia/$slug'
     | '/mapa/$slug'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/respuestas-familia'
     | '/apoyo-familiar/$state'
+    | '/herramientas-ia/$slug'
     | '/mapa/$slug'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/respuestas-familia'
     | '/apoyo-familiar/$state'
+    | '/herramientas-ia/$slug'
     | '/mapa/$slug'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -186,7 +198,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
-  HerramientasIaRoute: typeof HerramientasIaRoute
+  HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
   MapaRoute: typeof MapaRouteWithChildren
   PaisesRoute: typeof PaisesRouteWithChildren
   RecursosRoute: typeof RecursosRouteWithChildren
@@ -272,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapaSlugRouteImport
       parentRoute: typeof MapaRoute
     }
+    '/herramientas-ia/$slug': {
+      id: '/herramientas-ia/$slug'
+      path: '/$slug'
+      fullPath: '/herramientas-ia/$slug'
+      preLoaderRoute: typeof HerramientasIaSlugRouteImport
+      parentRoute: typeof HerramientasIaRoute
+    }
     '/apoyo-familiar/$state': {
       id: '/apoyo-familiar/$state'
       path: '/$state'
@@ -310,6 +329,18 @@ const ApoyoFamiliarRouteChildren: ApoyoFamiliarRouteChildren = {
 
 const ApoyoFamiliarRouteWithChildren = ApoyoFamiliarRoute._addFileChildren(
   ApoyoFamiliarRouteChildren,
+)
+
+interface HerramientasIaRouteChildren {
+  HerramientasIaSlugRoute: typeof HerramientasIaSlugRoute
+}
+
+const HerramientasIaRouteChildren: HerramientasIaRouteChildren = {
+  HerramientasIaSlugRoute: HerramientasIaSlugRoute,
+}
+
+const HerramientasIaRouteWithChildren = HerramientasIaRoute._addFileChildren(
+  HerramientasIaRouteChildren,
 )
 
 interface MapaRouteChildren {
@@ -359,7 +390,7 @@ const RespuestasFamiliaRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
-  HerramientasIaRoute: HerramientasIaRoute,
+  HerramientasIaRoute: HerramientasIaRouteWithChildren,
   MapaRoute: MapaRouteWithChildren,
   PaisesRoute: PaisesRouteWithChildren,
   RecursosRoute: RecursosRouteWithChildren,
