@@ -23,7 +23,7 @@ function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
         <Link to="/" className="flex items-center gap-2">
           <img src={logo} alt="AyudaSobria" width={36} height={36} className="h-9 w-9" />
-          <span className="text-lg font-semibold tracking-tight">AyudaSobria</span>
+          <span className="text-lg font-semibold tracking-tight">Ayuda Sobria</span>
         </Link>
         <nav className="hidden items-center gap-5 lg:flex">
           {links.map((l) => (
@@ -69,7 +69,7 @@ function Footer() {
         <div>
           <div className="flex items-center gap-2">
             <img src={logo} alt="AyudaSobria" width={32} height={32} className="h-8 w-8" />
-            <span className="text-base font-semibold">AyudaSobria</span>
+            <span className="text-base font-semibold">Ayuda Sobria</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
             Apoyo en español para familias que enfrentan la adicción de un ser querido.
