@@ -156,7 +156,7 @@ export function CTAStrip() {
         </Link>
         <Link to="/coaching-familiar" className="rounded-xl border-2 border-chart-4/60 bg-card p-5 hover:border-chart-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Cuando no puedes esperar</p>
-          <p className="mt-1 text-lg font-semibold">Coaching privado desde $150</p>
+          <p className="mt-1 text-lg font-semibold">Coaching privado desde US$150 (USD)</p>
         </Link>
         <Link to="/intervencion" className="rounded-xl border-2 border-destructive/50 bg-card p-5 hover:border-destructive">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Alto riesgo</p>
