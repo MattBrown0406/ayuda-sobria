@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
 import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
 import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
+import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
 
@@ -66,6 +67,11 @@ const PaisesCountryRoute = PaisesCountryRouteImport.update({
   path: '/$country',
   getParentRoute: () => PaisesRoute,
 } as any)
+const MapaSlugRoute = MapaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => MapaRoute,
+} as any)
 const ApoyoFamiliarStateRoute = ApoyoFamiliarStateRouteImport.update({
   id: '/$state',
   path: '/$state',
@@ -80,11 +86,12 @@ const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/mapa': typeof MapaRoute
+  '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/mapa/$slug': typeof MapaSlugRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -93,11 +100,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/mapa': typeof MapaRoute
+  '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/mapa/$slug': typeof MapaSlugRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -107,11 +115,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/mapa': typeof MapaRoute
+  '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/mapa/$slug': typeof MapaSlugRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/respuestas-familia'
     | '/apoyo-familiar/$state'
+    | '/mapa/$slug'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/respuestas-familia'
     | '/apoyo-familiar/$state'
+    | '/mapa/$slug'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/respuestas-familia'
     | '/apoyo-familiar/$state'
+    | '/mapa/$slug'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -162,7 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
-  MapaRoute: typeof MapaRoute
+  MapaRoute: typeof MapaRouteWithChildren
   PaisesRoute: typeof PaisesRouteWithChildren
   RecursosRoute: typeof RecursosRouteWithChildren
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
@@ -233,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaisesCountryRouteImport
       parentRoute: typeof PaisesRoute
     }
+    '/mapa/$slug': {
+      id: '/mapa/$slug'
+      path: '/$slug'
+      fullPath: '/mapa/$slug'
+      preLoaderRoute: typeof MapaSlugRouteImport
+      parentRoute: typeof MapaRoute
+    }
     '/apoyo-familiar/$state': {
       id: '/apoyo-familiar/$state'
       path: '/$state'
@@ -273,6 +292,16 @@ const ApoyoFamiliarRouteWithChildren = ApoyoFamiliarRoute._addFileChildren(
   ApoyoFamiliarRouteChildren,
 )
 
+interface MapaRouteChildren {
+  MapaSlugRoute: typeof MapaSlugRoute
+}
+
+const MapaRouteChildren: MapaRouteChildren = {
+  MapaSlugRoute: MapaSlugRoute,
+}
+
+const MapaRouteWithChildren = MapaRoute._addFileChildren(MapaRouteChildren)
+
 interface PaisesRouteChildren {
   PaisesCountryRoute: typeof PaisesCountryRoute
 }
@@ -310,7 +339,7 @@ const RespuestasFamiliaRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
-  MapaRoute: MapaRoute,
+  MapaRoute: MapaRouteWithChildren,
   PaisesRoute: PaisesRouteWithChildren,
   RecursosRoute: RecursosRouteWithChildren,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
