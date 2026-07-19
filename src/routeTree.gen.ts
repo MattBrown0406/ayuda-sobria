@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestimoniosRouteImport } from './routes/testimonios'
 import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
 import { Route as RecursosRouteImport } from './routes/recursos'
+import { Route as ProveedoresRouteImport } from './routes/proveedores'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MembresiaRouteImport } from './routes/membresia'
 import { Route as MapaRouteImport } from './routes/mapa'
@@ -43,6 +44,11 @@ const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
 const RecursosRoute = RecursosRouteImport.update({
   id: '/recursos',
   path: '/recursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProveedoresRoute = ProveedoresRouteImport.update({
+  id: '/proveedores',
+  path: '/proveedores',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaisesRoute = PaisesRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/mapa': typeof MapaRouteWithChildren
   '/membresia': typeof MembresiaRoute
   '/paises': typeof PaisesRouteWithChildren
+  '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/testimonios': typeof TestimoniosRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/mapa': typeof MapaRouteWithChildren
   '/membresia': typeof MembresiaRoute
   '/paises': typeof PaisesRouteWithChildren
+  '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/testimonios': typeof TestimoniosRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/mapa': typeof MapaRouteWithChildren
   '/membresia': typeof MembresiaRoute
   '/paises': typeof PaisesRouteWithChildren
+  '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/testimonios': typeof TestimoniosRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/membresia'
     | '/paises'
+    | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
     | '/testimonios'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/membresia'
     | '/paises'
+    | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
     | '/testimonios'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/membresia'
     | '/paises'
+    | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
     | '/testimonios'
@@ -278,6 +290,7 @@ export interface RootRouteChildren {
   MapaRoute: typeof MapaRouteWithChildren
   MembresiaRoute: typeof MembresiaRoute
   PaisesRoute: typeof PaisesRouteWithChildren
+  ProveedoresRoute: typeof ProveedoresRoute
   RecursosRoute: typeof RecursosRouteWithChildren
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
   TestimoniosRoute: typeof TestimoniosRoute
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       path: '/recursos'
       fullPath: '/recursos'
       preLoaderRoute: typeof RecursosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proveedores': {
+      id: '/proveedores'
+      path: '/proveedores'
+      fullPath: '/proveedores'
+      preLoaderRoute: typeof ProveedoresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/paises': {
@@ -518,6 +538,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapaRoute: MapaRouteWithChildren,
   MembresiaRoute: MembresiaRoute,
   PaisesRoute: PaisesRouteWithChildren,
+  ProveedoresRoute: ProveedoresRoute,
   RecursosRoute: RecursosRouteWithChildren,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
   TestimoniosRoute: TestimoniosRoute,
