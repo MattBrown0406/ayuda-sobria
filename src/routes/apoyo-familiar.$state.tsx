@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { STATE_MAP } from "@/data/locations";
+import { STATE_MAP, type State } from "@/data/locations";
 import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/apoyo-familiar/$state")({
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/apoyo-familiar/$state")({
 });
 
 function StatePage() {
-  const { state } = Route.useLoaderData();
+  const { state } = Route.useLoaderData() as { state: State };
   return (
     <>
       <PageHero eyebrow="Apoyo por estado" title={`Familias en ${state.name}`} description={`Recursos, coaching y reuniones semanales para familias hispanohablantes en ${state.name} afectadas por la adicción de un ser querido.`} />
@@ -36,7 +36,7 @@ function StatePage() {
         <h2 className="text-xl font-semibold">Ciudades de {state.name}</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {state.cities.map((c) => (
-            <Link key={c.slug} to="/$state/$city" params={{ state: state.slug, city: c.slug }} className="rounded-lg border border-border bg-card p-4 hover:border-primary/60">
+            <Link key={c.slug} to="/apoyo-familiar/$state/$city" params={{ state: state.slug, city: c.slug }} className="rounded-lg border border-border bg-card p-4 hover:border-primary/60">
               <p className="font-medium">{c.name}, {state.name}</p>
               <p className="mt-1 text-xs text-muted-foreground">Apoyo familiar en español</p>
             </Link>
