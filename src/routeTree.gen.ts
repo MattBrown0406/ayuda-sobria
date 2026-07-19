@@ -13,6 +13,7 @@ import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
 import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecursosSlugRoute = RecursosSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => RecursosRoute,
+} as any)
 const PaisesCountryRoute = PaisesCountryRouteImport.update({
   id: '/$country',
   path: '/$country',
@@ -57,18 +63,20 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
-  '/recursos': typeof RecursosRoute
+  '/recursos': typeof RecursosRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/paises/$country': typeof PaisesCountryRoute
+  '/recursos/$slug': typeof RecursosSlugRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
-  '/recursos': typeof RecursosRoute
+  '/recursos': typeof RecursosRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/paises/$country': typeof PaisesCountryRoute
+  '/recursos/$slug': typeof RecursosSlugRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRoutesById {
@@ -76,9 +84,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
-  '/recursos': typeof RecursosRoute
+  '/recursos': typeof RecursosRouteWithChildren
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/paises/$country': typeof PaisesCountryRoute
+  '/recursos/$slug': typeof RecursosSlugRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/apoyo-familiar/$state'
     | '/paises/$country'
+    | '/recursos/$slug'
     | '/apoyo-familiar/$state/$city'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/apoyo-familiar/$state'
     | '/paises/$country'
+    | '/recursos/$slug'
     | '/apoyo-familiar/$state/$city'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/apoyo-familiar/$state'
     | '/paises/$country'
+    | '/recursos/$slug'
     | '/apoyo-familiar/$state/$city'
   fileRoutesById: FileRoutesById
 }
@@ -115,7 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
   PaisesRoute: typeof PaisesRouteWithChildren
-  RecursosRoute: typeof RecursosRoute
+  RecursosRoute: typeof RecursosRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -147,6 +159,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/recursos/$slug': {
+      id: '/recursos/$slug'
+      path: '/$slug'
+      fullPath: '/recursos/$slug'
+      preLoaderRoute: typeof RecursosSlugRouteImport
+      parentRoute: typeof RecursosRoute
     }
     '/paises/$country': {
       id: '/paises/$country'
@@ -206,11 +225,23 @@ const PaisesRouteChildren: PaisesRouteChildren = {
 const PaisesRouteWithChildren =
   PaisesRoute._addFileChildren(PaisesRouteChildren)
 
+interface RecursosRouteChildren {
+  RecursosSlugRoute: typeof RecursosSlugRoute
+}
+
+const RecursosRouteChildren: RecursosRouteChildren = {
+  RecursosSlugRoute: RecursosSlugRoute,
+}
+
+const RecursosRouteWithChildren = RecursosRoute._addFileChildren(
+  RecursosRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
   PaisesRoute: PaisesRouteWithChildren,
-  RecursosRoute: RecursosRoute,
+  RecursosRoute: RecursosRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
