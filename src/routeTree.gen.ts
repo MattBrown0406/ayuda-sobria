@@ -9,38 +9,486 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestimoniosRouteImport } from './routes/testimonios'
+import { Route as TerminosSmsRouteImport } from './routes/terminos-sms'
+import { Route as TerminosRouteImport } from './routes/terminos'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
+import { Route as RecursosRouteImport } from './routes/recursos'
+import { Route as ProveedoresRouteImport } from './routes/proveedores'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
+import { Route as PaisesRouteImport } from './routes/paises'
+import { Route as MembresiaRouteImport } from './routes/membresia'
+import { Route as MapaRouteImport } from './routes/mapa'
+import { Route as IntervencionRouteImport } from './routes/intervencion'
+import { Route as IngresarRouteImport } from './routes/ingresar'
+import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
+import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
+import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
+import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
+import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
+import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
+import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
+import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
+import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
 
+const TestimoniosRoute = TestimoniosRouteImport.update({
+  id: '/testimonios',
+  path: '/testimonios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosSmsRoute = TerminosSmsRouteImport.update({
+  id: '/terminos-sms',
+  path: '/terminos-sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
+  id: '/respuestas-familia',
+  path: '/respuestas-familia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecursosRoute = RecursosRouteImport.update({
+  id: '/recursos',
+  path: '/recursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProveedoresRoute = ProveedoresRouteImport.update({
+  id: '/proveedores',
+  path: '/proveedores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaisesRoute = PaisesRouteImport.update({
+  id: '/paises',
+  path: '/paises',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MembresiaRoute = MembresiaRouteImport.update({
+  id: '/membresia',
+  path: '/membresia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapaRoute = MapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntervencionRoute = IntervencionRouteImport.update({
+  id: '/intervencion',
+  path: '/intervencion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IngresarRoute = IngresarRouteImport.update({
+  id: '/ingresar',
+  path: '/ingresar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HerramientasIaRoute = HerramientasIaRouteImport.update({
+  id: '/herramientas-ia',
+  path: '/herramientas-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachingFamiliarRoute = CoachingFamiliarRouteImport.update({
+  id: '/coaching-familiar',
+  path: '/coaching-familiar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CirculoFamiliarRoute = CirculoFamiliarRouteImport.update({
+  id: '/circulo-familiar',
+  path: '/circulo-familiar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
+  id: '/apoyo-familiar',
+  path: '/apoyo-familiar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RespuestasFamiliaSlugRoute = RespuestasFamiliaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => RespuestasFamiliaRoute,
+} as any)
+const RecursosSlugRoute = RecursosSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => RecursosRoute,
+} as any)
+const PaisesCountryRoute = PaisesCountryRouteImport.update({
+  id: '/$country',
+  path: '/$country',
+  getParentRoute: () => PaisesRoute,
+} as any)
+const MapaSlugRoute = MapaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => MapaRoute,
+} as any)
+const HerramientasIaSlugRoute = HerramientasIaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => HerramientasIaRoute,
+} as any)
+const ApoyoFamiliarStateRoute = ApoyoFamiliarStateRouteImport.update({
+  id: '/$state',
+  path: '/$state',
+  getParentRoute: () => ApoyoFamiliarRoute,
+} as any)
+const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
+  id: '/$city',
+  path: '/$city',
+  getParentRoute: () => ApoyoFamiliarStateRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/circulo-familiar': typeof CirculoFamiliarRoute
+  '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/faq': typeof FaqRoute
+  '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/ingresar': typeof IngresarRoute
+  '/intervencion': typeof IntervencionRoute
+  '/mapa': typeof MapaRouteWithChildren
+  '/membresia': typeof MembresiaRoute
+  '/paises': typeof PaisesRouteWithChildren
+  '/privacidad': typeof PrivacidadRoute
+  '/proveedores': typeof ProveedoresRoute
+  '/recursos': typeof RecursosRouteWithChildren
+  '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terminos': typeof TerminosRoute
+  '/terminos-sms': typeof TerminosSmsRoute
+  '/testimonios': typeof TestimoniosRoute
+  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
+  '/mapa/$slug': typeof MapaSlugRoute
+  '/paises/$country': typeof PaisesCountryRoute
+  '/recursos/$slug': typeof RecursosSlugRoute
+  '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
+  '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/circulo-familiar': typeof CirculoFamiliarRoute
+  '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/faq': typeof FaqRoute
+  '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/ingresar': typeof IngresarRoute
+  '/intervencion': typeof IntervencionRoute
+  '/mapa': typeof MapaRouteWithChildren
+  '/membresia': typeof MembresiaRoute
+  '/paises': typeof PaisesRouteWithChildren
+  '/privacidad': typeof PrivacidadRoute
+  '/proveedores': typeof ProveedoresRoute
+  '/recursos': typeof RecursosRouteWithChildren
+  '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terminos': typeof TerminosRoute
+  '/terminos-sms': typeof TerminosSmsRoute
+  '/testimonios': typeof TestimoniosRoute
+  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
+  '/mapa/$slug': typeof MapaSlugRoute
+  '/paises/$country': typeof PaisesCountryRoute
+  '/recursos/$slug': typeof RecursosSlugRoute
+  '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
+  '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/circulo-familiar': typeof CirculoFamiliarRoute
+  '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/faq': typeof FaqRoute
+  '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/ingresar': typeof IngresarRoute
+  '/intervencion': typeof IntervencionRoute
+  '/mapa': typeof MapaRouteWithChildren
+  '/membresia': typeof MembresiaRoute
+  '/paises': typeof PaisesRouteWithChildren
+  '/privacidad': typeof PrivacidadRoute
+  '/proveedores': typeof ProveedoresRoute
+  '/recursos': typeof RecursosRouteWithChildren
+  '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terminos': typeof TerminosRoute
+  '/terminos-sms': typeof TerminosSmsRoute
+  '/testimonios': typeof TestimoniosRoute
+  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
+  '/mapa/$slug': typeof MapaSlugRoute
+  '/paises/$country': typeof PaisesCountryRoute
+  '/recursos/$slug': typeof RecursosSlugRoute
+  '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
+  '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/apoyo-familiar'
+    | '/circulo-familiar'
+    | '/coaching-familiar'
+    | '/faq'
+    | '/herramientas-ia'
+    | '/ingresar'
+    | '/intervencion'
+    | '/mapa'
+    | '/membresia'
+    | '/paises'
+    | '/privacidad'
+    | '/proveedores'
+    | '/recursos'
+    | '/respuestas-familia'
+    | '/sitemap.xml'
+    | '/terminos'
+    | '/terminos-sms'
+    | '/testimonios'
+    | '/apoyo-familiar/$state'
+    | '/herramientas-ia/$slug'
+    | '/mapa/$slug'
+    | '/paises/$country'
+    | '/recursos/$slug'
+    | '/respuestas-familia/$slug'
+    | '/apoyo-familiar/$state/$city'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/apoyo-familiar'
+    | '/circulo-familiar'
+    | '/coaching-familiar'
+    | '/faq'
+    | '/herramientas-ia'
+    | '/ingresar'
+    | '/intervencion'
+    | '/mapa'
+    | '/membresia'
+    | '/paises'
+    | '/privacidad'
+    | '/proveedores'
+    | '/recursos'
+    | '/respuestas-familia'
+    | '/sitemap.xml'
+    | '/terminos'
+    | '/terminos-sms'
+    | '/testimonios'
+    | '/apoyo-familiar/$state'
+    | '/herramientas-ia/$slug'
+    | '/mapa/$slug'
+    | '/paises/$country'
+    | '/recursos/$slug'
+    | '/respuestas-familia/$slug'
+    | '/apoyo-familiar/$state/$city'
+  id:
+    | '__root__'
+    | '/'
+    | '/apoyo-familiar'
+    | '/circulo-familiar'
+    | '/coaching-familiar'
+    | '/faq'
+    | '/herramientas-ia'
+    | '/ingresar'
+    | '/intervencion'
+    | '/mapa'
+    | '/membresia'
+    | '/paises'
+    | '/privacidad'
+    | '/proveedores'
+    | '/recursos'
+    | '/respuestas-familia'
+    | '/sitemap.xml'
+    | '/terminos'
+    | '/terminos-sms'
+    | '/testimonios'
+    | '/apoyo-familiar/$state'
+    | '/herramientas-ia/$slug'
+    | '/mapa/$slug'
+    | '/paises/$country'
+    | '/recursos/$slug'
+    | '/respuestas-familia/$slug'
+    | '/apoyo-familiar/$state/$city'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
+  CirculoFamiliarRoute: typeof CirculoFamiliarRoute
+  CoachingFamiliarRoute: typeof CoachingFamiliarRoute
+  FaqRoute: typeof FaqRoute
+  HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
+  IngresarRoute: typeof IngresarRoute
+  IntervencionRoute: typeof IntervencionRoute
+  MapaRoute: typeof MapaRouteWithChildren
+  MembresiaRoute: typeof MembresiaRoute
+  PaisesRoute: typeof PaisesRouteWithChildren
+  PrivacidadRoute: typeof PrivacidadRoute
+  ProveedoresRoute: typeof ProveedoresRoute
+  RecursosRoute: typeof RecursosRouteWithChildren
+  RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TerminosRoute: typeof TerminosRoute
+  TerminosSmsRoute: typeof TerminosSmsRoute
+  TestimoniosRoute: typeof TestimoniosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/testimonios': {
+      id: '/testimonios'
+      path: '/testimonios'
+      fullPath: '/testimonios'
+      preLoaderRoute: typeof TestimoniosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos-sms': {
+      id: '/terminos-sms'
+      path: '/terminos-sms'
+      fullPath: '/terminos-sms'
+      preLoaderRoute: typeof TerminosSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/respuestas-familia': {
+      id: '/respuestas-familia'
+      path: '/respuestas-familia'
+      fullPath: '/respuestas-familia'
+      preLoaderRoute: typeof RespuestasFamiliaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recursos': {
+      id: '/recursos'
+      path: '/recursos'
+      fullPath: '/recursos'
+      preLoaderRoute: typeof RecursosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proveedores': {
+      id: '/proveedores'
+      path: '/proveedores'
+      fullPath: '/proveedores'
+      preLoaderRoute: typeof ProveedoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paises': {
+      id: '/paises'
+      path: '/paises'
+      fullPath: '/paises'
+      preLoaderRoute: typeof PaisesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/membresia': {
+      id: '/membresia'
+      path: '/membresia'
+      fullPath: '/membresia'
+      preLoaderRoute: typeof MembresiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mapa': {
+      id: '/mapa'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof MapaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/intervencion': {
+      id: '/intervencion'
+      path: '/intervencion'
+      fullPath: '/intervencion'
+      preLoaderRoute: typeof IntervencionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ingresar': {
+      id: '/ingresar'
+      path: '/ingresar'
+      fullPath: '/ingresar'
+      preLoaderRoute: typeof IngresarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/herramientas-ia': {
+      id: '/herramientas-ia'
+      path: '/herramientas-ia'
+      fullPath: '/herramientas-ia'
+      preLoaderRoute: typeof HerramientasIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coaching-familiar': {
+      id: '/coaching-familiar'
+      path: '/coaching-familiar'
+      fullPath: '/coaching-familiar'
+      preLoaderRoute: typeof CoachingFamiliarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/circulo-familiar': {
+      id: '/circulo-familiar'
+      path: '/circulo-familiar'
+      fullPath: '/circulo-familiar'
+      preLoaderRoute: typeof CirculoFamiliarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apoyo-familiar': {
+      id: '/apoyo-familiar'
+      path: '/apoyo-familiar'
+      fullPath: '/apoyo-familiar'
+      preLoaderRoute: typeof ApoyoFamiliarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +496,157 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/respuestas-familia/$slug': {
+      id: '/respuestas-familia/$slug'
+      path: '/$slug'
+      fullPath: '/respuestas-familia/$slug'
+      preLoaderRoute: typeof RespuestasFamiliaSlugRouteImport
+      parentRoute: typeof RespuestasFamiliaRoute
+    }
+    '/recursos/$slug': {
+      id: '/recursos/$slug'
+      path: '/$slug'
+      fullPath: '/recursos/$slug'
+      preLoaderRoute: typeof RecursosSlugRouteImport
+      parentRoute: typeof RecursosRoute
+    }
+    '/paises/$country': {
+      id: '/paises/$country'
+      path: '/$country'
+      fullPath: '/paises/$country'
+      preLoaderRoute: typeof PaisesCountryRouteImport
+      parentRoute: typeof PaisesRoute
+    }
+    '/mapa/$slug': {
+      id: '/mapa/$slug'
+      path: '/$slug'
+      fullPath: '/mapa/$slug'
+      preLoaderRoute: typeof MapaSlugRouteImport
+      parentRoute: typeof MapaRoute
+    }
+    '/herramientas-ia/$slug': {
+      id: '/herramientas-ia/$slug'
+      path: '/$slug'
+      fullPath: '/herramientas-ia/$slug'
+      preLoaderRoute: typeof HerramientasIaSlugRouteImport
+      parentRoute: typeof HerramientasIaRoute
+    }
+    '/apoyo-familiar/$state': {
+      id: '/apoyo-familiar/$state'
+      path: '/$state'
+      fullPath: '/apoyo-familiar/$state'
+      preLoaderRoute: typeof ApoyoFamiliarStateRouteImport
+      parentRoute: typeof ApoyoFamiliarRoute
+    }
+    '/apoyo-familiar/$state/$city': {
+      id: '/apoyo-familiar/$state/$city'
+      path: '/$city'
+      fullPath: '/apoyo-familiar/$state/$city'
+      preLoaderRoute: typeof ApoyoFamiliarStateCityRouteImport
+      parentRoute: typeof ApoyoFamiliarStateRoute
+    }
   }
 }
 
+interface ApoyoFamiliarStateRouteChildren {
+  ApoyoFamiliarStateCityRoute: typeof ApoyoFamiliarStateCityRoute
+}
+
+const ApoyoFamiliarStateRouteChildren: ApoyoFamiliarStateRouteChildren = {
+  ApoyoFamiliarStateCityRoute: ApoyoFamiliarStateCityRoute,
+}
+
+const ApoyoFamiliarStateRouteWithChildren =
+  ApoyoFamiliarStateRoute._addFileChildren(ApoyoFamiliarStateRouteChildren)
+
+interface ApoyoFamiliarRouteChildren {
+  ApoyoFamiliarStateRoute: typeof ApoyoFamiliarStateRouteWithChildren
+}
+
+const ApoyoFamiliarRouteChildren: ApoyoFamiliarRouteChildren = {
+  ApoyoFamiliarStateRoute: ApoyoFamiliarStateRouteWithChildren,
+}
+
+const ApoyoFamiliarRouteWithChildren = ApoyoFamiliarRoute._addFileChildren(
+  ApoyoFamiliarRouteChildren,
+)
+
+interface HerramientasIaRouteChildren {
+  HerramientasIaSlugRoute: typeof HerramientasIaSlugRoute
+}
+
+const HerramientasIaRouteChildren: HerramientasIaRouteChildren = {
+  HerramientasIaSlugRoute: HerramientasIaSlugRoute,
+}
+
+const HerramientasIaRouteWithChildren = HerramientasIaRoute._addFileChildren(
+  HerramientasIaRouteChildren,
+)
+
+interface MapaRouteChildren {
+  MapaSlugRoute: typeof MapaSlugRoute
+}
+
+const MapaRouteChildren: MapaRouteChildren = {
+  MapaSlugRoute: MapaSlugRoute,
+}
+
+const MapaRouteWithChildren = MapaRoute._addFileChildren(MapaRouteChildren)
+
+interface PaisesRouteChildren {
+  PaisesCountryRoute: typeof PaisesCountryRoute
+}
+
+const PaisesRouteChildren: PaisesRouteChildren = {
+  PaisesCountryRoute: PaisesCountryRoute,
+}
+
+const PaisesRouteWithChildren =
+  PaisesRoute._addFileChildren(PaisesRouteChildren)
+
+interface RecursosRouteChildren {
+  RecursosSlugRoute: typeof RecursosSlugRoute
+}
+
+const RecursosRouteChildren: RecursosRouteChildren = {
+  RecursosSlugRoute: RecursosSlugRoute,
+}
+
+const RecursosRouteWithChildren = RecursosRoute._addFileChildren(
+  RecursosRouteChildren,
+)
+
+interface RespuestasFamiliaRouteChildren {
+  RespuestasFamiliaSlugRoute: typeof RespuestasFamiliaSlugRoute
+}
+
+const RespuestasFamiliaRouteChildren: RespuestasFamiliaRouteChildren = {
+  RespuestasFamiliaSlugRoute: RespuestasFamiliaSlugRoute,
+}
+
+const RespuestasFamiliaRouteWithChildren =
+  RespuestasFamiliaRoute._addFileChildren(RespuestasFamiliaRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
+  CirculoFamiliarRoute: CirculoFamiliarRoute,
+  CoachingFamiliarRoute: CoachingFamiliarRoute,
+  FaqRoute: FaqRoute,
+  HerramientasIaRoute: HerramientasIaRouteWithChildren,
+  IngresarRoute: IngresarRoute,
+  IntervencionRoute: IntervencionRoute,
+  MapaRoute: MapaRouteWithChildren,
+  MembresiaRoute: MembresiaRoute,
+  PaisesRoute: PaisesRouteWithChildren,
+  PrivacidadRoute: PrivacidadRoute,
+  ProveedoresRoute: ProveedoresRoute,
+  RecursosRoute: RecursosRouteWithChildren,
+  RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TerminosRoute: TerminosRoute,
+  TerminosSmsRoute: TerminosSmsRoute,
+  TestimoniosRoute: TestimoniosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
