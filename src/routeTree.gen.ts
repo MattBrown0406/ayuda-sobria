@@ -25,6 +25,7 @@ import { Route as IntervencionRouteImport } from './routes/intervencion'
 import { Route as IngresarRouteImport } from './routes/ingresar'
 import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as CoachingPagoRouteImport } from './routes/coaching-pago'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
@@ -117,6 +118,11 @@ const FaqRoute = FaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoachingPagoRoute = CoachingPagoRouteImport.update({
+  id: '/coaching-pago',
+  path: '/coaching-pago',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CoachingFamiliarRoute = CoachingFamiliarRouteImport.update({
   id: '/coaching-familiar',
   path: '/coaching-familiar',
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/coaching-pago': typeof CoachingPagoRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/ingresar': typeof IngresarRoute
@@ -207,6 +214,7 @@ export interface FileRoutesByTo {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/coaching-pago': typeof CoachingPagoRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/ingresar': typeof IngresarRoute
@@ -237,6 +245,7 @@ export interface FileRoutesById {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/coaching-pago': typeof CoachingPagoRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/ingresar': typeof IngresarRoute
@@ -268,6 +277,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/circulo-familiar'
     | '/coaching-familiar'
+    | '/coaching-pago'
     | '/faq'
     | '/herramientas-ia'
     | '/ingresar'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/circulo-familiar'
     | '/coaching-familiar'
+    | '/coaching-pago'
     | '/faq'
     | '/herramientas-ia'
     | '/ingresar'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/circulo-familiar'
     | '/coaching-familiar'
+    | '/coaching-pago'
     | '/faq'
     | '/herramientas-ia'
     | '/ingresar'
@@ -356,6 +368,7 @@ export interface RootRouteChildren {
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
+  CoachingPagoRoute: typeof CoachingPagoRoute
   FaqRoute: typeof FaqRoute
   HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
   IngresarRoute: typeof IngresarRoute
@@ -486,6 +499,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coaching-pago': {
+      id: '/coaching-pago'
+      path: '/coaching-pago'
+      fullPath: '/coaching-pago'
+      preLoaderRoute: typeof CoachingPagoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/coaching-familiar': {
@@ -652,6 +672,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
+  CoachingPagoRoute: CoachingPagoRoute,
   FaqRoute: FaqRoute,
   HerramientasIaRoute: HerramientasIaRouteWithChildren,
   IngresarRoute: IngresarRoute,
