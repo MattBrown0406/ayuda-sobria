@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
 import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
@@ -18,6 +19,11 @@ import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
 
+const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
+  id: '/respuestas-familia',
+  path: '/respuestas-familia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecursosRoute = RecursosRouteImport.update({
   id: '/recursos',
   path: '/recursos',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
+  '/respuestas-familia': typeof RespuestasFamiliaRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
+  '/respuestas-familia': typeof RespuestasFamiliaRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
+  '/respuestas-familia': typeof RespuestasFamiliaRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/paises'
     | '/recursos'
+    | '/respuestas-familia'
     | '/apoyo-familiar/$state'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/paises'
     | '/recursos'
+    | '/respuestas-familia'
     | '/apoyo-familiar/$state'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/paises'
     | '/recursos'
+    | '/respuestas-familia'
     | '/apoyo-familiar/$state'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -128,10 +140,18 @@ export interface RootRouteChildren {
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
   PaisesRoute: typeof PaisesRouteWithChildren
   RecursosRoute: typeof RecursosRouteWithChildren
+  RespuestasFamiliaRoute: typeof RespuestasFamiliaRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/respuestas-familia': {
+      id: '/respuestas-familia'
+      path: '/respuestas-familia'
+      fullPath: '/respuestas-familia'
+      preLoaderRoute: typeof RespuestasFamiliaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recursos': {
       id: '/recursos'
       path: '/recursos'
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
   PaisesRoute: PaisesRouteWithChildren,
   RecursosRoute: RecursosRouteWithChildren,
+  RespuestasFamiliaRoute: RespuestasFamiliaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
