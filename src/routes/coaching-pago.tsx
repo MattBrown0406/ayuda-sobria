@@ -196,6 +196,12 @@ function CoachingPagoPage() {
         description="Sesiones privadas en español para familias que enfrentan la adicción de un ser querido. Elige el paquete que mejor se ajuste a tu situación y paga de forma segura con PayPal, tarjeta o Venmo."
       />
 
+      <div className="mx-auto max-w-5xl px-4">
+        <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          Todos los precios están en <strong>dólares estadounidenses (USD)</strong>. Si pagas desde otro país, tu banco o PayPal hará la conversión a tu moneda local al tipo de cambio del día.
+        </div>
+      </div>
+
       <section className="mx-auto max-w-5xl px-4 pb-20">
         <div className="grid gap-8 md:grid-cols-[1.2fr_1fr]">
           <div>

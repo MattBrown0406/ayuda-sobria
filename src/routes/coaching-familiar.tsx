@@ -7,7 +7,7 @@ export const Route = createFileRoute("/coaching-familiar")({
       { title: "Coaching familiar privado en español — AyudaSobria" },
       { name: "description", content: "Sesiones privadas uno a uno para familias que necesitan claridad rápida sobre la adicción de un ser querido." },
       { property: "og:title", content: "Coaching familiar — AyudaSobria" },
-      { property: "og:description", content: "Sesiones privadas en español, desde $150." },
+      { property: "og:description", content: "Sesiones privadas en español, desde US$150 (USD)." },
       { property: "og:url", content: "/coaching-familiar" },
     ],
     links: [{ rel: "canonical", href: "/coaching-familiar" }],
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/coaching-familiar")({
         <ul>
           <li>Sesión inicial de 60 minutos.</li>
           <li>Por Zoom, en español, confidencial.</li>
-          <li>Desde $150 la sesión.</li>
+          <li>Desde US$150 (USD) la sesión.</li>
         </ul>
         <p>Reserva escribiendo a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o al (458) 298-8011.</p>
       </Prose>

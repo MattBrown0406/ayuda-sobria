@@ -6,7 +6,7 @@ const FAQS = [
   { q: "¿Necesito que mi ser querido acepte ayuda primero?", a: "No. AyudaSobria trabaja con la familia. Puedes empezar aunque tu ser querido todavía no quiera tratamiento." },
   { q: "¿Ofrecen servicios en persona?", a: "El Círculo Familiar y el coaching son en línea, para que familias de cualquier país o ciudad puedan participar." },
   { q: "¿Es confidencial?", a: "Sí. Lo que compartes en el Círculo y en las sesiones privadas queda ahí." },
-  { q: "¿Cuánto cuesta el coaching privado?", a: "Desde $150 la sesión de 60 minutos." },
+  { q: "¿Cuánto cuesta el coaching privado?", a: "Desde US$150 dólares (USD) la sesión de 60 minutos. Todos los precios están en dólares estadounidenses; si pagas desde otro país, tu banco o PayPal hará la conversión al tipo de cambio del día." },
 ];
 
 export const Route = createFileRoute("/faq")({

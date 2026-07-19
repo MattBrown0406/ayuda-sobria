@@ -6,13 +6,13 @@ const PAYPAL_CLIENT_ID =
   "AZp-wM9j2rM3zpYD_TQW_yrwPn_boYZBDauMrvXDcSNedPKqJc4I225HElAVvhFnelll6yNzT8H2PEXy";
 // Create a $14.99/month plan in PayPal (Pay → Subscriptions → Plans) and paste the ID here.
 const PAYPAL_PLAN_ID = "REEMPLAZAR_CON_PLAN_ID";
-const PRICE_DISPLAY = "$14.99 USD / mes";
+const PRICE_DISPLAY = "US$14.99 / mes";
 
 export const Route = createFileRoute("/membresia")({
   head: () => ({
     meta: [
-      { title: "Membresía $14.99/mes — AyudaSobria" },
-      { name: "description", content: "Membresía mensual de $14.99 con acceso al Círculo Familiar, biblioteca en español, coaching grupal y descuentos." },
+      { title: "Membresía US$14.99/mes (dólares) — AyudaSobria" },
+      { name: "description", content: "Membresía mensual de US$14.99 (dólares estadounidenses) con acceso al Círculo Familiar, biblioteca en español, coaching grupal y descuentos." },
       { property: "og:title", content: "Membresía — AyudaSobria" },
       { property: "og:description", content: "Acompañamiento continuo para la familia en español." },
       { property: "og:url", content: "/membresia" },
@@ -73,8 +73,8 @@ function MembresiaPage() {
     <SiteLayout>
       <PageHero
         eyebrow="Suscripción mensual"
-        title="Membresía AyudaSobria — $14.99/mes"
-        description="Acompañamiento continuo para la familia, con acceso a reuniones, biblioteca y coaching grupal en español. Cancela cuando quieras."
+        title="Membresía AyudaSobria — US$14.99/mes"
+        description="Acompañamiento continuo para la familia, con acceso a reuniones, biblioteca y coaching grupal en español. Todos los precios están en dólares estadounidenses (USD). Cancela cuando quieras."
       />
       <section className="mx-auto max-w-5xl px-4 pb-16">
         <div className="grid gap-8 md:grid-cols-[1.2fr_1fr]">
@@ -91,7 +91,7 @@ function MembresiaPage() {
           <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="text-sm font-semibold uppercase tracking-wide text-primary">Membresía mensual</div>
             <div className="mt-1 text-3xl font-bold text-slate-900">{PRICE_DISPLAY}</div>
-            <p className="mt-2 text-sm text-slate-600">Cobro recurrente cada mes. Cancela en cualquier momento desde tu cuenta de PayPal.</p>
+            <p className="mt-2 text-sm text-slate-600">Precio en <strong>dólares estadounidenses (USD)</strong>. Si tu tarjeta o cuenta usa otra moneda, PayPal la convertirá al tipo de cambio del día. Cobro recurrente cada mes; cancela en cualquier momento desde tu cuenta de PayPal.</p>
             <div className="mt-5 min-h-[220px]">
               {!planConfigured && (
                 <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">

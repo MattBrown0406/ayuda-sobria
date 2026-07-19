@@ -95,7 +95,7 @@ function Hero() {
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <span>Apoyo gratuito los lunes a las 8 PM (Pacífico)</span>
             <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
-            <span>Sesiones privadas desde $150</span>
+            <span>Sesiones privadas desde US$150 (USD)</span>
             <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
             <a href={PHONE_HREF} className="font-semibold text-primary">Llama {PHONE_DISPLAY}</a>
           </div>
@@ -262,7 +262,7 @@ function Situations() {
           </ul>
           <p className="mt-6 text-sm text-muted-foreground">No tienes que resolver esto sola. Consigue herramientas prácticas, apoyo constante y un lugar para pensar con claridad de nuevo.</p>
           <a href="#membresia" className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">Explorar la membresía</a>
-          <p className="mt-2 text-xs text-muted-foreground">Prueba gratis de 7 días, luego $14.99/mes. Cancela cuando quieras.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Prueba gratis de 7 días, luego US$14.99/mes (USD). Cancela cuando quieras.</p>
         </div>
       </div>
     </section>
@@ -273,7 +273,7 @@ function Programs() {
   const items = [
     { icon: Users, tag: "Apoyo semanal gratuito", title: "«El Círculo Familiar» cada lunes a las 8 PM (PST)", body: "Apoyo grupal en vivo cada lunes para cualquier familiar. No requiere membresía.", cta: "Regístrate ahora" },
     { icon: BookOpen, tag: "Apoyo continuo", title: "Membresía Familiar para acompañamiento entre crisis", body: "Accede al foro, biblioteca de educación, grabaciones y precios preferenciales de coaching.", cta: "Explorar la membresía" },
-    { icon: MessageCircle, tag: "Ayuda privada", title: "Coaching familiar cuando necesitas orientación uno a uno", body: "El coaching privado está para cuando el grupo y la membresía no bastan. Sesiones de emergencia desde $150.", cta: "Ver opciones de coaching" },
+    { icon: MessageCircle, tag: "Ayuda privada", title: "Coaching familiar cuando necesitas orientación uno a uno", body: "El coaching privado está para cuando el grupo y la membresía no bastan. Sesiones de emergencia desde US$150 (USD).", cta: "Ver opciones de coaching" },
     { icon: Sparkles, tag: "Planificación de alto impacto", title: "Intensivo de Preparación Familiar para decisiones mayores", body: "Sesión estratégica de 90 minutos más 7 días de seguimiento para familias que necesitan claridad rápido.", cta: "Explorar el intensivo" },
   ];
   return (
