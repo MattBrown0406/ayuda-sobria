@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestimoniosRouteImport } from './routes/testimonios'
 import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
 import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as PaisesRouteImport } from './routes/paises'
@@ -28,6 +29,11 @@ import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
 
+const TestimoniosRoute = TestimoniosRouteImport.update({
+  id: '/testimonios',
+  path: '/testimonios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
   id: '/respuestas-familia',
   path: '/respuestas-familia',
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/testimonios': typeof TestimoniosRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/testimonios': typeof TestimoniosRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/testimonios': typeof TestimoniosRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
+    | '/testimonios'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -214,6 +224,7 @@ export interface FileRouteTypes {
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
+    | '/testimonios'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -234,6 +245,7 @@ export interface FileRouteTypes {
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
+    | '/testimonios'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -255,10 +267,18 @@ export interface RootRouteChildren {
   PaisesRoute: typeof PaisesRouteWithChildren
   RecursosRoute: typeof RecursosRouteWithChildren
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
+  TestimoniosRoute: typeof TestimoniosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/testimonios': {
+      id: '/testimonios'
+      path: '/testimonios'
+      fullPath: '/testimonios'
+      preLoaderRoute: typeof TestimoniosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/respuestas-familia': {
       id: '/respuestas-familia'
       path: '/respuestas-familia'
@@ -479,6 +499,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaisesRoute: PaisesRouteWithChildren,
   RecursosRoute: RecursosRouteWithChildren,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
+  TestimoniosRoute: TestimoniosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
