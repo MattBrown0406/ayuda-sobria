@@ -13,6 +13,7 @@ import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-famil
 import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MapaRouteImport } from './routes/mapa'
+import { Route as IntervencionRouteImport } from './routes/intervencion'
 import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
@@ -44,6 +45,11 @@ const PaisesRoute = PaisesRouteImport.update({
 const MapaRoute = MapaRouteImport.update({
   id: '/mapa',
   path: '/mapa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntervencionRoute = IntervencionRouteImport.update({
+  id: '/intervencion',
+  path: '/intervencion',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HerramientasIaRoute = HerramientasIaRouteImport.update({
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/herramientas-ia'
+    | '/intervencion'
     | '/mapa'
     | '/paises'
     | '/recursos'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/herramientas-ia'
+    | '/intervencion'
     | '/mapa'
     | '/paises'
     | '/recursos'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/herramientas-ia'
+    | '/intervencion'
     | '/mapa'
     | '/paises'
     | '/recursos'
@@ -225,6 +237,7 @@ export interface RootRouteChildren {
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
   HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
+  IntervencionRoute: typeof IntervencionRoute
   MapaRoute: typeof MapaRouteWithChildren
   PaisesRoute: typeof PaisesRouteWithChildren
   RecursosRoute: typeof RecursosRouteWithChildren
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/mapa'
       fullPath: '/mapa'
       preLoaderRoute: typeof MapaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/intervencion': {
+      id: '/intervencion'
+      path: '/intervencion'
+      fullPath: '/intervencion'
+      preLoaderRoute: typeof IntervencionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/herramientas-ia': {
@@ -433,6 +453,7 @@ const rootRouteChildren: RootRouteChildren = {
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
   HerramientasIaRoute: HerramientasIaRouteWithChildren,
+  IntervencionRoute: IntervencionRoute,
   MapaRoute: MapaRouteWithChildren,
   PaisesRoute: PaisesRouteWithChildren,
   RecursosRoute: RecursosRouteWithChildren,
