@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      coaching_orders: {
+        Row: {
+          amount: number
+          captured_at: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          id: string
+          paypal_order_id: string
+          session_type: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          captured_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          id?: string
+          paypal_order_id: string
+          session_type: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          captured_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          id?: string
+          paypal_order_id?: string
+          session_type?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       memberships: {
         Row: {
           access_ends_at: string | null
@@ -24,6 +66,7 @@ export type Database = {
           id: string
           next_billing_date: string | null
           paypal_subscription_id: string
+          plan_type: string
           start_date: string | null
           status: string
           updated_at: string
@@ -38,6 +81,7 @@ export type Database = {
           id?: string
           next_billing_date?: string | null
           paypal_subscription_id: string
+          plan_type?: string
           start_date?: string | null
           status?: string
           updated_at?: string
@@ -52,6 +96,7 @@ export type Database = {
           id?: string
           next_billing_date?: string | null
           paypal_subscription_id?: string
+          plan_type?: string
           start_date?: string | null
           status?: string
           updated_at?: string
