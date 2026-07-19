@@ -30,11 +30,14 @@ import { Route as EvaluacionesRouteImport } from './routes/evaluaciones'
 import { Route as CoachingPagoRouteImport } from './routes/coaching-pago'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
 import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
 import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
+import { Route as MembresiaExitoRouteImport } from './routes/membresia.exito'
+import { Route as MembresiaCanceladoRouteImport } from './routes/membresia.cancelado'
 import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
 import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
@@ -146,6 +149,11 @@ const CirculoFamiliarRoute = CirculoFamiliarRouteImport.update({
   path: '/circulo-familiar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
   id: '/apoyo-familiar',
   path: '/apoyo-familiar',
@@ -170,6 +178,16 @@ const PaisesCountryRoute = PaisesCountryRouteImport.update({
   id: '/$country',
   path: '/$country',
   getParentRoute: () => PaisesRoute,
+} as any)
+const MembresiaExitoRoute = MembresiaExitoRouteImport.update({
+  id: '/exito',
+  path: '/exito',
+  getParentRoute: () => MembresiaRoute,
+} as any)
+const MembresiaCanceladoRoute = MembresiaCanceladoRouteImport.update({
+  id: '/cancelado',
+  path: '/cancelado',
+  getParentRoute: () => MembresiaRoute,
 } as any)
 const MapaSlugRoute = MapaSlugRouteImport.update({
   id: '/$slug',
@@ -200,6 +218,7 @@ const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
@@ -209,7 +228,7 @@ export interface FileRoutesByFullPath {
   '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
-  '/membresia': typeof MembresiaRoute
+  '/membresia': typeof MembresiaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
@@ -225,6 +244,8 @@ export interface FileRoutesByFullPath {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/cancelado': typeof MembresiaCanceladoRoute
+  '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -233,6 +254,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
@@ -242,7 +264,7 @@ export interface FileRoutesByTo {
   '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
-  '/membresia': typeof MembresiaRoute
+  '/membresia': typeof MembresiaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
@@ -258,6 +280,8 @@ export interface FileRoutesByTo {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/cancelado': typeof MembresiaCanceladoRoute
+  '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -267,6 +291,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
@@ -276,7 +301,7 @@ export interface FileRoutesById {
   '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
-  '/membresia': typeof MembresiaRoute
+  '/membresia': typeof MembresiaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
@@ -292,6 +317,8 @@ export interface FileRoutesById {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/cancelado': typeof MembresiaCanceladoRoute
+  '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -302,6 +329,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/apoyo-familiar'
+    | '/auth'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -327,6 +355,8 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/cancelado'
+    | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -335,6 +365,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/apoyo-familiar'
+    | '/auth'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -360,6 +391,8 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/cancelado'
+    | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -368,6 +401,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/apoyo-familiar'
+    | '/auth'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -393,6 +427,8 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/cancelado'
+    | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -402,6 +438,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
+  AuthRoute: typeof AuthRoute
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
   CoachingPagoRoute: typeof CoachingPagoRoute
@@ -411,7 +448,7 @@ export interface RootRouteChildren {
   IngresarRoute: typeof IngresarRoute
   IntervencionRoute: typeof IntervencionRoute
   MapaRoute: typeof MapaRouteWithChildren
-  MembresiaRoute: typeof MembresiaRoute
+  MembresiaRoute: typeof MembresiaRouteWithChildren
   PaisesRoute: typeof PaisesRouteWithChildren
   PrivacidadRoute: typeof PrivacidadRoute
   ProveedoresRoute: typeof ProveedoresRoute
@@ -575,6 +612,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CirculoFamiliarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/apoyo-familiar': {
       id: '/apoyo-familiar'
       path: '/apoyo-familiar'
@@ -609,6 +653,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/paises/$country'
       preLoaderRoute: typeof PaisesCountryRouteImport
       parentRoute: typeof PaisesRoute
+    }
+    '/membresia/exito': {
+      id: '/membresia/exito'
+      path: '/exito'
+      fullPath: '/membresia/exito'
+      preLoaderRoute: typeof MembresiaExitoRouteImport
+      parentRoute: typeof MembresiaRoute
+    }
+    '/membresia/cancelado': {
+      id: '/membresia/cancelado'
+      path: '/cancelado'
+      fullPath: '/membresia/cancelado'
+      preLoaderRoute: typeof MembresiaCanceladoRouteImport
+      parentRoute: typeof MembresiaRoute
     }
     '/mapa/$slug': {
       id: '/mapa/$slug'
@@ -693,6 +751,20 @@ const MapaRouteChildren: MapaRouteChildren = {
 
 const MapaRouteWithChildren = MapaRoute._addFileChildren(MapaRouteChildren)
 
+interface MembresiaRouteChildren {
+  MembresiaCanceladoRoute: typeof MembresiaCanceladoRoute
+  MembresiaExitoRoute: typeof MembresiaExitoRoute
+}
+
+const MembresiaRouteChildren: MembresiaRouteChildren = {
+  MembresiaCanceladoRoute: MembresiaCanceladoRoute,
+  MembresiaExitoRoute: MembresiaExitoRoute,
+}
+
+const MembresiaRouteWithChildren = MembresiaRoute._addFileChildren(
+  MembresiaRouteChildren,
+)
+
 interface PaisesRouteChildren {
   PaisesCountryRoute: typeof PaisesCountryRoute
 }
@@ -730,6 +802,7 @@ const RespuestasFamiliaRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
+  AuthRoute: AuthRoute,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
   CoachingPagoRoute: CoachingPagoRoute,
@@ -739,7 +812,7 @@ const rootRouteChildren: RootRouteChildren = {
   IngresarRoute: IngresarRoute,
   IntervencionRoute: IntervencionRoute,
   MapaRoute: MapaRouteWithChildren,
-  MembresiaRoute: MembresiaRoute,
+  MembresiaRoute: MembresiaRouteWithChildren,
   PaisesRoute: PaisesRouteWithChildren,
   PrivacidadRoute: PrivacidadRoute,
   ProveedoresRoute: ProveedoresRoute,
