@@ -410,19 +410,15 @@ function Footer() {
 
 function Index() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Nav />
-      <main>
-        <Hero />
-        <PressureLevel />
-        <FAQ />
-        <Situations />
-        <Programs />
-        <Providers />
-        <Assessments />
-        <FinalCTA />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <Hero />
+      <PressureLevel />
+      <FAQ />
+      <Situations />
+      <Programs />
+      <Providers />
+      <Assessments />
+      <FinalCTA />
+    </>
   );
 }
