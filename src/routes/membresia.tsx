@@ -39,6 +39,7 @@ function MembresiaPage() {
   const createFn = useServerFn(createMembershipSubscription);
   const cancelFn = useServerFn(cancelMembershipSubscription);
   const getFn = useServerFn(getMyMembership);
+  const [planType, setPlanType] = useState<"monthly" | "annual">("monthly");
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -65,7 +66,7 @@ function MembresiaPage() {
     try {
       const returnUrl = `${window.location.origin}/membresia/exito`;
       const cancelUrl = `${window.location.origin}/membresia/cancelado`;
-      const { approvalUrl } = await createFn({ data: { returnUrl, cancelUrl } });
+      const { approvalUrl } = await createFn({ data: { returnUrl, cancelUrl, planType } });
       if (!approvalUrl) throw new Error("No se obtuvo el enlace de PayPal");
       window.location.href = approvalUrl;
     } catch (e) {
@@ -94,7 +95,7 @@ function MembresiaPage() {
   return (
     <>
       <PageHero
-        eyebrow="US$14.99 al mes"
+        eyebrow="Desde US$14.99 al mes"
         title="Membresía familiar"
         description="Acompañamiento entre crisis: educación, comunidad, sesiones en vivo y herramientas prácticas para la familia."
       />
@@ -111,15 +112,42 @@ function MembresiaPage() {
             </ul>
             <h2>Precio</h2>
             <p>
-              <strong>US$14.99 al mes.</strong> Todos los precios están en dólares
-              estadounidenses (USD). Tu banco o PayPal se encargará de la conversión si pagas
-              desde otro país.
+              <strong>Mensual:</strong> US$14.99 al mes. <strong>Anual:</strong> US$149 al año
+              (ahorra ~17%). Todos los precios están en dólares estadounidenses (USD). Tu banco
+              o PayPal se encargará de la conversión si pagas desde otro país.
+            </p>
+            <p>
+              Los miembros activos pagan <strong>US$125</strong> por sesión de coaching privada
+              (US$150 para no-miembros).
             </p>
           </Prose>
         </div>
         <aside className="rounded-lg border border-border bg-card p-6 shadow-sm h-fit">
-          <p className="text-sm text-muted-foreground">Membresía mensual</p>
-          <p className="mt-1 text-3xl font-bold">US$14.99<span className="text-base font-normal text-muted-foreground">/mes</span></p>
+          <p className="text-sm text-muted-foreground">Elige tu plan</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setPlanType("monthly")}
+              className={`rounded-md border p-3 text-left text-sm ${planType === "monthly" ? "border-primary bg-primary/5" : "border-input"}`}
+            >
+              <div className="font-semibold">Mensual</div>
+              <div className="text-xs text-muted-foreground">US$14.99/mes</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPlanType("annual")}
+              className={`rounded-md border p-3 text-left text-sm ${planType === "annual" ? "border-primary bg-primary/5" : "border-input"}`}
+            >
+              <div className="font-semibold">Anual</div>
+              <div className="text-xs text-muted-foreground">US$149/año</div>
+            </button>
+          </div>
+          <p className="mt-3 text-2xl font-bold">
+            {planType === "monthly" ? "US$14.99" : "US$149"}
+            <span className="text-sm font-normal text-muted-foreground">
+              {planType === "monthly" ? "/mes" : "/año"}
+            </span>
+          </p>
 
           {session === undefined && (
             <p className="mt-4 text-sm text-muted-foreground">Cargando…</p>
