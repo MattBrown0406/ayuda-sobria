@@ -20,6 +20,7 @@ import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MembresiaRouteImport } from './routes/membresia'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as IntervencionRouteImport } from './routes/intervencion'
+import { Route as IngresarRouteImport } from './routes/ingresar'
 import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
@@ -87,6 +88,11 @@ const MapaRoute = MapaRouteImport.update({
 const IntervencionRoute = IntervencionRouteImport.update({
   id: '/intervencion',
   path: '/intervencion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IngresarRoute = IngresarRouteImport.update({
+  id: '/ingresar',
+  path: '/ingresar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HerramientasIaRoute = HerramientasIaRouteImport.update({
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
   '/membresia': typeof MembresiaRoute
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
   '/membresia': typeof MembresiaRoute
@@ -215,6 +223,7 @@ export interface FileRoutesById {
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
+  '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
   '/membresia': typeof MembresiaRoute
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/coaching-familiar'
     | '/faq'
     | '/herramientas-ia'
+    | '/ingresar'
     | '/intervencion'
     | '/mapa'
     | '/membresia'
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/coaching-familiar'
     | '/faq'
     | '/herramientas-ia'
+    | '/ingresar'
     | '/intervencion'
     | '/mapa'
     | '/membresia'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/coaching-familiar'
     | '/faq'
     | '/herramientas-ia'
+    | '/ingresar'
     | '/intervencion'
     | '/mapa'
     | '/membresia'
@@ -322,6 +334,7 @@ export interface RootRouteChildren {
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
   FaqRoute: typeof FaqRoute
   HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
+  IngresarRoute: typeof IngresarRoute
   IntervencionRoute: typeof IntervencionRoute
   MapaRoute: typeof MapaRouteWithChildren
   MembresiaRoute: typeof MembresiaRoute
@@ -412,6 +425,13 @@ declare module '@tanstack/react-router' {
       path: '/intervencion'
       fullPath: '/intervencion'
       preLoaderRoute: typeof IntervencionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ingresar': {
+      id: '/ingresar'
+      path: '/ingresar'
+      fullPath: '/ingresar'
+      preLoaderRoute: typeof IngresarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/herramientas-ia': {
@@ -594,6 +614,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoachingFamiliarRoute: CoachingFamiliarRoute,
   FaqRoute: FaqRoute,
   HerramientasIaRoute: HerramientasIaRouteWithChildren,
+  IngresarRoute: IngresarRoute,
   IntervencionRoute: IntervencionRoute,
   MapaRoute: MapaRouteWithChildren,
   MembresiaRoute: MembresiaRoute,
