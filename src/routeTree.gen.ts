@@ -37,6 +37,7 @@ import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-f
 import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
 import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
 import { Route as MembresiaExitoRouteImport } from './routes/membresia.exito'
+import { Route as MembresiaCanceladoRouteImport } from './routes/membresia.cancelado'
 import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
 import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
@@ -183,6 +184,11 @@ const MembresiaExitoRoute = MembresiaExitoRouteImport.update({
   path: '/exito',
   getParentRoute: () => MembresiaRoute,
 } as any)
+const MembresiaCanceladoRoute = MembresiaCanceladoRouteImport.update({
+  id: '/cancelado',
+  path: '/cancelado',
+  getParentRoute: () => MembresiaRoute,
+} as any)
 const MapaSlugRoute = MapaSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/cancelado': typeof MembresiaCanceladoRoute
   '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/cancelado': typeof MembresiaCanceladoRoute
   '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -309,6 +317,7 @@ export interface FileRoutesById {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/cancelado': typeof MembresiaCanceladoRoute
   '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
@@ -346,6 +355,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/cancelado'
     | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/cancelado'
     | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -416,6 +427,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/cancelado'
     | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
@@ -649,6 +661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembresiaExitoRouteImport
       parentRoute: typeof MembresiaRoute
     }
+    '/membresia/cancelado': {
+      id: '/membresia/cancelado'
+      path: '/cancelado'
+      fullPath: '/membresia/cancelado'
+      preLoaderRoute: typeof MembresiaCanceladoRouteImport
+      parentRoute: typeof MembresiaRoute
+    }
     '/mapa/$slug': {
       id: '/mapa/$slug'
       path: '/$slug'
@@ -733,10 +752,12 @@ const MapaRouteChildren: MapaRouteChildren = {
 const MapaRouteWithChildren = MapaRoute._addFileChildren(MapaRouteChildren)
 
 interface MembresiaRouteChildren {
+  MembresiaCanceladoRoute: typeof MembresiaCanceladoRoute
   MembresiaExitoRoute: typeof MembresiaExitoRoute
 }
 
 const MembresiaRouteChildren: MembresiaRouteChildren = {
+  MembresiaCanceladoRoute: MembresiaCanceladoRoute,
   MembresiaExitoRoute: MembresiaExitoRoute,
 }
 
