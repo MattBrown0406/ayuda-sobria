@@ -93,7 +93,7 @@ function Hero() {
             </a>
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            <span>Apoyo gratuito los lunes a las 7 PM (Pacífico)</span>
+            <span>Apoyo gratuito los lunes a las 8 PM (Pacífico)</span>
             <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
             <span>Sesiones privadas desde $150</span>
             <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
@@ -271,7 +271,7 @@ function Situations() {
 
 function Programs() {
   const items = [
-    { icon: Users, tag: "Apoyo semanal gratuito", title: "«El Círculo Familiar» cada lunes a las 7 PM (PST)", body: "Apoyo grupal en vivo cada lunes para cualquier familiar. No requiere membresía.", cta: "Regístrate ahora" },
+    { icon: Users, tag: "Apoyo semanal gratuito", title: "«El Círculo Familiar» cada lunes a las 8 PM (PST)", body: "Apoyo grupal en vivo cada lunes para cualquier familiar. No requiere membresía.", cta: "Regístrate ahora" },
     { icon: BookOpen, tag: "Apoyo continuo", title: "Membresía Familiar para acompañamiento entre crisis", body: "Accede al foro, biblioteca de educación, grabaciones y precios preferenciales de coaching.", cta: "Explorar la membresía" },
     { icon: MessageCircle, tag: "Ayuda privada", title: "Coaching familiar cuando necesitas orientación uno a uno", body: "El coaching privado está para cuando el grupo y la membresía no bastan. Sesiones de emergencia desde $150.", cta: "Ver opciones de coaching" },
     { icon: Sparkles, tag: "Planificación de alto impacto", title: "Intensivo de Preparación Familiar para decisiones mayores", body: "Sesión estratégica de 90 minutos más 7 días de seguimiento para familias que necesitan claridad rápido.", cta: "Explorar el intensivo" },
