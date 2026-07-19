@@ -40,21 +40,29 @@ async function createProduct(accessToken: string): Promise<string> {
   return data.id;
 }
 
-async function createPlan(accessToken: string, productId: string): Promise<string> {
+type PlanType = "monthly" | "annual";
+
+const PLAN_CONFIG: Record<PlanType, { interval: "MONTH" | "YEAR"; price: string; name: string }> = {
+  monthly: { interval: "MONTH", price: "14.99", name: "Family Membership - Monthly" },
+  annual: { interval: "YEAR", price: "149.00", name: "Family Membership - Annual" },
+};
+
+async function createPlan(accessToken: string, productId: string, planType: PlanType): Promise<string> {
+  const cfg = PLAN_CONFIG[planType];
   const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/plans`, {
     method: "POST",
     headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       product_id: productId,
-      name: "Family Membership - Monthly",
-      description: "Monthly family membership subscription",
+      name: cfg.name,
+      description: cfg.name,
       billing_cycles: [
         {
-          frequency: { interval_unit: "MONTH", interval_count: 1 },
+          frequency: { interval_unit: cfg.interval, interval_count: 1 },
           tenure_type: "REGULAR",
           sequence: 1,
           total_cycles: 0,
-          pricing_scheme: { fixed_price: { value: "14.99", currency_code: "USD" } },
+          pricing_scheme: { fixed_price: { value: cfg.price, currency_code: "USD" } },
         },
       ],
       payment_preferences: {
@@ -114,11 +122,12 @@ async function getSubscriptionDetails(accessToken: string, subscriptionId: strin
 
 export const createMembershipSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { returnUrl: string; cancelUrl: string }) => input)
+  .inputValidator((input: { returnUrl: string; cancelUrl: string; planType?: PlanType }) => input)
   .handler(async ({ data, context }) => {
+    const planType: PlanType = data.planType === "annual" ? "annual" : "monthly";
     const accessToken = await getAccessToken();
     const productId = await createProduct(accessToken);
-    const planId = await createPlan(accessToken, productId);
+    const planId = await createPlan(accessToken, productId, planType);
     const { subscriptionId, approvalUrl } = await createSubscription(
       accessToken,
       planId,
@@ -131,7 +140,8 @@ export const createMembershipSubscription = createServerFn({ method: "POST" })
       user_id: context.userId,
       paypal_subscription_id: subscriptionId,
       status: "pending",
-      amount: 14.99,
+      amount: Number(PLAN_CONFIG[planType].price),
+      plan_type: planType,
     });
     if (error) throw new Error(`DB insert failed: ${error.message}`);
 
@@ -224,4 +234,143 @@ export const getMyMembership = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     return data;
+  });
+
+// ---- Coaching one-time payments ----
+
+const COACHING_SESSIONS = {
+  initial: { label: "Consulta inicial (60 min)", memberPrice: "125.00", nonMemberPrice: "150.00" },
+  followup: { label: "Sesión de seguimiento (60 min)", memberPrice: "125.00", nonMemberPrice: "150.00" },
+} as const;
+type SessionType = keyof typeof COACHING_SESSIONS;
+
+async function userHasActiveMembership(userId: string): Promise<boolean> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await supabaseAdmin
+    .from("memberships")
+    .select("status")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .limit(1)
+    .maybeSingle();
+  return !!data;
+}
+
+export const getCoachingPricing = createServerFn({ method: "GET" }).handler(async () => {
+  // Determine membership status from the request bearer if present.
+  let isMember = false;
+  try {
+    const { getRequestHeader } = await import("@tanstack/react-start/server");
+    const auth = getRequestHeader("authorization");
+    if (auth?.startsWith("Bearer ")) {
+      const { createClient } = await import("@supabase/supabase-js");
+      const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+        global: { headers: { Authorization: auth } },
+        auth: { persistSession: false },
+      });
+      const { data: userData } = await sb.auth.getUser();
+      if (userData.user) isMember = await userHasActiveMembership(userData.user.id);
+    }
+  } catch { /* ignore, treat as non-member */ }
+  return {
+    isMember,
+    sessions: {
+      initial: { label: COACHING_SESSIONS.initial.label, price: isMember ? COACHING_SESSIONS.initial.memberPrice : COACHING_SESSIONS.initial.nonMemberPrice },
+      followup: { label: COACHING_SESSIONS.followup.label, price: isMember ? COACHING_SESSIONS.followup.memberPrice : COACHING_SESSIONS.followup.nonMemberPrice },
+    },
+  };
+});
+
+export const createCoachingOrder = createServerFn({ method: "POST" })
+  .inputValidator((input: {
+    sessionType: SessionType;
+    returnUrl: string;
+    cancelUrl: string;
+    customerEmail: string;
+    customerName: string;
+  }) => input)
+  .handler(async ({ data }) => {
+    const cfg = COACHING_SESSIONS[data.sessionType];
+    if (!cfg) throw new Error("Invalid session type");
+
+    // Detect signed-in member for pricing
+    let userId: string | null = null;
+    let isMember = false;
+    try {
+      const { getRequestHeader } = await import("@tanstack/react-start/server");
+      const auth = getRequestHeader("authorization");
+      if (auth?.startsWith("Bearer ")) {
+        const { createClient } = await import("@supabase/supabase-js");
+        const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+          global: { headers: { Authorization: auth } },
+          auth: { persistSession: false },
+        });
+        const { data: userData } = await sb.auth.getUser();
+        if (userData.user) {
+          userId = userData.user.id;
+          isMember = await userHasActiveMembership(userId);
+        }
+      }
+    } catch { /* guest checkout */ }
+
+    const price = isMember ? cfg.memberPrice : cfg.nonMemberPrice;
+    const accessToken = await getAccessToken();
+    const res = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        intent: "CAPTURE",
+        purchase_units: [{
+          description: `Ayuda Sobria — ${cfg.label}`,
+          amount: { currency_code: "USD", value: price },
+        }],
+        application_context: {
+          brand_name: "Ayuda Sobria",
+          locale: "es-ES",
+          shipping_preference: "NO_SHIPPING",
+          user_action: "PAY_NOW",
+          return_url: data.returnUrl,
+          cancel_url: data.cancelUrl,
+        },
+      }),
+    });
+    if (!res.ok) throw new Error(`PayPal order creation failed: ${await res.text()}`);
+    const order = (await res.json()) as { id: string; links: Array<{ rel: string; href: string }> };
+    const approvalUrl = order.links.find((l) => l.rel === "approve")?.href ?? "";
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("coaching_orders").insert({
+      user_id: userId,
+      paypal_order_id: order.id,
+      session_type: data.sessionType,
+      amount: Number(price),
+      status: "pending",
+      customer_email: data.customerEmail,
+      customer_name: data.customerName,
+    });
+    if (error) throw new Error(`DB insert failed: ${error.message}`);
+
+    return { orderId: order.id, approvalUrl, price, isMember };
+  });
+
+export const captureCoachingOrder = createServerFn({ method: "POST" })
+  .inputValidator((input: { orderId: string }) => input)
+  .handler(async ({ data }) => {
+    const accessToken = await getAccessToken();
+    const res = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders/${data.orderId}/capture`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+    });
+    if (!res.ok && res.status !== 422) throw new Error(`PayPal capture failed: ${await res.text()}`);
+    const result = (await res.json()) as { status: string };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (result.status === "COMPLETED") {
+      await supabaseAdmin
+        .from("coaching_orders")
+        .update({ status: "completed", captured_at: new Date().toISOString() })
+        .eq("paypal_order_id", data.orderId);
+      return { success: true };
+    }
+    return { success: false, status: result.status };
   });

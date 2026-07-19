@@ -40,6 +40,7 @@ import { Route as MembresiaExitoRouteImport } from './routes/membresia.exito'
 import { Route as MembresiaCanceladoRouteImport } from './routes/membresia.cancelado'
 import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
 import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
+import { Route as CoachingPagoExitoRouteImport } from './routes/coaching-pago.exito'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
 import { Route as ApiRegistroRouteImport } from './routes/api.registro'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
@@ -199,6 +200,11 @@ const HerramientasIaSlugRoute = HerramientasIaSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => HerramientasIaRoute,
 } as any)
+const CoachingPagoExitoRoute = CoachingPagoExitoRouteImport.update({
+  id: '/exito',
+  path: '/exito',
+  getParentRoute: () => CoachingPagoRoute,
+} as any)
 const ApoyoFamiliarStateRoute = ApoyoFamiliarStateRouteImport.update({
   id: '/$state',
   path: '/$state',
@@ -221,7 +227,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
-  '/coaching-pago': typeof CoachingPagoRoute
+  '/coaching-pago': typeof CoachingPagoRouteWithChildren
   '/evaluaciones': typeof EvaluacionesRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/testimonios': typeof TestimoniosRoute
   '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/coaching-pago/exito': typeof CoachingPagoExitoRoute
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
   '/membresia/cancelado': typeof MembresiaCanceladoRoute
@@ -257,7 +264,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
-  '/coaching-pago': typeof CoachingPagoRoute
+  '/coaching-pago': typeof CoachingPagoRouteWithChildren
   '/evaluaciones': typeof EvaluacionesRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/testimonios': typeof TestimoniosRoute
   '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/coaching-pago/exito': typeof CoachingPagoExitoRoute
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
   '/membresia/cancelado': typeof MembresiaCanceladoRoute
@@ -294,7 +302,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
-  '/coaching-pago': typeof CoachingPagoRoute
+  '/coaching-pago': typeof CoachingPagoRouteWithChildren
   '/evaluaciones': typeof EvaluacionesRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/testimonios': typeof TestimoniosRoute
   '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/coaching-pago/exito': typeof CoachingPagoExitoRoute
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
   '/membresia/cancelado': typeof MembresiaCanceladoRoute
@@ -353,6 +362,7 @@ export interface FileRouteTypes {
     | '/testimonios'
     | '/api/registro'
     | '/apoyo-familiar/$state'
+    | '/coaching-pago/exito'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
     | '/membresia/cancelado'
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/testimonios'
     | '/api/registro'
     | '/apoyo-familiar/$state'
+    | '/coaching-pago/exito'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
     | '/membresia/cancelado'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/testimonios'
     | '/api/registro'
     | '/apoyo-familiar/$state'
+    | '/coaching-pago/exito'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
     | '/membresia/cancelado'
@@ -441,7 +453,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
-  CoachingPagoRoute: typeof CoachingPagoRoute
+  CoachingPagoRoute: typeof CoachingPagoRouteWithChildren
   EvaluacionesRoute: typeof EvaluacionesRoute
   FaqRoute: typeof FaqRoute
   HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
@@ -682,6 +694,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HerramientasIaSlugRouteImport
       parentRoute: typeof HerramientasIaRoute
     }
+    '/coaching-pago/exito': {
+      id: '/coaching-pago/exito'
+      path: '/exito'
+      fullPath: '/coaching-pago/exito'
+      preLoaderRoute: typeof CoachingPagoExitoRouteImport
+      parentRoute: typeof CoachingPagoRoute
+    }
     '/apoyo-familiar/$state': {
       id: '/apoyo-familiar/$state'
       path: '/$state'
@@ -727,6 +746,18 @@ const ApoyoFamiliarRouteChildren: ApoyoFamiliarRouteChildren = {
 
 const ApoyoFamiliarRouteWithChildren = ApoyoFamiliarRoute._addFileChildren(
   ApoyoFamiliarRouteChildren,
+)
+
+interface CoachingPagoRouteChildren {
+  CoachingPagoExitoRoute: typeof CoachingPagoExitoRoute
+}
+
+const CoachingPagoRouteChildren: CoachingPagoRouteChildren = {
+  CoachingPagoExitoRoute: CoachingPagoExitoRoute,
+}
+
+const CoachingPagoRouteWithChildren = CoachingPagoRoute._addFileChildren(
+  CoachingPagoRouteChildren,
 )
 
 interface HerramientasIaRouteChildren {
@@ -805,7 +836,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
-  CoachingPagoRoute: CoachingPagoRoute,
+  CoachingPagoRoute: CoachingPagoRouteWithChildren,
   EvaluacionesRoute: EvaluacionesRoute,
   FaqRoute: FaqRoute,
   HerramientasIaRoute: HerramientasIaRouteWithChildren,
