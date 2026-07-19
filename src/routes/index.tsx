@@ -9,8 +9,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "AyudaSobria — Apoyo para familias afectadas por la adicción" },
       { name: "description", content: "Reunión gratuita los lunes, sesiones privadas cuando no puedes esperar y evaluación de intervención. Orientación en español para familias." },
-      { property: "og:title", content: "AyudaSobria — Apoyo para familias" },
-      { property: "og:description", content: "Deja de adivinar el próximo paso. Recibe el nivel adecuado de ayuda familiar frente a la adicción." },
+      { property: "og:title", content: "AyudaSobria — Apoyo para familias afectadas por la adicción" },
+      { property: "og:description", content: "Reunión gratuita los lunes, sesiones privadas cuando no puedes esperar y evaluación de intervención. Orientación en español para familias." },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
