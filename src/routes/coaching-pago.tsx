@@ -193,7 +193,7 @@ function CoachingPagoPage() {
       <PageHero
         eyebrow="Coaching familiar"
         title="Reserva tu sesión con Matt Brown"
-        subtitle="Sesiones privadas en español para familias que enfrentan la adicción de un ser querido. Elige el paquete que mejor se ajuste a tu situación y paga de forma segura con PayPal, tarjeta o Venmo."
+        description="Sesiones privadas en español para familias que enfrentan la adicción de un ser querido. Elige el paquete que mejor se ajuste a tu situación y paga de forma segura con PayPal, tarjeta o Venmo."
       />
 
       <section className="mx-auto max-w-5xl px-4 pb-20">
