@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
 import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as PaisesRouteImport } from './routes/paises'
+import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
@@ -33,6 +34,11 @@ const RecursosRoute = RecursosRouteImport.update({
 const PaisesRoute = PaisesRouteImport.update({
   id: '/paises',
   path: '/paises',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapaRoute = MapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
@@ -74,6 +80,7 @@ const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/mapa': typeof MapaRoute
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/mapa': typeof MapaRoute
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/mapa': typeof MapaRoute
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/apoyo-familiar'
+    | '/mapa'
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/apoyo-familiar'
+    | '/mapa'
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/apoyo-familiar'
+    | '/mapa'
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
+  MapaRoute: typeof MapaRoute
   PaisesRoute: typeof PaisesRouteWithChildren
   RecursosRoute: typeof RecursosRouteWithChildren
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
@@ -176,6 +189,13 @@ declare module '@tanstack/react-router' {
       path: '/paises'
       fullPath: '/paises'
       preLoaderRoute: typeof PaisesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mapa': {
+      id: '/mapa'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof MapaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/apoyo-familiar': {
@@ -290,6 +310,7 @@ const RespuestasFamiliaRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
+  MapaRoute: MapaRoute,
   PaisesRoute: PaisesRouteWithChildren,
   RecursosRoute: RecursosRouteWithChildren,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
