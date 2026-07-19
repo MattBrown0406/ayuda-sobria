@@ -17,7 +17,8 @@ import {
   ClipboardList,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
-import counselor from "@/assets/counselor.jpg";
+import counselorAsset from "@/assets/counselor.png.asset.json";
+const counselor = counselorAsset.url;
 
 export const Route = createFileRoute("/")({
   component: Index,
