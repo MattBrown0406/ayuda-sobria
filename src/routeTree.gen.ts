@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
+import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
 
 const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
   id: '/apoyo-familiar',
@@ -28,29 +29,50 @@ const ApoyoFamiliarStateRoute = ApoyoFamiliarStateRouteImport.update({
   path: '/$state',
   getParentRoute: () => ApoyoFamiliarRoute,
 } as any)
+const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
+  id: '/$city',
+  path: '/$city',
+  getParentRoute: () => ApoyoFamiliarStateRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRoute
+  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRoute
+  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
-  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRoute
+  '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apoyo-familiar' | '/apoyo-familiar/$state'
+  fullPaths:
+    | '/'
+    | '/apoyo-familiar'
+    | '/apoyo-familiar/$state'
+    | '/apoyo-familiar/$state/$city'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apoyo-familiar' | '/apoyo-familiar/$state'
-  id: '__root__' | '/' | '/apoyo-familiar' | '/apoyo-familiar/$state'
+  to:
+    | '/'
+    | '/apoyo-familiar'
+    | '/apoyo-familiar/$state'
+    | '/apoyo-familiar/$state/$city'
+  id:
+    | '__root__'
+    | '/'
+    | '/apoyo-familiar'
+    | '/apoyo-familiar/$state'
+    | '/apoyo-familiar/$state/$city'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -81,15 +103,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApoyoFamiliarStateRouteImport
       parentRoute: typeof ApoyoFamiliarRoute
     }
+    '/apoyo-familiar/$state/$city': {
+      id: '/apoyo-familiar/$state/$city'
+      path: '/$city'
+      fullPath: '/apoyo-familiar/$state/$city'
+      preLoaderRoute: typeof ApoyoFamiliarStateCityRouteImport
+      parentRoute: typeof ApoyoFamiliarStateRoute
+    }
   }
 }
 
+interface ApoyoFamiliarStateRouteChildren {
+  ApoyoFamiliarStateCityRoute: typeof ApoyoFamiliarStateCityRoute
+}
+
+const ApoyoFamiliarStateRouteChildren: ApoyoFamiliarStateRouteChildren = {
+  ApoyoFamiliarStateCityRoute: ApoyoFamiliarStateCityRoute,
+}
+
+const ApoyoFamiliarStateRouteWithChildren =
+  ApoyoFamiliarStateRoute._addFileChildren(ApoyoFamiliarStateRouteChildren)
+
 interface ApoyoFamiliarRouteChildren {
-  ApoyoFamiliarStateRoute: typeof ApoyoFamiliarStateRoute
+  ApoyoFamiliarStateRoute: typeof ApoyoFamiliarStateRouteWithChildren
 }
 
 const ApoyoFamiliarRouteChildren: ApoyoFamiliarRouteChildren = {
-  ApoyoFamiliarStateRoute: ApoyoFamiliarStateRoute,
+  ApoyoFamiliarStateRoute: ApoyoFamiliarStateRouteWithChildren,
 }
 
 const ApoyoFamiliarRouteWithChildren = ApoyoFamiliarRoute._addFileChildren(
