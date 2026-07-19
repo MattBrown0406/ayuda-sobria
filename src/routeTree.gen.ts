@@ -30,6 +30,7 @@ import { Route as EvaluacionesRouteImport } from './routes/evaluaciones'
 import { Route as CoachingPagoRouteImport } from './routes/coaching-pago'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
@@ -146,6 +147,11 @@ const CirculoFamiliarRoute = CirculoFamiliarRouteImport.update({
   path: '/circulo-familiar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
   id: '/apoyo-familiar',
   path: '/apoyo-familiar',
@@ -200,6 +206,7 @@ const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
@@ -233,6 +240,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/auth': typeof AuthRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/apoyo-familiar'
+    | '/auth'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/apoyo-familiar'
+    | '/auth'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/apoyo-familiar'
+    | '/auth'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -402,6 +414,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
+  AuthRoute: typeof AuthRoute
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
   CoachingPagoRoute: typeof CoachingPagoRoute
@@ -575,6 +588,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CirculoFamiliarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/apoyo-familiar': {
       id: '/apoyo-familiar'
       path: '/apoyo-familiar'
@@ -730,6 +750,7 @@ const RespuestasFamiliaRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
+  AuthRoute: AuthRoute,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
   CoachingPagoRoute: CoachingPagoRoute,
