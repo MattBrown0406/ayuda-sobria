@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
 
 const PHONE_DISPLAY = "(458) 298-8011";
 const PHONE_HREF = "tel:4582988011";
-const EMAIL = "hola@ayudasobria.com";
+const EMAIL = "matt@soberhelpline.com";
 
 function Nav() {
   const links = [

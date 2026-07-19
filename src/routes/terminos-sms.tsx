@@ -16,7 +16,7 @@ export const Route = createFileRoute("/terminos-sms")({
       <PageHero eyebrow="Legal" title="Términos SMS" />
       <Prose>
         <p>Al enviar tu número de teléfono a AyudaSobria autorizas recibir mensajes de texto relacionados con el Círculo Familiar, coaching e intervención. La frecuencia varía. Pueden aplicar tarifas de tu operador.</p>
-        <p>Para dejar de recibir mensajes responde <strong>BAJA</strong>. Para ayuda responde <strong>AYUDA</strong> o escribe a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a>.</p>
+        <p>Para dejar de recibir mensajes responde <strong>BAJA</strong>. Para ayuda responde <strong>AYUDA</strong> o escribe a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>.</p>
       </Prose>
     </>
   ),

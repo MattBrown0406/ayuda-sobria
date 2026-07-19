@@ -155,7 +155,7 @@ function CoachingPagoPage() {
           setStatus({
             kind: "error",
             message:
-              "El pago se aprobó pero hubo un problema al confirmarlo. Escríbenos a hola@ayudasobria.com.",
+              "El pago se aprobó pero hubo un problema al confirmarlo. Escríbenos a matt@soberhelpline.com.",
           });
         }
       },
@@ -163,7 +163,7 @@ function CoachingPagoPage() {
         setStatus({
           kind: "error",
           message:
-            "Ocurrió un error al procesar el pago. Puedes intentarlo de nuevo o escribirnos a hola@ayudasobria.com.",
+            "Ocurrió un error al procesar el pago. Puedes intentarlo de nuevo o escribirnos a matt@soberhelpline.com.",
         }),
       onCancel: () =>
         setStatus({
@@ -295,9 +295,9 @@ function CoachingPagoPage() {
               dudas escribe a{" "}
               <a
                 className="text-sky-700 underline"
-                href="mailto:hola@ayudasobria.com"
+                href="mailto:matt@soberhelpline.com"
               >
-                hola@ayudasobria.com
+                matt@soberhelpline.com
               </a>
               .
             </p>

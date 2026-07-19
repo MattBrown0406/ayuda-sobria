@@ -22,7 +22,7 @@ export const Route = createFileRoute("/proveedores")({
           <li>Directorio en español para pacientes y familias.</li>
           <li>Apoyo clínico a distancia para la familia mientras el paciente está en tratamiento.</li>
         </ul>
-        <p>Escríbenos a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a>.</p>
+        <p>Escríbenos a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>.</p>
       </Prose>
       <CTAStrip />
     </>
