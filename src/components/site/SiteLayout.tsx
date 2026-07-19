@@ -59,7 +59,7 @@ function Header() {
             <Menu className="h-4 w-4" />
           </button>
           <Link
-            to="/ingresar"
+            to="/auth"
             className="hidden items-center gap-1 rounded-md border border-input px-3 py-2 text-sm font-medium xl:inline-flex"
           >
             <LogIn className="h-4 w-4" /> Ingresar
