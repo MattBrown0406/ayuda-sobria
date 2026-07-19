@@ -5,7 +5,7 @@ import logo from "@/assets/logo.png";
 
 export const PHONE_DISPLAY = "(458) 298-8011";
 export const PHONE_HREF = "tel:4582988011";
-export const EMAIL = "hola@ayudasobria.com";
+export const EMAIL = "matt@soberhelpline.com";
 
 function Header() {
   const [open, setOpen] = useState(false);

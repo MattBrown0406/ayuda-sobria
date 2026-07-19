@@ -21,7 +21,7 @@ export const Route = createFileRoute("/terminos")({
         <h2>Limitación de responsabilidad</h2>
         <p>La información aquí publicada es educativa. En caso de emergencia comunícate con los servicios locales de tu país.</p>
         <h2>Contacto</h2>
-        <p><a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a></p>
+        <p><a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a></p>
       </Prose>
     </>
   ),

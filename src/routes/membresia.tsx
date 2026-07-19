@@ -60,7 +60,7 @@ function MembresiaPage() {
           message: `¡Gracias! Tu membresía está activa (ID ${data.subscriptionID ?? "confirmado"}). Te enviaremos los accesos a tu correo en las próximas 24 horas.`,
         });
       },
-      onError: () => setStatus({ kind: "error", message: "Ocurrió un error al procesar la suscripción. Escríbenos a hola@ayudasobria.com." }),
+      onError: () => setStatus({ kind: "error", message: "Ocurrió un error al procesar la suscripción. Escríbenos a matt@soberhelpline.com." }),
       onCancel: () => setStatus({ kind: "idle", message: "Suscripción cancelada. Puedes intentarlo cuando quieras." }),
     });
     instance.render(buttonsRef.current).catch(() =>
@@ -86,7 +86,7 @@ function MembresiaPage() {
               <li>Coaching grupal en vivo cada mes.</li>
               <li>Descuento en sesiones privadas y evaluaciones de intervención.</li>
             </ul>
-            <p>¿Prefieres inscribirte con ayuda humana? Escribe a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a>.</p>
+            <p>¿Prefieres inscribirte con ayuda humana? Escribe a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>.</p>
           </Prose>
           <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="text-sm font-semibold uppercase tracking-wide text-primary">Membresía mensual</div>
@@ -112,7 +112,7 @@ function MembresiaPage() {
             {status.kind === "idle" && status.message && (
               <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">{status.message}</div>
             )}
-            <p className="mt-6 text-xs text-slate-500">Pago seguro procesado por PayPal. Para reembolsos o dudas escribe a <a className="text-sky-700 underline" href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a>.</p>
+            <p className="mt-6 text-xs text-slate-500">Pago seguro procesado por PayPal. Para reembolsos o dudas escribe a <a className="text-sky-700 underline" href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>.</p>
           </aside>
         </div>
       </section>

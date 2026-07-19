@@ -25,7 +25,7 @@ export const Route = createFileRoute("/privacidad")({
         <h2>Cómo la usamos</h2>
         <p>Solo la usamos para responderte, agendar sesiones y enviarte información que solicitaste. No vendemos ni compartimos tus datos con terceros con fines comerciales.</p>
         <h2>Contacto</h2>
-        <p>Escribe a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> para acceder, corregir o eliminar tu información.</p>
+        <p>Escribe a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> para acceder, corregir o eliminar tu información.</p>
       </Prose>
     </>
   ),

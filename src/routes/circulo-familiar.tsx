@@ -25,7 +25,7 @@ export const Route = createFileRoute("/circulo-familiar")({
           <li>Formato: Zoom, cámara opcional.</li>
           <li>Costo: gratis.</li>
         </ul>
-        <p>Escríbenos a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o llama al (458) 298-8011 para recibir el enlace de la próxima reunión.</p>
+        <p>Escríbenos a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o llama al (458) 298-8011 para recibir el enlace de la próxima reunión.</p>
       </Prose>
       <CTAStrip />
     </>
