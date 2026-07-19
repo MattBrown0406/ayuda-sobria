@@ -51,7 +51,7 @@ function RegistroPage() {
         <div className="mx-auto max-w-2xl px-4 py-12 space-y-4 text-muted-foreground">
           <p>Gracias, <strong className="text-foreground">{form.nombre || "familia"}</strong>. Registramos tu lugar para el <strong className="text-foreground">Círculo Familiar del lunes a las 8:00 PM (hora del Pacífico)</strong>.</p>
           <p>En las próximas horas te enviaremos a <strong className="text-foreground">{form.email}</strong> el enlace de Zoom, un recordatorio 24 horas antes y una breve guía para prepararte.</p>
-          <p>Si necesitas hablar con alguien antes del lunes, escribe a <a className="text-primary hover:underline" href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o llama al <a className="text-primary hover:underline" href="tel:+14582988008">(458) 298-8008</a>.</p>
+          <p>Si necesitas hablar con alguien antes del lunes, escribe a <a className="text-primary hover:underline" href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o llama al <a className="text-primary hover:underline" href="tel:+14582988011">(458) 298-8011</a>.</p>
         </div>
         <CTAStrip />
       </>

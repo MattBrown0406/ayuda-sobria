@@ -17,8 +17,8 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const PHONE_DISPLAY = "(458) 298-8008";
-const PHONE_HREF = "tel:4582988008";
+const PHONE_DISPLAY = "(458) 298-8011";
+const PHONE_HREF = "tel:4582988011";
 const EMAIL = "hola@ayudasobria.com";
 
 function Nav() {

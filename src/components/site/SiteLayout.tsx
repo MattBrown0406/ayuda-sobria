@@ -3,8 +3,8 @@ import { Phone, LogIn, Menu } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import logo from "@/assets/logo.png";
 
-export const PHONE_DISPLAY = "(458) 298-8008";
-export const PHONE_HREF = "tel:4582988008";
+export const PHONE_DISPLAY = "(458) 298-8011";
+export const PHONE_HREF = "tel:4582988011";
 export const EMAIL = "hola@ayudasobria.com";
 
 function Header() {

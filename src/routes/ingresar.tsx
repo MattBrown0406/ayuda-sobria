@@ -15,7 +15,7 @@ export const Route = createFileRoute("/ingresar")({
     <>
       <PageHero eyebrow="Miembros" title="Ingresar" description="El portal de miembros estará disponible pronto." />
       <Prose>
-        <p>Mientras tanto, escríbenos a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o llama al (458) 298-8008 para acceder al Círculo Familiar y a los recursos de membresía.</p>
+        <p>Mientras tanto, escríbenos a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o llama al (458) 298-8011 para acceder al Círculo Familiar y a los recursos de membresía.</p>
       </Prose>
     </>
   ),

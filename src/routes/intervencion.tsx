@@ -30,7 +30,7 @@ export const Route = createFileRoute("/intervencion")({
           <li>Preparación de participantes y opciones de tratamiento.</li>
           <li>Día de la intervención y seguimiento.</li>
         </ol>
-        <p>Escríbenos a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o llama al (458) 298-8008.</p>
+        <p>Escríbenos a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o llama al (458) 298-8011.</p>
       </Prose>
       <CTAStrip />
     </>

@@ -24,7 +24,7 @@ export const Route = createFileRoute("/coaching-familiar")({
           <li>Por Zoom, en español, confidencial.</li>
           <li>Desde $150 la sesión.</li>
         </ul>
-        <p>Reserva escribiendo a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o al (458) 298-8008.</p>
+        <p>Reserva escribiendo a <a href="mailto:hola@ayudasobria.com">hola@ayudasobria.com</a> o al (458) 298-8011.</p>
       </Prose>
       <CTAStrip />
     </>
