@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestimoniosRouteImport } from './routes/testimonios'
+import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
 import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as ProveedoresRouteImport } from './routes/proveedores'
@@ -35,6 +36,11 @@ import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-famil
 const TestimoniosRoute = TestimoniosRouteImport.update({
   id: '/testimonios',
   path: '/testimonios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/terminos': typeof TerminosRoute
   '/testimonios': typeof TestimoniosRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/terminos': typeof TerminosRoute
   '/testimonios': typeof TestimoniosRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/terminos': typeof TerminosRoute
   '/testimonios': typeof TestimoniosRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
+    | '/terminos'
     | '/testimonios'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
+    | '/terminos'
     | '/testimonios'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recursos'
     | '/respuestas-familia'
+    | '/terminos'
     | '/testimonios'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
@@ -306,6 +318,7 @@ export interface RootRouteChildren {
   ProveedoresRoute: typeof ProveedoresRoute
   RecursosRoute: typeof RecursosRouteWithChildren
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
+  TerminosRoute: typeof TerminosRoute
   TestimoniosRoute: typeof TestimoniosRoute
 }
 
@@ -316,6 +329,13 @@ declare module '@tanstack/react-router' {
       path: '/testimonios'
       fullPath: '/testimonios'
       preLoaderRoute: typeof TestimoniosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/respuestas-familia': {
@@ -562,6 +582,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProveedoresRoute: ProveedoresRoute,
   RecursosRoute: RecursosRouteWithChildren,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
+  TerminosRoute: TerminosRoute,
   TestimoniosRoute: TestimoniosRoute,
 }
 export const routeTree = rootRouteImport
