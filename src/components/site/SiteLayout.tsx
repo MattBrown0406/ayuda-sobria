@@ -36,8 +36,8 @@ function Header() {
           <a href={PHONE_HREF} className="hidden items-center gap-2 rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-semibold sm:inline-flex">
             <Phone className="h-3.5 w-3.5" /> {PHONE_DISPLAY}
           </a>
-          <Link to="/circulo-familiar" className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
-            Reunión gratis
+          <Link to="/registro" className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+            Reservar lugar
           </Link>
           <button onClick={() => setOpen((o) => !o)} className="rounded-md border border-input p-2 lg:hidden" aria-label="Menú">
             <Menu className="h-4 w-4" />

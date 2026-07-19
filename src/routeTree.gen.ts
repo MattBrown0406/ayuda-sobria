@@ -14,6 +14,7 @@ import { Route as TerminosSmsRouteImport } from './routes/terminos-sms'
 import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
+import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as ProveedoresRouteImport } from './routes/proveedores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
@@ -59,6 +60,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
   id: '/respuestas-familia',
   path: '/respuestas-familia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegistroRoute = RegistroRouteImport.update({
+  id: '/registro',
+  path: '/registro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecursosRoute = RecursosRouteImport.update({
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
+  '/registro': typeof RegistroRoute
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
+  '/registro': typeof RegistroRoute
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
   '/recursos': typeof RecursosRouteWithChildren
+  '/registro': typeof RegistroRoute
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
@@ -269,6 +278,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/proveedores'
     | '/recursos'
+    | '/registro'
     | '/respuestas-familia'
     | '/sitemap.xml'
     | '/terminos'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/proveedores'
     | '/recursos'
+    | '/registro'
     | '/respuestas-familia'
     | '/sitemap.xml'
     | '/terminos'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/proveedores'
     | '/recursos'
+    | '/registro'
     | '/respuestas-familia'
     | '/sitemap.xml'
     | '/terminos'
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   PrivacidadRoute: typeof PrivacidadRoute
   ProveedoresRoute: typeof ProveedoresRoute
   RecursosRoute: typeof RecursosRouteWithChildren
+  RegistroRoute: typeof RegistroRoute
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TerminosRoute: typeof TerminosRoute
@@ -396,6 +409,13 @@ declare module '@tanstack/react-router' {
       path: '/respuestas-familia'
       fullPath: '/respuestas-familia'
       preLoaderRoute: typeof RespuestasFamiliaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/registro': {
+      id: '/registro'
+      path: '/registro'
+      fullPath: '/registro'
+      preLoaderRoute: typeof RegistroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recursos': {
@@ -642,6 +662,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadRoute: PrivacidadRoute,
   ProveedoresRoute: ProveedoresRoute,
   RecursosRoute: RecursosRouteWithChildren,
+  RegistroRoute: RegistroRoute,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TerminosRoute: TerminosRoute,
