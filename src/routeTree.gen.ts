@@ -36,6 +36,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
 import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
 import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
+import { Route as MembresiaExitoRouteImport } from './routes/membresia.exito'
 import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
 import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
@@ -177,6 +178,11 @@ const PaisesCountryRoute = PaisesCountryRouteImport.update({
   path: '/$country',
   getParentRoute: () => PaisesRoute,
 } as any)
+const MembresiaExitoRoute = MembresiaExitoRouteImport.update({
+  id: '/exito',
+  path: '/exito',
+  getParentRoute: () => MembresiaRoute,
+} as any)
 const MapaSlugRoute = MapaSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -216,7 +222,7 @@ export interface FileRoutesByFullPath {
   '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
-  '/membresia': typeof MembresiaRoute
+  '/membresia': typeof MembresiaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -250,7 +257,7 @@ export interface FileRoutesByTo {
   '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
-  '/membresia': typeof MembresiaRoute
+  '/membresia': typeof MembresiaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
@@ -266,6 +273,7 @@ export interface FileRoutesByTo {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -285,7 +293,7 @@ export interface FileRoutesById {
   '/ingresar': typeof IngresarRoute
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
-  '/membresia': typeof MembresiaRoute
+  '/membresia': typeof MembresiaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
   '/privacidad': typeof PrivacidadRoute
   '/proveedores': typeof ProveedoresRoute
@@ -301,6 +309,7 @@ export interface FileRoutesById {
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
+  '/membresia/exito': typeof MembresiaExitoRoute
   '/paises/$country': typeof PaisesCountryRoute
   '/recursos/$slug': typeof RecursosSlugRoute
   '/respuestas-familia/$slug': typeof RespuestasFamiliaSlugRoute
@@ -337,6 +346,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -405,6 +416,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
+    | '/membresia/exito'
     | '/paises/$country'
     | '/recursos/$slug'
     | '/respuestas-familia/$slug'
@@ -424,7 +436,7 @@ export interface RootRouteChildren {
   IngresarRoute: typeof IngresarRoute
   IntervencionRoute: typeof IntervencionRoute
   MapaRoute: typeof MapaRouteWithChildren
-  MembresiaRoute: typeof MembresiaRoute
+  MembresiaRoute: typeof MembresiaRouteWithChildren
   PaisesRoute: typeof PaisesRouteWithChildren
   PrivacidadRoute: typeof PrivacidadRoute
   ProveedoresRoute: typeof ProveedoresRoute
@@ -630,6 +642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaisesCountryRouteImport
       parentRoute: typeof PaisesRoute
     }
+    '/membresia/exito': {
+      id: '/membresia/exito'
+      path: '/exito'
+      fullPath: '/membresia/exito'
+      preLoaderRoute: typeof MembresiaExitoRouteImport
+      parentRoute: typeof MembresiaRoute
+    }
     '/mapa/$slug': {
       id: '/mapa/$slug'
       path: '/$slug'
@@ -713,6 +732,18 @@ const MapaRouteChildren: MapaRouteChildren = {
 
 const MapaRouteWithChildren = MapaRoute._addFileChildren(MapaRouteChildren)
 
+interface MembresiaRouteChildren {
+  MembresiaExitoRoute: typeof MembresiaExitoRoute
+}
+
+const MembresiaRouteChildren: MembresiaRouteChildren = {
+  MembresiaExitoRoute: MembresiaExitoRoute,
+}
+
+const MembresiaRouteWithChildren = MembresiaRoute._addFileChildren(
+  MembresiaRouteChildren,
+)
+
 interface PaisesRouteChildren {
   PaisesCountryRoute: typeof PaisesCountryRoute
 }
@@ -760,7 +791,7 @@ const rootRouteChildren: RootRouteChildren = {
   IngresarRoute: IngresarRoute,
   IntervencionRoute: IntervencionRoute,
   MapaRoute: MapaRouteWithChildren,
-  MembresiaRoute: MembresiaRoute,
+  MembresiaRoute: MembresiaRouteWithChildren,
   PaisesRoute: PaisesRouteWithChildren,
   PrivacidadRoute: PrivacidadRoute,
   ProveedoresRoute: ProveedoresRoute,
