@@ -40,21 +40,29 @@ async function createProduct(accessToken: string): Promise<string> {
   return data.id;
 }
 
-async function createPlan(accessToken: string, productId: string): Promise<string> {
+type PlanType = "monthly" | "annual";
+
+const PLAN_CONFIG: Record<PlanType, { interval: "MONTH" | "YEAR"; price: string; name: string }> = {
+  monthly: { interval: "MONTH", price: "14.99", name: "Family Membership - Monthly" },
+  annual: { interval: "YEAR", price: "149.00", name: "Family Membership - Annual" },
+};
+
+async function createPlan(accessToken: string, productId: string, planType: PlanType): Promise<string> {
+  const cfg = PLAN_CONFIG[planType];
   const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/plans`, {
     method: "POST",
     headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       product_id: productId,
-      name: "Family Membership - Monthly",
-      description: "Monthly family membership subscription",
+      name: cfg.name,
+      description: cfg.name,
       billing_cycles: [
         {
-          frequency: { interval_unit: "MONTH", interval_count: 1 },
+          frequency: { interval_unit: cfg.interval, interval_count: 1 },
           tenure_type: "REGULAR",
           sequence: 1,
           total_cycles: 0,
-          pricing_scheme: { fixed_price: { value: "14.99", currency_code: "USD" } },
+          pricing_scheme: { fixed_price: { value: cfg.price, currency_code: "USD" } },
         },
       ],
       payment_preferences: {
@@ -114,11 +122,12 @@ async function getSubscriptionDetails(accessToken: string, subscriptionId: strin
 
 export const createMembershipSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { returnUrl: string; cancelUrl: string }) => input)
+  .inputValidator((input: { returnUrl: string; cancelUrl: string; planType?: PlanType }) => input)
   .handler(async ({ data, context }) => {
+    const planType: PlanType = data.planType === "annual" ? "annual" : "monthly";
     const accessToken = await getAccessToken();
     const productId = await createProduct(accessToken);
-    const planId = await createPlan(accessToken, productId);
+    const planId = await createPlan(accessToken, productId, planType);
     const { subscriptionId, approvalUrl } = await createSubscription(
       accessToken,
       planId,
@@ -131,7 +140,8 @@ export const createMembershipSubscription = createServerFn({ method: "POST" })
       user_id: context.userId,
       paypal_subscription_id: subscriptionId,
       status: "pending",
-      amount: 14.99,
+      amount: Number(PLAN_CONFIG[planType].price),
+      plan_type: planType,
     });
     if (error) throw new Error(`DB insert failed: ${error.message}`);
 
