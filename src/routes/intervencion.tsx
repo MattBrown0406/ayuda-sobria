@@ -5,16 +5,27 @@ export const Route = createFileRoute("/intervencion")({
   head: () => ({
     meta: [
       { title: "Intervención familiar en español — AyudaSobria" },
-      { name: "description", content: "Evaluación y planificación de intervención para familias cuyo ser querido rechaza el tratamiento." },
+      {
+        name: "description",
+        content:
+          "Evaluación y planificación de intervención para familias cuyo ser querido rechaza el tratamiento.",
+      },
       { property: "og:title", content: "Intervención — AyudaSobria" },
-      { property: "og:description", content: "Cuando hay rechazo repetido al tratamiento o riesgo de seguridad." },
+      {
+        property: "og:description",
+        content: "Cuando hay rechazo repetido al tratamiento o riesgo de seguridad.",
+      },
       { property: "og:url", content: "/intervencion" },
     ],
     links: [{ rel: "canonical", href: "/intervencion" }],
   }),
   component: () => (
     <>
-      <PageHero eyebrow="Cuando hay rechazo o riesgo" title="Intervención familiar" description="Un proceso guiado para familias cuando conversar ya no alcanza." />
+      <PageHero
+        eyebrow="Cuando hay rechazo o riesgo"
+        title="Intervención familiar"
+        description="Un proceso guiado para familias cuando conversar ya no alcanza."
+      />
       <Prose>
         <h2>Cuándo considerarla</h2>
         <ul>
@@ -30,7 +41,10 @@ export const Route = createFileRoute("/intervencion")({
           <li>Preparación de participantes y opciones de tratamiento.</li>
           <li>Día de la intervención y seguimiento.</li>
         </ol>
-        <p>Escríbenos a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o llama al (458) 298-8011.</p>
+        <p>
+          Escríbenos a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o llama al
+          (458) 298-8011.
+        </p>
       </Prose>
       <CTAStrip />
     </>

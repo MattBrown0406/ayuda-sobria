@@ -3,7 +3,10 @@ import { COUNTRY_MAP } from "@/data/locations";
 import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 
 const HOTLINES: Record<string, { name: string; number: string }[]> = {
-  mexico: [{ name: "SAPTEL (24/7)", number: "55 5259-8121" }, { name: "Línea de la Vida", number: "800 911-2000" }],
+  mexico: [
+    { name: "SAPTEL (24/7)", number: "55 5259-8121" },
+    { name: "Línea de la Vida", number: "800 911-2000" },
+  ],
   argentina: [{ name: "SEDRONAR", number: "141" }],
   chile: [{ name: "SENDA Fonodrogas", number: "1412" }],
   colombia: [{ name: "Línea 106", number: "106" }],
@@ -20,7 +23,8 @@ export const Route = createFileRoute("/paises/$country")({
     return { country };
   },
   head: ({ loaderData, params }) => {
-    if (!loaderData) return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
+    if (!loaderData)
+      return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
     const t = `Apoyo familiar para la adicción en ${loaderData.country.name} — AyudaSobria`;
     const d = `Familias en ${loaderData.country.name} enfrentando la adicción de un ser querido: reunión semanal, coaching privado y evaluación de intervención, todo en español.`;
     return {
@@ -41,32 +45,62 @@ export const Route = createFileRoute("/paises/$country")({
 function CountryPage() {
   const { country } = Route.useLoaderData();
   const lines = HOTLINES[country.slug];
-  const regionLabel = country.region === "Sur" ? "Sudamérica" : country.region === "Caribe" ? "Caribe" : "Centroamérica";
+  const regionLabel =
+    country.region === "Sur"
+      ? "Sudamérica"
+      : country.region === "Caribe"
+        ? "Caribe"
+        : "Centroamérica";
   return (
     <>
-      <PageHero eyebrow={regionLabel} title={`Familias en ${country.name}`} description={`AyudaSobria acompaña a familias hispanohablantes en ${country.name} que enfrentan la adicción de un ser querido. Todo el proceso se hace en línea y en español.`} />
+      <PageHero
+        eyebrow={regionLabel}
+        title={`Familias en ${country.name}`}
+        description={`AyudaSobria acompaña a familias hispanohablantes en ${country.name} que enfrentan la adicción de un ser querido. Todo el proceso se hace en línea y en español.`}
+      />
       <div className="mx-auto max-w-3xl px-4 py-12 space-y-8">
         <section>
           <h2 className="text-xl font-semibold">Empieza esta semana</h2>
           <ol className="mt-4 space-y-3 text-muted-foreground">
-            <li><strong className="text-foreground">Círculo Familiar (gratis):</strong> reunión por Zoom cada lunes a las 8:00 PM (hora del Pacífico de EE. UU.). Consulta la conversión de horario en {country.name} antes de conectarte.</li>
-            <li><strong className="text-foreground">Coaching familiar privado:</strong> sesiones uno a uno cuando la familia necesita respuestas rápidas.</li>
-            <li><strong className="text-foreground">Evaluación de intervención:</strong> para casos donde hay rechazo al tratamiento, recaída repetida o riesgo de seguridad.</li>
+            <li>
+              <strong className="text-foreground">Círculo Familiar (gratis):</strong> reunión por
+              Zoom cada lunes a las 7:00 PM (hora del Pacífico de EE. UU.). Consulta la conversión
+              de horario en {country.name} antes de conectarte.
+            </li>
+            <li>
+              <strong className="text-foreground">Coaching familiar privado:</strong> sesiones uno a
+              uno cuando la familia necesita respuestas rápidas.
+            </li>
+            <li>
+              <strong className="text-foreground">Evaluación de intervención:</strong> para casos
+              donde hay rechazo al tratamiento, recaída repetida o riesgo de seguridad.
+            </li>
           </ol>
         </section>
         <section>
           <h2 className="text-xl font-semibold">Cultura, familia y adicción en {country.name}</h2>
-          <p className="mt-3 text-muted-foreground">En muchas familias latinas la adicción se vive en silencio, por vergüenza, por proteger la reputación o porque nadie sabe qué decir. En {country.name} eso se combina con recursos limitados en español pensados para la familia (no solo para la persona que consume). AyudaSobria existe para llenar ese vacío: la familia también necesita orientación, aunque el ser querido todavía no acepte ayuda.</p>
+          <p className="mt-3 text-muted-foreground">
+            En muchas familias latinas la adicción se vive en silencio, por vergüenza, por proteger
+            la reputación o porque nadie sabe qué decir. En {country.name} eso se combina con
+            recursos limitados en español pensados para la familia (no solo para la persona que
+            consume). AyudaSobria existe para llenar ese vacío: la familia también necesita
+            orientación, aunque el ser querido todavía no acepte ayuda.
+          </p>
         </section>
         {lines && (
           <section className="rounded-xl border border-border bg-secondary/40 p-6">
             <h2 className="text-lg font-semibold">Líneas de crisis en {country.name}</h2>
             <ul className="mt-3 space-y-2 text-sm">
               {lines.map((h) => (
-                <li key={h.number}><strong>{h.name}:</strong> <span className="font-mono">{h.number}</span></li>
+                <li key={h.number}>
+                  <strong>{h.name}:</strong> <span className="font-mono">{h.number}</span>
+                </li>
               ))}
             </ul>
-            <p className="mt-3 text-xs text-muted-foreground">Ante una emergencia inmediata, comunícate con el servicio local de emergencias de tu país.</p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Ante una emergencia inmediata, comunícate con el servicio local de emergencias de tu
+              país.
+            </p>
           </section>
         )}
         <section>

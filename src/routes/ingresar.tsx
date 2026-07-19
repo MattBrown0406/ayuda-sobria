@@ -5,18 +5,39 @@ export const Route = createFileRoute("/ingresar")({
   head: () => ({
     meta: [
       { title: "Ingresar — AyudaSobria" },
-      { name: "description", content: "Ingresa al portal de miembros de AyudaSobria." },
-      { property: "og:title", content: "Ingresar — AyudaSobria" },
-      { property: "og:url", content: "/ingresar" },
+      {
+        name: "description",
+        content: "Ingresa al portal seguro de miembros de AyudaSobria y SoberHelpline.",
+      },
     ],
     links: [{ rel: "canonical", href: "/ingresar" }],
   }),
-  component: () => (
+  component: IngresarPage,
+});
+
+function IngresarPage() {
+  return (
     <>
-      <PageHero eyebrow="Miembros" title="Ingresar" description="El portal de miembros estará disponible pronto." />
+      <PageHero
+        eyebrow="Miembros"
+        title="Ingresa a tu cuenta"
+        description="Tu membresía de AyudaSobria usa el portal seguro de SoberHelpline para proteger tu cuenta, pagos y contenido privado."
+      />
       <Prose>
-        <p>Mientras tanto, escríbenos a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o llama al (458) 298-8011 para acceder al Círculo Familiar y a los recursos de membresía.</p>
+        <p>
+          <a href="https://soberhelpline.com/auth?redirect=/member-home">
+            Ingresar al portal seguro →
+          </a>
+        </p>
+        <p>
+          ¿Todavía no eres miembro? <a href="/membresia">Conoce los planes y la prueba gratuita</a>.
+        </p>
+        <p>
+          Si necesitas ayuda con tu acceso, escribe a{" "}
+          <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o llama al (458)
+          298-8011.
+        </p>
       </Prose>
     </>
-  ),
-});
+  );
+}

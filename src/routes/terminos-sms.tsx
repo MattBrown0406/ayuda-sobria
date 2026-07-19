@@ -5,7 +5,10 @@ export const Route = createFileRoute("/terminos-sms")({
   head: () => ({
     meta: [
       { title: "Términos SMS — AyudaSobria" },
-      { name: "description", content: "Condiciones para comunicación por mensajes de texto con AyudaSobria." },
+      {
+        name: "description",
+        content: "Condiciones para comunicación por mensajes de texto con AyudaSobria.",
+      },
       { property: "og:title", content: "Términos SMS — AyudaSobria" },
       { property: "og:url", content: "/terminos-sms" },
     ],
@@ -15,8 +18,17 @@ export const Route = createFileRoute("/terminos-sms")({
     <>
       <PageHero eyebrow="Legal" title="Términos SMS" />
       <Prose>
-        <p>Al enviar tu número de teléfono a AyudaSobria autorizas recibir mensajes de texto relacionados con el Círculo Familiar, coaching e intervención. La frecuencia varía. Pueden aplicar tarifas de tu operador.</p>
-        <p>Para dejar de recibir mensajes responde <strong>BAJA</strong>. Para ayuda responde <strong>AYUDA</strong> o escribe a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>.</p>
+        <p>
+          Al enviar tu número de teléfono a AyudaSobria autorizas recibir mensajes de texto
+          relacionados con el Círculo Familiar, coaching e intervención. La frecuencia varía y puede
+          incluir mensajes recurrentes automatizados. Pueden aplicar tarifas de mensajes y datos de
+          tu operador. El consentimiento no es condición de compra.
+        </p>
+        <p>
+          Para dejar de recibir mensajes responde <strong>STOP</strong> o <strong>BAJA</strong>.
+          Para ayuda responde <strong>HELP</strong> o <strong>AYUDA</strong>, llama al (458)
+          298-8011 o escribe a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>.
+        </p>
       </Prose>
     </>
   ),

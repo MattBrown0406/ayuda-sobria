@@ -9,128 +9,41 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestimoniosRouteImport } from './routes/testimonios'
-import { Route as TerminosSmsRouteImport } from './routes/terminos-sms'
-import { Route as TerminosRouteImport } from './routes/terminos'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
-import { Route as RegistroRouteImport } from './routes/registro'
-import { Route as RecursosRouteImport } from './routes/recursos'
-import { Route as ProveedoresRouteImport } from './routes/proveedores'
-import { Route as PrivacidadRouteImport } from './routes/privacidad'
-import { Route as PaisesRouteImport } from './routes/paises'
-import { Route as MembresiaRouteImport } from './routes/membresia'
-import { Route as MapaRouteImport } from './routes/mapa'
-import { Route as IntervencionRouteImport } from './routes/intervencion'
-import { Route as IngresarRouteImport } from './routes/ingresar'
-import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as CoachingPagoRouteImport } from './routes/coaching-pago'
-import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
-import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
-import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
-import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
-import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
-import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
-import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
+import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
+import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
+import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
+import { Route as CoachingPagoRouteImport } from './routes/coaching-pago'
+import { Route as EvaluacionesRouteImport } from './routes/evaluaciones'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
+import { Route as IngresarRouteImport } from './routes/ingresar'
+import { Route as IntervencionRouteImport } from './routes/intervencion'
+import { Route as MapaRouteImport } from './routes/mapa'
+import { Route as MembresiaRouteImport } from './routes/membresia'
+import { Route as PaisesRouteImport } from './routes/paises'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
+import { Route as ProveedoresRouteImport } from './routes/proveedores'
+import { Route as RecursosRouteImport } from './routes/recursos'
+import { Route as RegistroRouteImport } from './routes/registro'
+import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TerminosRouteImport } from './routes/terminos'
+import { Route as TerminosSmsRouteImport } from './routes/terminos-sms'
+import { Route as TestimoniosRouteImport } from './routes/testimonios'
+import { Route as ApiRegistroRouteImport } from './routes/api.registro'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
+import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
+import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
+import { Route as PaisesCountryRouteImport } from './routes/paises.$country'
+import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
+import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
 
-const TestimoniosRoute = TestimoniosRouteImport.update({
-  id: '/testimonios',
-  path: '/testimonios',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TerminosSmsRoute = TerminosSmsRouteImport.update({
-  id: '/terminos-sms',
-  path: '/terminos-sms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TerminosRoute = TerminosRouteImport.update({
-  id: '/terminos',
-  path: '/terminos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
-  id: '/respuestas-familia',
-  path: '/respuestas-familia',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegistroRoute = RegistroRouteImport.update({
-  id: '/registro',
-  path: '/registro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecursosRoute = RecursosRouteImport.update({
-  id: '/recursos',
-  path: '/recursos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProveedoresRoute = ProveedoresRouteImport.update({
-  id: '/proveedores',
-  path: '/proveedores',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacidadRoute = PrivacidadRouteImport.update({
-  id: '/privacidad',
-  path: '/privacidad',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaisesRoute = PaisesRouteImport.update({
-  id: '/paises',
-  path: '/paises',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MembresiaRoute = MembresiaRouteImport.update({
-  id: '/membresia',
-  path: '/membresia',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapaRoute = MapaRouteImport.update({
-  id: '/mapa',
-  path: '/mapa',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IntervencionRoute = IntervencionRouteImport.update({
-  id: '/intervencion',
-  path: '/intervencion',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IngresarRoute = IngresarRouteImport.update({
-  id: '/ingresar',
-  path: '/ingresar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HerramientasIaRoute = HerramientasIaRouteImport.update({
-  id: '/herramientas-ia',
-  path: '/herramientas-ia',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoachingPagoRoute = CoachingPagoRouteImport.update({
-  id: '/coaching-pago',
-  path: '/coaching-pago',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoachingFamiliarRoute = CoachingFamiliarRouteImport.update({
-  id: '/coaching-familiar',
-  path: '/coaching-familiar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CirculoFamiliarRoute = CirculoFamiliarRouteImport.update({
-  id: '/circulo-familiar',
-  path: '/circulo-familiar',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
@@ -138,40 +51,145 @@ const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
   path: '/apoyo-familiar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CirculoFamiliarRoute = CirculoFamiliarRouteImport.update({
+  id: '/circulo-familiar',
+  path: '/circulo-familiar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RespuestasFamiliaSlugRoute = RespuestasFamiliaSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => RespuestasFamiliaRoute,
+const CoachingFamiliarRoute = CoachingFamiliarRouteImport.update({
+  id: '/coaching-familiar',
+  path: '/coaching-familiar',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const RecursosSlugRoute = RecursosSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => RecursosRoute,
+const CoachingPagoRoute = CoachingPagoRouteImport.update({
+  id: '/coaching-pago',
+  path: '/coaching-pago',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const PaisesCountryRoute = PaisesCountryRouteImport.update({
-  id: '/$country',
-  path: '/$country',
-  getParentRoute: () => PaisesRoute,
+const EvaluacionesRoute = EvaluacionesRouteImport.update({
+  id: '/evaluaciones',
+  path: '/evaluaciones',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const MapaSlugRoute = MapaSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => MapaRoute,
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HerramientasIaRoute = HerramientasIaRouteImport.update({
+  id: '/herramientas-ia',
+  path: '/herramientas-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IngresarRoute = IngresarRouteImport.update({
+  id: '/ingresar',
+  path: '/ingresar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntervencionRoute = IntervencionRouteImport.update({
+  id: '/intervencion',
+  path: '/intervencion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapaRoute = MapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MembresiaRoute = MembresiaRouteImport.update({
+  id: '/membresia',
+  path: '/membresia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaisesRoute = PaisesRouteImport.update({
+  id: '/paises',
+  path: '/paises',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProveedoresRoute = ProveedoresRouteImport.update({
+  id: '/proveedores',
+  path: '/proveedores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecursosRoute = RecursosRouteImport.update({
+  id: '/recursos',
+  path: '/recursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegistroRoute = RegistroRouteImport.update({
+  id: '/registro',
+  path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
+  id: '/respuestas-familia',
+  path: '/respuestas-familia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosSmsRoute = TerminosSmsRouteImport.update({
+  id: '/terminos-sms',
+  path: '/terminos-sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestimoniosRoute = TestimoniosRouteImport.update({
+  id: '/testimonios',
+  path: '/testimonios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRegistroRoute = ApiRegistroRouteImport.update({
+  id: '/api/registro',
+  path: '/api/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApoyoFamiliarStateRoute = ApoyoFamiliarStateRouteImport.update({
+  id: '/$state',
+  path: '/$state',
+  getParentRoute: () => ApoyoFamiliarRoute,
 } as any)
 const HerramientasIaSlugRoute = HerramientasIaSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => HerramientasIaRoute,
 } as any)
-const ApoyoFamiliarStateRoute = ApoyoFamiliarStateRouteImport.update({
-  id: '/$state',
-  path: '/$state',
-  getParentRoute: () => ApoyoFamiliarRoute,
+const MapaSlugRoute = MapaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => MapaRoute,
+} as any)
+const PaisesCountryRoute = PaisesCountryRouteImport.update({
+  id: '/$country',
+  path: '/$country',
+  getParentRoute: () => PaisesRoute,
+} as any)
+const RecursosSlugRoute = RecursosSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => RecursosRoute,
+} as any)
+const RespuestasFamiliaSlugRoute = RespuestasFamiliaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => RespuestasFamiliaRoute,
 } as any)
 const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
   id: '/$city',
@@ -185,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
+  '/evaluaciones': typeof EvaluacionesRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/ingresar': typeof IngresarRoute
@@ -197,10 +216,12 @@ export interface FileRoutesByFullPath {
   '/recursos': typeof RecursosRouteWithChildren
   '/registro': typeof RegistroRoute
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
+  '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -215,6 +236,7 @@ export interface FileRoutesByTo {
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
+  '/evaluaciones': typeof EvaluacionesRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/ingresar': typeof IngresarRoute
@@ -227,10 +249,12 @@ export interface FileRoutesByTo {
   '/recursos': typeof RecursosRouteWithChildren
   '/registro': typeof RegistroRoute
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
+  '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -246,6 +270,7 @@ export interface FileRoutesById {
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRoute
+  '/evaluaciones': typeof EvaluacionesRoute
   '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/ingresar': typeof IngresarRoute
@@ -258,10 +283,12 @@ export interface FileRoutesById {
   '/recursos': typeof RecursosRouteWithChildren
   '/registro': typeof RegistroRoute
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
+  '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -278,6 +305,7 @@ export interface FileRouteTypes {
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
+    | '/evaluaciones'
     | '/faq'
     | '/herramientas-ia'
     | '/ingresar'
@@ -290,10 +318,12 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/registro'
     | '/respuestas-familia'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
+    | '/api/registro'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -308,6 +338,7 @@ export interface FileRouteTypes {
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
+    | '/evaluaciones'
     | '/faq'
     | '/herramientas-ia'
     | '/ingresar'
@@ -320,10 +351,12 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/registro'
     | '/respuestas-familia'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
+    | '/api/registro'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -338,6 +371,7 @@ export interface FileRouteTypes {
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
+    | '/evaluaciones'
     | '/faq'
     | '/herramientas-ia'
     | '/ingresar'
@@ -350,10 +384,12 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/registro'
     | '/respuestas-familia'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
+    | '/api/registro'
     | '/apoyo-familiar/$state'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -369,6 +405,7 @@ export interface RootRouteChildren {
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
   CoachingPagoRoute: typeof CoachingPagoRoute
+  EvaluacionesRoute: typeof EvaluacionesRoute
   FaqRoute: typeof FaqRoute
   HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
   IngresarRoute: typeof IngresarRoute
@@ -381,145 +418,21 @@ export interface RootRouteChildren {
   RecursosRoute: typeof RecursosRouteWithChildren
   RegistroRoute: typeof RegistroRoute
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TerminosRoute: typeof TerminosRoute
   TerminosSmsRoute: typeof TerminosSmsRoute
   TestimoniosRoute: typeof TestimoniosRoute
+  ApiRegistroRoute: typeof ApiRegistroRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/testimonios': {
-      id: '/testimonios'
-      path: '/testimonios'
-      fullPath: '/testimonios'
-      preLoaderRoute: typeof TestimoniosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terminos-sms': {
-      id: '/terminos-sms'
-      path: '/terminos-sms'
-      fullPath: '/terminos-sms'
-      preLoaderRoute: typeof TerminosSmsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terminos': {
-      id: '/terminos'
-      path: '/terminos'
-      fullPath: '/terminos'
-      preLoaderRoute: typeof TerminosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/respuestas-familia': {
-      id: '/respuestas-familia'
-      path: '/respuestas-familia'
-      fullPath: '/respuestas-familia'
-      preLoaderRoute: typeof RespuestasFamiliaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/registro': {
-      id: '/registro'
-      path: '/registro'
-      fullPath: '/registro'
-      preLoaderRoute: typeof RegistroRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recursos': {
-      id: '/recursos'
-      path: '/recursos'
-      fullPath: '/recursos'
-      preLoaderRoute: typeof RecursosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/proveedores': {
-      id: '/proveedores'
-      path: '/proveedores'
-      fullPath: '/proveedores'
-      preLoaderRoute: typeof ProveedoresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidad': {
-      id: '/privacidad'
-      path: '/privacidad'
-      fullPath: '/privacidad'
-      preLoaderRoute: typeof PrivacidadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/paises': {
-      id: '/paises'
-      path: '/paises'
-      fullPath: '/paises'
-      preLoaderRoute: typeof PaisesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/membresia': {
-      id: '/membresia'
-      path: '/membresia'
-      fullPath: '/membresia'
-      preLoaderRoute: typeof MembresiaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mapa': {
-      id: '/mapa'
-      path: '/mapa'
-      fullPath: '/mapa'
-      preLoaderRoute: typeof MapaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/intervencion': {
-      id: '/intervencion'
-      path: '/intervencion'
-      fullPath: '/intervencion'
-      preLoaderRoute: typeof IntervencionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ingresar': {
-      id: '/ingresar'
-      path: '/ingresar'
-      fullPath: '/ingresar'
-      preLoaderRoute: typeof IngresarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/herramientas-ia': {
-      id: '/herramientas-ia'
-      path: '/herramientas-ia'
-      fullPath: '/herramientas-ia'
-      preLoaderRoute: typeof HerramientasIaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coaching-pago': {
-      id: '/coaching-pago'
-      path: '/coaching-pago'
-      fullPath: '/coaching-pago'
-      preLoaderRoute: typeof CoachingPagoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coaching-familiar': {
-      id: '/coaching-familiar'
-      path: '/coaching-familiar'
-      fullPath: '/coaching-familiar'
-      preLoaderRoute: typeof CoachingFamiliarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/circulo-familiar': {
-      id: '/circulo-familiar'
-      path: '/circulo-familiar'
-      fullPath: '/circulo-familiar'
-      preLoaderRoute: typeof CirculoFamiliarRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/apoyo-familiar': {
@@ -529,40 +442,166 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApoyoFamiliarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/circulo-familiar': {
+      id: '/circulo-familiar'
+      path: '/circulo-familiar'
+      fullPath: '/circulo-familiar'
+      preLoaderRoute: typeof CirculoFamiliarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/respuestas-familia/$slug': {
-      id: '/respuestas-familia/$slug'
-      path: '/$slug'
-      fullPath: '/respuestas-familia/$slug'
-      preLoaderRoute: typeof RespuestasFamiliaSlugRouteImport
-      parentRoute: typeof RespuestasFamiliaRoute
+    '/coaching-familiar': {
+      id: '/coaching-familiar'
+      path: '/coaching-familiar'
+      fullPath: '/coaching-familiar'
+      preLoaderRoute: typeof CoachingFamiliarRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/recursos/$slug': {
-      id: '/recursos/$slug'
-      path: '/$slug'
-      fullPath: '/recursos/$slug'
-      preLoaderRoute: typeof RecursosSlugRouteImport
-      parentRoute: typeof RecursosRoute
+    '/coaching-pago': {
+      id: '/coaching-pago'
+      path: '/coaching-pago'
+      fullPath: '/coaching-pago'
+      preLoaderRoute: typeof CoachingPagoRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/paises/$country': {
-      id: '/paises/$country'
-      path: '/$country'
-      fullPath: '/paises/$country'
-      preLoaderRoute: typeof PaisesCountryRouteImport
-      parentRoute: typeof PaisesRoute
+    '/evaluaciones': {
+      id: '/evaluaciones'
+      path: '/evaluaciones'
+      fullPath: '/evaluaciones'
+      preLoaderRoute: typeof EvaluacionesRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/mapa/$slug': {
-      id: '/mapa/$slug'
-      path: '/$slug'
-      fullPath: '/mapa/$slug'
-      preLoaderRoute: typeof MapaSlugRouteImport
-      parentRoute: typeof MapaRoute
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/herramientas-ia': {
+      id: '/herramientas-ia'
+      path: '/herramientas-ia'
+      fullPath: '/herramientas-ia'
+      preLoaderRoute: typeof HerramientasIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ingresar': {
+      id: '/ingresar'
+      path: '/ingresar'
+      fullPath: '/ingresar'
+      preLoaderRoute: typeof IngresarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/intervencion': {
+      id: '/intervencion'
+      path: '/intervencion'
+      fullPath: '/intervencion'
+      preLoaderRoute: typeof IntervencionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mapa': {
+      id: '/mapa'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof MapaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/membresia': {
+      id: '/membresia'
+      path: '/membresia'
+      fullPath: '/membresia'
+      preLoaderRoute: typeof MembresiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paises': {
+      id: '/paises'
+      path: '/paises'
+      fullPath: '/paises'
+      preLoaderRoute: typeof PaisesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proveedores': {
+      id: '/proveedores'
+      path: '/proveedores'
+      fullPath: '/proveedores'
+      preLoaderRoute: typeof ProveedoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recursos': {
+      id: '/recursos'
+      path: '/recursos'
+      fullPath: '/recursos'
+      preLoaderRoute: typeof RecursosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/registro': {
+      id: '/registro'
+      path: '/registro'
+      fullPath: '/registro'
+      preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/respuestas-familia': {
+      id: '/respuestas-familia'
+      path: '/respuestas-familia'
+      fullPath: '/respuestas-familia'
+      preLoaderRoute: typeof RespuestasFamiliaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos-sms': {
+      id: '/terminos-sms'
+      path: '/terminos-sms'
+      fullPath: '/terminos-sms'
+      preLoaderRoute: typeof TerminosSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/testimonios': {
+      id: '/testimonios'
+      path: '/testimonios'
+      fullPath: '/testimonios'
+      preLoaderRoute: typeof TestimoniosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/registro': {
+      id: '/api/registro'
+      path: '/api/registro'
+      fullPath: '/api/registro'
+      preLoaderRoute: typeof ApiRegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apoyo-familiar/$state': {
+      id: '/apoyo-familiar/$state'
+      path: '/$state'
+      fullPath: '/apoyo-familiar/$state'
+      preLoaderRoute: typeof ApoyoFamiliarStateRouteImport
+      parentRoute: typeof ApoyoFamiliarRoute
     }
     '/herramientas-ia/$slug': {
       id: '/herramientas-ia/$slug'
@@ -571,12 +610,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HerramientasIaSlugRouteImport
       parentRoute: typeof HerramientasIaRoute
     }
-    '/apoyo-familiar/$state': {
-      id: '/apoyo-familiar/$state'
-      path: '/$state'
-      fullPath: '/apoyo-familiar/$state'
-      preLoaderRoute: typeof ApoyoFamiliarStateRouteImport
-      parentRoute: typeof ApoyoFamiliarRoute
+    '/mapa/$slug': {
+      id: '/mapa/$slug'
+      path: '/$slug'
+      fullPath: '/mapa/$slug'
+      preLoaderRoute: typeof MapaSlugRouteImport
+      parentRoute: typeof MapaRoute
+    }
+    '/paises/$country': {
+      id: '/paises/$country'
+      path: '/$country'
+      fullPath: '/paises/$country'
+      preLoaderRoute: typeof PaisesCountryRouteImport
+      parentRoute: typeof PaisesRoute
+    }
+    '/recursos/$slug': {
+      id: '/recursos/$slug'
+      path: '/$slug'
+      fullPath: '/recursos/$slug'
+      preLoaderRoute: typeof RecursosSlugRouteImport
+      parentRoute: typeof RecursosRoute
+    }
+    '/respuestas-familia/$slug': {
+      id: '/respuestas-familia/$slug'
+      path: '/$slug'
+      fullPath: '/respuestas-familia/$slug'
+      preLoaderRoute: typeof RespuestasFamiliaSlugRouteImport
+      parentRoute: typeof RespuestasFamiliaRoute
     }
     '/apoyo-familiar/$state/$city': {
       id: '/apoyo-familiar/$state/$city'
@@ -673,6 +733,7 @@ const rootRouteChildren: RootRouteChildren = {
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
   CoachingPagoRoute: CoachingPagoRoute,
+  EvaluacionesRoute: EvaluacionesRoute,
   FaqRoute: FaqRoute,
   HerramientasIaRoute: HerramientasIaRouteWithChildren,
   IngresarRoute: IngresarRoute,
@@ -685,11 +746,23 @@ const rootRouteChildren: RootRouteChildren = {
   RecursosRoute: RecursosRouteWithChildren,
   RegistroRoute: RegistroRoute,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TerminosRoute: TerminosRoute,
   TerminosSmsRoute: TerminosSmsRoute,
   TestimoniosRoute: TestimoniosRoute,
+  ApiRegistroRoute: ApiRegistroRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

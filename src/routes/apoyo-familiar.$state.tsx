@@ -9,7 +9,8 @@ export const Route = createFileRoute("/apoyo-familiar/$state")({
     return { state };
   },
   head: ({ loaderData, params }) => {
-    if (!loaderData) return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
+    if (!loaderData)
+      return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
     const t = `Apoyo familiar para la adicción en ${loaderData.state.name} — AyudaSobria`;
     const d = `Familias en ${loaderData.state.name} encuentran apoyo en español, coaching y reuniones semanales del Círculo Familiar.`;
     return {
@@ -31,21 +32,42 @@ function StatePage() {
   const { state } = Route.useLoaderData() as { state: State };
   return (
     <>
-      <PageHero eyebrow="Apoyo por estado" title={`Familias en ${state.name}`} description={`Recursos, coaching y reuniones semanales para familias hispanohablantes en ${state.name} afectadas por la adicción de un ser querido.`} />
+      <PageHero
+        eyebrow="Apoyo por estado"
+        title={`Familias en ${state.name}`}
+        description={`Recursos, coaching y reuniones semanales para familias hispanohablantes en ${state.name} afectadas por la adicción de un ser querido.`}
+      />
       <div className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-xl font-semibold">Ciudades de {state.name}</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {state.cities.map((c) => (
-            <Link key={c.slug} to="/apoyo-familiar/$state/$city" params={{ state: state.slug, city: c.slug }} className="rounded-lg border border-border bg-card p-4 hover:border-primary/60">
-              <p className="font-medium">{c.name}, {state.name}</p>
+            <Link
+              key={c.slug}
+              to="/apoyo-familiar/$state/$city"
+              params={{ state: state.slug, city: c.slug }}
+              className="rounded-lg border border-border bg-card p-4 hover:border-primary/60"
+            >
+              <p className="font-medium">
+                {c.name}, {state.name}
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">Apoyo familiar en español</p>
             </Link>
           ))}
         </div>
         <div className="prose prose-sm mt-10 max-w-none text-muted-foreground">
-          <h3 className="text-lg font-semibold text-foreground">Cómo trabajamos con familias en {state.name}</h3>
-          <p className="mt-2">Aunque estés en {state.name}, la reunión del <strong>Círculo Familiar</strong> se realiza en línea cada lunes a las 8:00 PM (hora del Pacífico). No importa si vives en una ciudad grande o en una zona rural: tu familia puede empezar esta semana sin viajar.</p>
-          <p className="mt-2">El coaching privado, la evaluación de intervención y el directorio de tratamiento también están disponibles a distancia. Muchas familias en {state.name} nos llaman cuando el sistema local en inglés no las alcanza.</p>
+          <h3 className="text-lg font-semibold text-foreground">
+            Cómo trabajamos con familias en {state.name}
+          </h3>
+          <p className="mt-2">
+            Aunque estés en {state.name}, la reunión del <strong>Círculo Familiar</strong> se
+            realiza en línea cada lunes a las 7:00 PM (hora del Pacífico). No importa si vives en
+            una ciudad grande o en una zona rural: tu familia puede empezar esta semana sin viajar.
+          </p>
+          <p className="mt-2">
+            El coaching privado, la evaluación de intervención y el directorio de tratamiento
+            también están disponibles a distancia. Muchas familias en {state.name} nos llaman cuando
+            el sistema local en inglés no las alcanza.
+          </p>
         </div>
       </div>
       <CTAStrip />
