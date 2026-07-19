@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
 import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as PaisesRouteImport } from './routes/paises'
+import { Route as MembresiaRouteImport } from './routes/membresia'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as IntervencionRouteImport } from './routes/intervencion'
 import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
@@ -40,6 +41,11 @@ const RecursosRoute = RecursosRouteImport.update({
 const PaisesRoute = PaisesRouteImport.update({
   id: '/paises',
   path: '/paises',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MembresiaRoute = MembresiaRouteImport.update({
+  id: '/membresia',
+  path: '/membresia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapaRoute = MapaRouteImport.update({
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
+  '/membresia': typeof MembresiaRoute
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
+  '/membresia': typeof MembresiaRoute
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
+  '/membresia': typeof MembresiaRoute
   '/paises': typeof PaisesRouteWithChildren
   '/recursos': typeof RecursosRouteWithChildren
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/herramientas-ia'
     | '/intervencion'
     | '/mapa'
+    | '/membresia'
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/herramientas-ia'
     | '/intervencion'
     | '/mapa'
+    | '/membresia'
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/herramientas-ia'
     | '/intervencion'
     | '/mapa'
+    | '/membresia'
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
   IntervencionRoute: typeof IntervencionRoute
   MapaRoute: typeof MapaRouteWithChildren
+  MembresiaRoute: typeof MembresiaRoute
   PaisesRoute: typeof PaisesRouteWithChildren
   RecursosRoute: typeof RecursosRouteWithChildren
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/paises'
       fullPath: '/paises'
       preLoaderRoute: typeof PaisesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/membresia': {
+      id: '/membresia'
+      path: '/membresia'
+      fullPath: '/membresia'
+      preLoaderRoute: typeof MembresiaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mapa': {
@@ -455,6 +475,7 @@ const rootRouteChildren: RootRouteChildren = {
   HerramientasIaRoute: HerramientasIaRouteWithChildren,
   IntervencionRoute: IntervencionRoute,
   MapaRoute: MapaRouteWithChildren,
+  MembresiaRoute: MembresiaRoute,
   PaisesRoute: PaisesRouteWithChildren,
   RecursosRoute: RecursosRouteWithChildren,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
