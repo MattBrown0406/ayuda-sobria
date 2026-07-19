@@ -14,6 +14,7 @@ import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
+import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
@@ -48,6 +49,11 @@ const MapaRoute = MapaRouteImport.update({
 const HerramientasIaRoute = HerramientasIaRouteImport.update({
   id: '/herramientas-ia',
   path: '/herramientas-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachingFamiliarRoute = CoachingFamiliarRouteImport.update({
+  id: '/coaching-familiar',
+  path: '/coaching-familiar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CirculoFamiliarRoute = CirculoFamiliarRouteImport.update({
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
+  '/coaching-familiar': typeof CoachingFamiliarRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
+  '/coaching-familiar': typeof CoachingFamiliarRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
+  '/coaching-familiar': typeof CoachingFamiliarRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/mapa': typeof MapaRouteWithChildren
   '/paises': typeof PaisesRouteWithChildren
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/circulo-familiar'
+    | '/coaching-familiar'
     | '/herramientas-ia'
     | '/mapa'
     | '/paises'
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/circulo-familiar'
+    | '/coaching-familiar'
     | '/herramientas-ia'
     | '/mapa'
     | '/paises'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/circulo-familiar'
+    | '/coaching-familiar'
     | '/herramientas-ia'
     | '/mapa'
     | '/paises'
@@ -211,6 +223,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
+  CoachingFamiliarRoute: typeof CoachingFamiliarRoute
   HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
   MapaRoute: typeof MapaRouteWithChildren
   PaisesRoute: typeof PaisesRouteWithChildren
@@ -253,6 +266,13 @@ declare module '@tanstack/react-router' {
       path: '/herramientas-ia'
       fullPath: '/herramientas-ia'
       preLoaderRoute: typeof HerramientasIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coaching-familiar': {
+      id: '/coaching-familiar'
+      path: '/coaching-familiar'
+      fullPath: '/coaching-familiar'
+      preLoaderRoute: typeof CoachingFamiliarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/circulo-familiar': {
@@ -411,6 +431,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
+  CoachingFamiliarRoute: CoachingFamiliarRoute,
   HerramientasIaRoute: HerramientasIaRouteWithChildren,
   MapaRoute: MapaRouteWithChildren,
   PaisesRoute: PaisesRouteWithChildren,
