@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, LogIn, AlertTriangle, Calendar, Clock, Shield, Building2, ChevronDown, Check, BookOpen, HeartHandshake, Users, MessageCircle, Sparkles, ClipboardList } from "lucide-react";
 import logo from "@/assets/logo.png";
-import counselor from "@/assets/counselor.jpg";
+import counselor from "@/assets/matt-brown.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -106,12 +106,12 @@ function Hero() {
             <HeartHandshake className="h-3.5 w-3.5" /> Guía confiable, privada y centrada en la familia
           </span>
           <h2 className="mt-4 text-2xl font-bold">
-            Trabaja con <span className="text-primary">Mateo Bravo</span>
+            Trabaja con <span className="text-primary">Matt Brown</span>
           </h2>
           <div className="mt-4 flex gap-4">
-            <img src={counselor} alt="Mateo Bravo" width={120} height={120} className="h-28 w-28 rounded-lg object-cover" loading="lazy" />
+            <img src={counselor.url} alt="Matt Brown" width={120} height={120} className="h-28 w-28 rounded-lg object-cover" loading="lazy" />
             <p className="text-sm text-muted-foreground">
-              Mateo cuenta con más de 22 años de experiencia acompañando a familias frente a la adicción. Ayuda a pensar con claridad en los momentos difíciles, a evaluar opciones de tratamiento con ética y a dejar de sentirse presionados por la industria.
+              Matt cuenta con más de 22 años de experiencia acompañando a familias frente a la adicción. Ayuda a pensar con claridad en los momentos difíciles, a evaluar opciones de tratamiento con ética y a dejar de sentirse presionados por la industria.
             </p>
           </div>
           <ul className="mt-5 space-y-2 text-sm">
