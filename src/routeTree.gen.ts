@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
 
+const PaisesRoute = PaisesRouteImport.update({
+  id: '/paises',
+  path: '/paises',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
   id: '/apoyo-familiar',
   path: '/apoyo-familiar',
@@ -38,12 +44,14 @@ const ApoyoFamiliarStateCityRoute = ApoyoFamiliarStateCityRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/paises': typeof PaisesRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/paises': typeof PaisesRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
@@ -51,6 +59,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
+  '/paises': typeof PaisesRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
 }
@@ -59,18 +68,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/apoyo-familiar'
+    | '/paises'
     | '/apoyo-familiar/$state'
     | '/apoyo-familiar/$state/$city'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/apoyo-familiar'
+    | '/paises'
     | '/apoyo-familiar/$state'
     | '/apoyo-familiar/$state/$city'
   id:
     | '__root__'
     | '/'
     | '/apoyo-familiar'
+    | '/paises'
     | '/apoyo-familiar/$state'
     | '/apoyo-familiar/$state/$city'
   fileRoutesById: FileRoutesById
@@ -78,10 +90,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
+  PaisesRoute: typeof PaisesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/paises': {
+      id: '/paises'
+      path: '/paises'
+      fullPath: '/paises'
+      preLoaderRoute: typeof PaisesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/apoyo-familiar': {
       id: '/apoyo-familiar'
       path: '/apoyo-familiar'
@@ -139,6 +159,7 @@ const ApoyoFamiliarRouteWithChildren = ApoyoFamiliarRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
+  PaisesRoute: PaisesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
