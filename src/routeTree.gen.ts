@@ -17,6 +17,7 @@ import { Route as MembresiaRouteImport } from './routes/membresia'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as IntervencionRouteImport } from './routes/intervencion'
 import { Route as HerramientasIaRouteImport } from './routes/herramientas-ia'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
@@ -67,6 +68,11 @@ const IntervencionRoute = IntervencionRouteImport.update({
 const HerramientasIaRoute = HerramientasIaRouteImport.update({
   id: '/herramientas-ia',
   path: '/herramientas-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CoachingFamiliarRoute = CoachingFamiliarRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
+  '/faq': typeof FaqRoute
   '/herramientas-ia': typeof HerramientasIaRouteWithChildren
   '/intervencion': typeof IntervencionRoute
   '/mapa': typeof MapaRouteWithChildren
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/circulo-familiar'
     | '/coaching-familiar'
+    | '/faq'
     | '/herramientas-ia'
     | '/intervencion'
     | '/mapa'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/circulo-familiar'
     | '/coaching-familiar'
+    | '/faq'
     | '/herramientas-ia'
     | '/intervencion'
     | '/mapa'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/apoyo-familiar'
     | '/circulo-familiar'
     | '/coaching-familiar'
+    | '/faq'
     | '/herramientas-ia'
     | '/intervencion'
     | '/mapa'
@@ -260,6 +272,7 @@ export interface RootRouteChildren {
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
+  FaqRoute: typeof FaqRoute
   HerramientasIaRoute: typeof HerramientasIaRouteWithChildren
   IntervencionRoute: typeof IntervencionRoute
   MapaRoute: typeof MapaRouteWithChildren
@@ -326,6 +339,13 @@ declare module '@tanstack/react-router' {
       path: '/herramientas-ia'
       fullPath: '/herramientas-ia'
       preLoaderRoute: typeof HerramientasIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/coaching-familiar': {
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
+  FaqRoute: FaqRoute,
   HerramientasIaRoute: HerramientasIaRouteWithChildren,
   IntervencionRoute: IntervencionRoute,
   MapaRoute: MapaRouteWithChildren,
