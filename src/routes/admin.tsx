@@ -170,20 +170,20 @@ function AdminPage() {
 
   if (status === "loading") {
     return (
-      <SiteLayout>
+      <div className="min-h-screen bg-background">
         <div
           className="mx-auto max-w-6xl px-4 py-16 text-center text-muted-foreground"
           role="status"
         >
           Loading admin portal…
         </div>
-      </SiteLayout>
+      </div>
     );
   }
 
   if (status === "unauth") {
     return (
-      <SiteLayout>
+      <div className="min-h-screen bg-background">
         <div className="mx-auto max-w-md space-y-4 px-4 py-16 text-center">
           <h1 className="text-2xl font-semibold">Admin Portal</h1>
           <p className="text-muted-foreground">
@@ -193,13 +193,13 @@ function AdminPage() {
             Sign in
           </Button>
         </div>
-      </SiteLayout>
+      </div>
     );
   }
 
   if (status === "forbidden") {
     return (
-      <SiteLayout>
+      <div className="min-h-screen bg-background">
         <div className="mx-auto max-w-md space-y-4 px-4 py-16 text-center">
           <h1 className="text-2xl font-semibold">No access</h1>
           <p className="text-muted-foreground">Your account does not have admin permissions.</p>
@@ -207,13 +207,13 @@ function AdminPage() {
             Back to home
           </Link>
         </div>
-      </SiteLayout>
+      </div>
     );
   }
 
   if (status === "error" || !data) {
     return (
-      <SiteLayout>
+      <div className="min-h-screen bg-background">
         <div className="mx-auto max-w-md space-y-4 px-4 py-16 text-center">
           <h1 className="text-2xl font-semibold">We could not load the portal</h1>
           <p className="text-muted-foreground">
@@ -228,7 +228,7 @@ function AdminPage() {
             .
           </p>
         </div>
-      </SiteLayout>
+      </div>
     );
   }
 
@@ -244,7 +244,7 @@ function AdminPage() {
   const publishedCount = data.recordings.filter((recording: any) => recording.published).length;
 
   return (
-    <SiteLayout>
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-10">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div>
@@ -659,7 +659,7 @@ function AdminPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </SiteLayout>
+    </div>
   );
 }
 
