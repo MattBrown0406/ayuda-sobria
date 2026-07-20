@@ -144,6 +144,36 @@ export const Route = createFileRoute("/api/registro")({
             { status: 502 },
           );
         }
+
+        // Persist to admin dashboard (best-effort)
+        try {
+          const supabaseUrl = process.env.SUPABASE_URL;
+          const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+          if (supabaseUrl && supabaseKey) {
+            await fetch(`${supabaseUrl}/rest/v1/meeting_registrations`, {
+              method: "POST",
+              headers: {
+                apikey: supabaseKey,
+                Authorization: `Bearer ${supabaseKey}`,
+                "Content-Type": "application/json",
+                Prefer: "return=minimal",
+              },
+              body: JSON.stringify({
+                full_name: nombre,
+                email,
+                phone: clean(record.telefono, 50) || null,
+                location: clean(record.pais, 120) || null,
+                relationship: relacion,
+                situation: clean(record.situacion, 2000) || null,
+                consent_updates: !!record.consentSms,
+                consent_confidentiality: true,
+              }),
+            });
+          }
+        } catch (err) {
+          console.error("Registration DB insert failed", err);
+        }
+
         return Response.json({ ok: true });
       },
     },
