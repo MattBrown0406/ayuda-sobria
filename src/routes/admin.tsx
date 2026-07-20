@@ -244,7 +244,7 @@ function AdminPage() {
   const publishedCount = data.recordings.filter((recording: any) => recording.published).length;
 
   return (
-    <SiteLayout>
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-10">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div>
