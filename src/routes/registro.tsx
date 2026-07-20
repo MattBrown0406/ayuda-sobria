@@ -53,7 +53,7 @@ function RegistroPage() {
     preferredContactTime: "",
     preferredTimezone: "America/Los_Angeles",
     consentConfidentiality: false,
-    consentSms: false,
+    consentSms: true,
     website: "",
   });
 
