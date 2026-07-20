@@ -29,7 +29,7 @@ function StatesIndex() {
       <PageHero
         eyebrow="Ubicaciones"
         title="Apoyo familiar por estado"
-        description="Consulta guías para estados seleccionados. La reunión del Círculo Familiar es en línea y accesible desde cualquier estado de Estados Unidos."
+        description="Consulta guías para estados seleccionados. La reunión de La Sobremesa es en línea y accesible desde cualquier estado de Estados Unidos."
       />
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

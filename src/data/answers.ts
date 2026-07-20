@@ -5,7 +5,7 @@ export interface Answer {
 export const ANSWERS: Answer[] = [
   {
     slug: "can-i-attend-family-squares-if-loved-one-not-sober",
-    question: "¿Puedo asistir al Círculo Familiar si mi ser querido no está sobrio?",
+    question: "¿Puedo asistir a La Sobremesa si mi ser querido no está sobrio?",
   },
   {
     slug: "does-our-family-need-freedom-interventions",
@@ -67,10 +67,10 @@ export const ANSWERS: Answer[] = [
     slug: "what-if-we-cannot-wait-until-monday",
     question: "¿Y si no podemos esperar hasta el lunes?",
   },
-  { slug: "what-is-family-squares-meeting", question: "¿Qué es la reunión del Círculo Familiar?" },
+  { slug: "what-is-family-squares-meeting", question: "¿Qué es la reunión de La Sobremesa?" },
   {
     slug: "what-question-should-i-ask-family-squares",
-    question: "¿Qué pregunta debo llevar al Círculo Familiar?",
+    question: "¿Qué pregunta debo llevar a La Sobremesa?",
   },
   {
     slug: "what-should-family-do-after-relapse",

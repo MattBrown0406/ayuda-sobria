@@ -385,15 +385,15 @@ export const TOPICS: Topic[] = [
   },
   {
     slug: "family-squares",
-    title: "Círculo Familiar",
+    title: "La Sobremesa",
     description:
-      "Guía en español para familias sobre círculo familiar. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
+      "Guía en español para familias sobre La Sobremesa. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "family-squares-next-step",
-    title: "Círculo Familiar: siguiente paso",
+    title: "La Sobremesa: siguiente paso",
     description:
-      "Guía en español para familias sobre círculo familiar: siguiente paso. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
+      "Guía en español para familias sobre La Sobremesa: siguiente paso. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "family-support",

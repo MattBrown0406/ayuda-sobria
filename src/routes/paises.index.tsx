@@ -35,7 +35,7 @@ function CountriesIndex() {
       <PageHero
         eyebrow="Ubicaciones"
         title="Apoyo familiar por país"
-        description="La reunión del Círculo Familiar es en línea y accesible desde cualquier país. Coaching, intervención y recursos disponibles a distancia."
+        description="La reunión de La Sobremesa es en línea y accesible desde cualquier país. Coaching, intervención y recursos disponibles a distancia."
       />
       <div className="mx-auto max-w-6xl px-4 py-12 space-y-12">
         {regions.map((r) => (

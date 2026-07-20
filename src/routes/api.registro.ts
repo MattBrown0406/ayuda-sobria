@@ -136,7 +136,7 @@ export const Route = createFileRoute("/api/registro")({
             from: process.env.REGISTRATION_FROM_EMAIL ?? "AyudaSobria <registro@ayudasobria.com>",
             to: [process.env.REGISTRATION_TO_EMAIL ?? "matt@soberhelpline.com"],
             reply_to: email,
-            subject: `Registro al Círculo Familiar — ${nombre}`,
+            subject: `Registro a La Sobremesa — ${nombre}`,
             html,
           }),
         });

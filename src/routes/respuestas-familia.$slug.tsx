@@ -59,7 +59,7 @@ function AnswerPage() {
         <h2>Qué hacer esta semana</h2>
         <ol className="mt-4 list-decimal pl-6 space-y-2">
           <li>
-            Únete al <Link to="/circulo-familiar">Círculo Familiar</Link> del lunes a las 7:00 PM
+            Únete al <Link to="/circulo-familiar">La Sobremesa</Link> del lunes a las 7:00 PM
             (PT).
           </li>
           <li>

@@ -49,7 +49,7 @@ function TopicPage() {
         <h2>Qué puedes hacer esta semana</h2>
         <ol className="mt-4 list-decimal pl-6 space-y-2">
           <li>
-            Únete al Círculo Familiar del lunes a las 7:00 PM (PT) para escuchar a otras familias y
+            Únete a La Sobremesa del lunes a las 7:00 PM (PT) para escuchar a otras familias y
             ordenar tus ideas.
           </li>
           <li>

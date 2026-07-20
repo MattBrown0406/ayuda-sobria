@@ -53,8 +53,8 @@ export const Route = createFileRoute("/coaching-familiar")({
           298-8011.
         </p>
         <p>
-          ¿Aún no estás para una sesión privada? Empieza por el{" "}
-          <Link to="/registro">Círculo Familiar gratuito de los lunes</Link>.
+          ¿Aún no estás para una sesión privada? Empieza por{" "}
+          <Link to="/registro">La Sobremesa gratuita de los lunes</Link>.
         </p>
       </Prose>
       <CTAStrip />

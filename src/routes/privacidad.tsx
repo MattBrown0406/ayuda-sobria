@@ -20,7 +20,7 @@ export const Route = createFileRoute("/privacidad")({
       <Prose>
         <p>
           AyudaSobria respeta tu privacidad. Solo recopilamos la información necesaria para
-          responder a tus consultas y coordinar el acceso al Círculo Familiar, al coaching y a la
+          responder a tus consultas y coordinar el acceso a La Sobremesa, al coaching y a la
           intervención.
         </p>
         <h2>Qué recopilamos</h2>

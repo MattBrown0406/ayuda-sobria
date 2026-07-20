@@ -10,7 +10,7 @@ export const EMAIL = "matt@soberhelpline.com";
 function Header() {
   const [open, setOpen] = useState(false);
   const links = [
-    { to: "/circulo-familiar", label: "Círculo Familiar" },
+    { to: "/circulo-familiar", label: "La Sobremesa" },
     { to: "/coaching-familiar", label: "Coaching" },
     { to: "/intervencion", label: "Intervención" },
     { to: "/blog", label: "Blog" },
@@ -118,7 +118,7 @@ function Footer() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li>
               <Link to="/circulo-familiar" className="hover:text-foreground">
-                Círculo Familiar (lunes 7 PM PT)
+                La Sobremesa (lunes 7 PM PT)
               </Link>
             </li>
             <li>
@@ -288,7 +288,7 @@ export function CTAStrip() {
           className="rounded-xl border-2 border-primary bg-primary p-5 text-primary-foreground hover:bg-primary/90"
         >
           <p className="text-xs font-semibold uppercase tracking-wide opacity-90">Empieza aquí</p>
-          <p className="mt-1 text-lg font-semibold">Círculo Familiar gratis — lunes 7 PM PT</p>
+          <p className="mt-1 text-lg font-semibold">La Sobremesa gratis — lunes 7 PM PT</p>
         </Link>
         <Link
           to="/coaching-familiar"

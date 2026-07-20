@@ -28,7 +28,7 @@ function TestimoniosPage() {
       <Prose>
         <p>
           Las familias suelen llegar sintiéndose aisladas, confundidas o agotadas. El objetivo del
-          Círculo Familiar y del coaching es ayudarlas a pensar con más claridad, aprender límites
+          La Sobremesa y del coaching es ayudarlas a pensar con más claridad, aprender límites
           sostenibles y tomar decisiones con menos miedo.
         </p>
         <p>

@@ -3,7 +3,7 @@ import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 
 const FAQS = [
   {
-    q: "¿La reunión del Círculo Familiar realmente es gratis?",
+    q: "¿La reunión de La Sobremesa realmente es gratis?",
     a: "Sí. La reunión semanal del lunes 7:00 PM PT no tiene costo. Solo necesitas el enlace de Zoom.",
   },
   {
@@ -12,7 +12,7 @@ const FAQS = [
   },
   {
     q: "¿Ofrecen servicios en persona?",
-    a: "El Círculo Familiar y el coaching son en línea, para que familias de cualquier país o ciudad puedan participar.",
+    a: "La Sobremesa y el coaching son en línea, para que familias de cualquier país o ciudad puedan participar.",
   },
   {
     q: "¿Es confidencial?",
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/faq")({
       {
         name: "description",
         content:
-          "Respuestas rápidas sobre el Círculo Familiar, coaching, intervención y membresía en AyudaSobria.",
+          "Respuestas rápidas sobre La Sobremesa, coaching, intervención y membresía en AyudaSobria.",
       },
       { property: "og:title", content: "Preguntas frecuentes — AyudaSobria" },
       {

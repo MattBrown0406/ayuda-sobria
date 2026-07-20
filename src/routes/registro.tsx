@@ -5,13 +5,13 @@ import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 export const Route = createFileRoute("/registro")({
   head: () => ({
     meta: [
-      { title: "Registro — Círculo Familiar (lunes 7 PM PT) — AyudaSobria" },
+      { title: "Registro — La Sobremesa (lunes 7 PM PT) — AyudaSobria" },
       {
         name: "description",
         content:
-          "Reserva tu lugar en la reunión gratuita del Círculo Familiar cada lunes a las 7:00 PM hora del Pacífico. En español, por Zoom.",
+          "Reserva tu lugar en la reunión gratuita de La Sobremesa cada lunes a las 7:00 PM hora del Pacífico. En español, por Zoom.",
       },
-      { property: "og:title", content: "Registro al Círculo Familiar — AyudaSobria" },
+      { property: "og:title", content: "Registro a La Sobremesa — AyudaSobria" },
       {
         property: "og:description",
         content:
@@ -83,9 +83,9 @@ function RegistroPage() {
         <div className="mx-auto max-w-2xl px-4 py-12 space-y-4 text-muted-foreground">
           <p>
             Gracias, <strong className="text-foreground">{form.nombre || "familia"}</strong>.
-            Registramos tu lugar para el{" "}
+            Registramos tu lugar para{" "}
             <strong className="text-foreground">
-              Círculo Familiar del lunes a las 7:00 PM (hora del Pacífico)
+              La Sobremesa del lunes a las 7:00 PM (hora del Pacífico)
             </strong>
             .
           </p>
@@ -115,7 +115,7 @@ function RegistroPage() {
     <>
       <PageHero
         eyebrow="Reunión semanal · Gratis · En español"
-        title="Regístrate al Círculo Familiar"
+        title="Regístrate a La Sobremesa"
         description="Cada lunes a las 7:00 PM hora del Pacífico (EE. UU.), por Zoom. Para familias que aman a alguien con adicción."
       />
       <div className="mx-auto max-w-3xl px-4 py-12 grid gap-8 lg:grid-cols-[1fr_320px]">
@@ -192,7 +192,7 @@ function RegistroPage() {
             </p>
           </Field>
 
-          <Field label="¿Es tu primera vez en el Círculo Familiar?">
+          <Field label="¿Es tu primera vez en La Sobremesa?">
             <div className="flex gap-4 text-sm">
               <label className="inline-flex items-center gap-2">
                 <input

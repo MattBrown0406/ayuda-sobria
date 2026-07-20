@@ -14,7 +14,7 @@ export const Route = createFileRoute("/apoyo-familiar/$state/$city")({
     if (!loaderData)
       return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
     const t = `${loaderData.city.name}, ${loaderData.state.name}: apoyo familiar para la adicción`;
-    const d = `Familias en ${loaderData.city.name}, ${loaderData.state.name} encuentran apoyo en español, coaching y reuniones semanales del Círculo Familiar.`;
+    const d = `Familias en ${loaderData.city.name}, ${loaderData.state.name} encuentran apoyo en español, coaching y reuniones semanales de La Sobremesa.`;
     return {
       meta: [
         { title: t },
@@ -46,13 +46,13 @@ function CityPage() {
       <PageHero
         eyebrow={`${state.name} · Ciudad`}
         title={`Apoyo familiar en ${city.name}`}
-        description={`Recursos, coaching y reuniones del Círculo Familiar para familias hispanohablantes en ${city.name}, ${state.name}.`}
+        description={`Recursos, coaching y reuniones de La Sobremesa para familias hispanohablantes en ${city.name}, ${state.name}.`}
       />
       <div className="mx-auto max-w-3xl px-4 py-12">
         <h2 className="text-xl font-semibold">Cómo empezar esta semana</h2>
         <ol className="mt-4 space-y-3 text-muted-foreground">
           <li>
-            <strong className="text-foreground">1. Únete al Círculo Familiar.</strong> Reunión
+            <strong className="text-foreground">1. Únete a La Sobremesa.</strong> Reunión
             gratuita cada lunes 7:00 PM (hora del Pacífico) por Zoom. Puedes conectarte desde{" "}
             {city.name} sin desplazarte.
           </li>

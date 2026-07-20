@@ -12,7 +12,7 @@ export const Route = createFileRoute("/apoyo-familiar/$state/")({
     if (!loaderData)
       return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
     const t = `Apoyo familiar para la adicción en ${loaderData.state.name}`;
-    const d = `Familias en ${loaderData.state.name} encuentran apoyo en español, coaching y reuniones semanales del Círculo Familiar.`;
+    const d = `Familias en ${loaderData.state.name} encuentran apoyo en español, coaching y reuniones semanales de La Sobremesa.`;
     return {
       meta: [
         { title: t },
@@ -59,7 +59,7 @@ function StatePage() {
             Cómo trabajamos con familias en {state.name}
           </h3>
           <p className="mt-2">
-            Aunque estés en {state.name}, la reunión del <strong>Círculo Familiar</strong> se
+            Aunque estés en {state.name}, la reunión del <strong>La Sobremesa</strong> se
             realiza en línea cada lunes a las 7:00 PM (hora del Pacífico). No importa si vives en
             una ciudad grande o en una zona rural: tu familia puede empezar esta semana sin viajar.
           </p>

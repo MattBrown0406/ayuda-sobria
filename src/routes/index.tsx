@@ -48,7 +48,7 @@ const EMAIL = "matt@soberhelpline.com";
 function Nav() {
   const links = [
     { label: "Consulta de crisis", href: "#crisis" },
-    { label: "Círculo Familiar", href: "#circulo" },
+    { label: "La Sobremesa", href: "#circulo" },
     { label: "Intervención", href: "#intervencion" },
     { label: "Opciones de tratamiento", href: "#tratamiento" },
   ];
@@ -118,7 +118,7 @@ function Hero() {
           </h1>
           <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
             AyudaSobria acompaña a las familias a pasar de la preocupación a la acción. Únete al
-            Círculo Familiar los lunes, agenda una sesión privada si no puedes esperar, o evalúa si
+            La Sobremesa los lunes, agenda una sesión privada si no puedes esperar, o evalúa si
             es el momento de una intervención.
           </p>
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -128,7 +128,7 @@ function Hero() {
             >
               <Calendar className="mt-0.5 h-5 w-5 shrink-0" />
               <span className="text-sm font-semibold leading-snug">
-                Únete al Círculo Familiar gratuito
+                Únete a La Sobremesa gratuita
               </span>
             </a>
             <a
@@ -200,14 +200,14 @@ function Hero() {
               Empieza gratis. Avanza más rápido cuando la situación lo requiera.
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Si el apoyo del lunes es suficiente, comienza con el Círculo Familiar. Si tu familia
+              Si el apoyo del lunes es suficiente, comienza con La Sobremesa. Si tu familia
               necesita respuestas ya, reserva una sesión privada o evalúa la intervención.
             </p>
             <a
               href="#circulo"
               className="mt-3 inline-block text-sm font-semibold text-primary hover:underline"
             >
-              Regístrate en el Círculo Familiar →
+              Regístrate en La Sobremesa →
             </a>
           </div>
         </aside>
@@ -220,7 +220,7 @@ function PressureLevel() {
   const items = [
     {
       tag: "Empieza aquí cuando puede esperar",
-      title: "Círculo Familiar gratuito",
+      title: "La Sobremesa gratuita",
       body: "Usa la reunión gratuita de los lunes cuando tu familia necesita educación, perspectiva y un espacio de menor presión para hacer preguntas.",
       cta: "Únete a la reunión gratis",
       href: "#circulo",
@@ -298,7 +298,7 @@ function FAQ() {
     {
       tag: "Coaching privado",
       q: "¿Qué hacemos si no podemos esperar al lunes?",
-      a: "Si la situación no puede esperar al Círculo Familiar, reserva una sesión de coaching privada o llama para orientación. Usa el apoyo gratuito para estabilizarte, y la ayuda privada cuando el tiempo, la seguridad o una decisión concreta apremia.",
+      a: "Si la situación no puede esperar a La Sobremesa, reserva una sesión de coaching privada o llama para orientación. Usa el apoyo gratuito para estabilizarte, y la ayuda privada cuando el tiempo, la seguridad o una decisión concreta apremia.",
     },
     {
       tag: "Adicción en la pareja",
@@ -332,7 +332,7 @@ function FAQ() {
         </h2>
         <p className="mt-4 max-w-3xl text-muted-foreground">
           Las familias suelen llegar con una pregunta urgente. Estas respuestas te guían hacia el
-          Círculo Familiar, coaching privado o evaluación de intervención sin interrumpir el camino
+          La Sobremesa, coaching privado o evaluación de intervención sin interrumpir el camino
           de apoyo gratuito.
         </p>
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -392,7 +392,7 @@ function Situations() {
           <h3 className="font-semibold">Con apoyo constante</h3>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             {[
-              "Reuniones gratuitas del Círculo Familiar con otras familias que entienden",
+              "Reuniones gratuitas de La Sobremesa con otras familias que entienden",
               "Coaching por hora cuando necesitas guía uno a uno",
               "Educación clara que explica lo que estás viendo",
               "Un foro privado de familias que realmente comprenden",
@@ -430,7 +430,7 @@ function Programs() {
     {
       icon: Users,
       tag: "Apoyo semanal gratuito",
-      title: "«El Círculo Familiar» cada lunes a las 7 PM (hora del Pacífico)",
+      title: "«La Sobremesa» cada lunes a las 7 PM (hora del Pacífico)",
       body: "Apoyo grupal en vivo cada lunes para cualquier familiar. No requiere membresía.",
       cta: "Regístrate ahora",
       href: "/registro",
@@ -594,7 +594,7 @@ function FinalCTA() {
             href="#circulo"
             className="rounded-md bg-background px-5 py-3 text-sm font-semibold text-foreground hover:bg-background/90"
           >
-            Únete al Círculo Familiar
+            Únete a La Sobremesa
           </a>
           <a
             href="/coaching-familiar"
@@ -648,7 +648,7 @@ function Footer() {
           <h4 className="text-sm font-semibold">Programas</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li>
-              <a href="#circulo">Círculo Familiar</a>
+              <a href="#circulo">La Sobremesa</a>
             </li>
             <li>
               <a href="/coaching-familiar">Coaching privado</a>

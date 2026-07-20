@@ -4,13 +4,13 @@ import { PageHero, CTAStrip, Prose } from "@/components/site/SiteLayout";
 export const Route = createFileRoute("/circulo-familiar")({
   head: () => ({
     meta: [
-      { title: "Círculo Familiar — Reunión semanal en español — AyudaSobria" },
+      { title: "La Sobremesa — Reunión semanal en español — AyudaSobria" },
       {
         name: "description",
         content:
           "Reunión gratuita por Zoom cada lunes a las 7:00 PM (hora del Pacífico) para familias hispanohablantes afectadas por la adicción de un ser querido.",
       },
-      { property: "og:title", content: "Círculo Familiar — AyudaSobria" },
+      { property: "og:title", content: "La Sobremesa — AyudaSobria" },
       {
         property: "og:description",
         content: "Cada lunes 7:00 PM PT. Gratis. En español. Registro en línea disponible.",
@@ -23,11 +23,17 @@ export const Route = createFileRoute("/circulo-familiar")({
     <>
       <PageHero
         eyebrow="Reunión semanal · Gratis"
-        title="Círculo Familiar"
+        title="La Sobremesa"
         description="Cada lunes a las 7:00 PM (hora del Pacífico) por Zoom. En español. Para familias que aman a alguien con adicción."
       />
       <Prose>
-        <h2>Qué es el Círculo Familiar</h2>
+        <h2>Qué es La Sobremesa</h2>
+        <p>
+          La sobremesa es esa tradición nuestra de quedarse en la mesa conversando cuando la comida
+          ya terminó — ahí es donde la familia dice las cosas de verdad. La adicción suele ser lo
+          primero que nos roba esas conversaciones. Aquí las recuperamos, cada lunes.{" "}
+          <strong>Siempre hay un lugar en la mesa.</strong>
+        </p>
         <p>
           Es una reunión guiada donde otras familias comparten lo que están viviendo y reciben
           orientación práctica. No es un grupo de terapia y no reemplaza al tratamiento profesional.

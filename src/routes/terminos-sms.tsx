@@ -20,7 +20,7 @@ export const Route = createFileRoute("/terminos-sms")({
       <Prose>
         <p>
           Al enviar tu número de teléfono a AyudaSobria autorizas recibir mensajes de texto
-          relacionados con el Círculo Familiar, coaching e intervención. La frecuencia varía y puede
+          relacionados con La Sobremesa, coaching e intervención. La frecuencia varía y puede
           incluir mensajes recurrentes automatizados. Pueden aplicar tarifas de mensajes y datos de
           tu operador. El consentimiento no es condición de compra.
         </p>
