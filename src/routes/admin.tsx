@@ -238,7 +238,9 @@ function AdminPage() {
     participants.add(entry.participant_key);
     attendanceByOccurrence.set(entry.occurrence_id, participants);
   });
-  const occurrenceById = new Map(data.occurrences.map((occurrence: any) => [occurrence.id, occurrence]));
+  const occurrenceById = new Map<string, any>(
+    data.occurrences.map((occurrence: any) => [occurrence.id, occurrence]),
+  );
   const publishedCount = data.recordings.filter((recording: any) => recording.published).length;
 
   return (
