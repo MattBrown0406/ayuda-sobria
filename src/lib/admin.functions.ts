@@ -33,7 +33,8 @@ export const adminGetOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin: typedAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = typedAdmin as any;
 
     const [regs, memberships, coaching, profiles, occurrences, attendance, recordings] =
       await Promise.all([
@@ -134,7 +135,8 @@ export const adminUpdateZoomRecording = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin: typedAdmin2 } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = typedAdmin2 as any;
     const { data: current, error: readError } = await supabaseAdmin
       .from("zoom_recordings")
       .select("id, public_url")
@@ -169,7 +171,8 @@ export const adminDeleteRegistration = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin: typedAdmin3 } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = typedAdmin3 as any;
     const { data: registration, error: registrationError } = await supabaseAdmin
       .from("meeting_registrations")
       .select("id,occurrence_id,zoom_registrant_id,zoom_registration_status")
