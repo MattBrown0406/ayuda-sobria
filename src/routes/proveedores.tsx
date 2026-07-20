@@ -30,11 +30,19 @@ export const Route = createFileRoute("/proveedores")({
         <h2>Cómo colaboramos</h2>
         <ul>
           <li>Referencias de familias listas para tratamiento.</li>
-          <li>Directorio en español para pacientes y familias.</li>
+          <li>
+            Un directorio en español para pacientes y familias (en construcción — escríbenos para
+            aparecer en él desde el inicio).
+          </li>
           <li>
             Apoyo clínico a distancia para la familia mientras el paciente está en tratamiento.
           </li>
         </ul>
+        <p>
+          Las familias no pagan por referencias, y no aceptamos comisiones de centros de
+          tratamiento por referir pacientes. Colaboramos únicamente donde el interés de la familia
+          y el paciente esté primero.
+        </p>
         <p>
           Escríbenos a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>.
         </p>

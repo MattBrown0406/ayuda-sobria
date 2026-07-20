@@ -153,7 +153,7 @@ function Hero() {
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <span>Apoyo gratuito los lunes a las 7 PM (Pacífico)</span>
             <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
-            <span>Sesiones privadas desde US$150 (USD)</span>
+            <span>Sesiones privadas: US$150 (US$125 para miembros)</span>
             <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
             <a href={PHONE_HREF} className="font-semibold text-primary">
               Llama {PHONE_DISPLAY}
@@ -417,7 +417,7 @@ function Situations() {
             Explorar la membresía
           </a>
           <p className="mt-2 text-xs text-muted-foreground">
-            Prueba gratis de 7 días, luego $14.99 USD/mes. Cancela cuando quieras.
+            US$14.99 al mes o US$149 al año. Cancela cuando quieras.
           </p>
         </div>
       </div>
@@ -447,7 +447,7 @@ function Programs() {
       icon: MessageCircle,
       tag: "Ayuda privada",
       title: "Coaching familiar cuando necesitas orientación uno a uno",
-      body: "El coaching privado está para cuando el grupo y la membresía no bastan. Sesiones de emergencia desde US$150 (USD).",
+      body: "El coaching privado está para cuando el grupo y la membresía no bastan. US$150 por sesión (US$125 para miembros).",
       cta: "Ver opciones de coaching",
       href: "/coaching-familiar",
     },

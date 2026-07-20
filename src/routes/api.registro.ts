@@ -11,21 +11,27 @@ function clientIp(request: Request) {
   );
 }
 
-async function verifyTurnstile(token: string, request: Request) {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return { configured: false, valid: false };
-  const formData = new FormData();
-  formData.set("secret", secret);
-  formData.set("response", token);
-  const ip = clientIp(request);
-  if (ip !== "unknown") formData.set("remoteip", ip);
-  const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-    method: "POST",
-    body: formData,
-  });
-  if (!response.ok) return { configured: true, valid: false };
-  const result = (await response.json()) as { success?: boolean };
-  return { configured: true, valid: result.success === true };
+// Layered anti-bot defenses, no third-party captcha:
+// 1. Honeypot — a hidden "website" field humans never see; bots fill it.
+// 2. Time trap — the form reports how long it was open; bots submit in <3s.
+// 3. Rate limit — per-IP cap so a runaway script can't flood the inbox.
+// Trapped submissions get a fake "ok" so bots don't learn what failed.
+const MIN_FORM_MS = 3_000;
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const submissionLog = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entries = (submissionLog.get(ip) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  entries.push(now);
+  submissionLog.set(ip, entries);
+  if (submissionLog.size > 5000) {
+    for (const [key, times] of submissionLog) {
+      if (times.every((t) => now - t >= RATE_LIMIT_WINDOW_MS)) submissionLog.delete(key);
+    }
+  }
+  return entries.length > RATE_LIMIT_MAX;
 }
 
 function clean(value: unknown, max = 1000) {
@@ -69,21 +75,18 @@ export const Route = createFileRoute("/api/registro")({
         }
 
         const record = body as Record<string, unknown>;
+        // Honeypot: hidden field only bots fill in.
         if (clean(record.website)) return Response.json({ ok: true });
-        const turnstile = await verifyTurnstile(clean(record.turnstileToken, 2048), request);
-        if (!turnstile.configured) {
-          return Response.json(
-            { error: "La verificación de seguridad no está configurada todavía." },
-            { status: 503 },
-          );
+        // Time trap: humans don't complete this form in under 3 seconds.
+        const formMs = Number(record.formMs);
+        if (!Number.isFinite(formMs) || formMs < MIN_FORM_MS) {
+          return Response.json({ ok: true });
         }
-        if (!turnstile.valid) {
+        // Rate limit per IP.
+        if (isRateLimited(clientIp(request))) {
           return Response.json(
-            {
-              error:
-                "No pudimos verificar que eres una persona. Actualiza la página e inténtalo de nuevo.",
-            },
-            { status: 400 },
+            { error: "Demasiados intentos. Espera unos minutos e inténtalo de nuevo." },
+            { status: 429 },
           );
         }
 

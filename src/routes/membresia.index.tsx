@@ -43,19 +43,24 @@ function MembresiaPage() {
   const [planType, setPlanType] = useState<"monthly" | "annual">("monthly");
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) {
-        setSession(null);
-        return;
-      }
-      setSession({ userId: data.user.id });
-      try {
-        const m = await getFn();
-        setMembership(m);
-      } catch {
-        /* ignore */
-      }
-    });
+    supabase.auth
+      .getUser()
+      .then(async ({ data }) => {
+        if (!data.user) {
+          setSession(null);
+          return;
+        }
+        setSession({ userId: data.user.id });
+        try {
+          const m = await getFn();
+          setMembership(m);
+        } catch {
+          /* ignore */
+        }
+      })
+      // Never leave the page stuck on "Cargando…" — if the auth check fails,
+      // degrade to the signed-out state so the visitor still sees the signup path.
+      .catch(() => setSession(null));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s ? { userId: s.user.id } : null);
       router.invalidate();

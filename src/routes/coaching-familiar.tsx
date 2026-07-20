@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero, CTAStrip, Prose } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/coaching-familiar")({
@@ -11,7 +11,10 @@ export const Route = createFileRoute("/coaching-familiar")({
           "Sesiones privadas uno a uno para familias que necesitan claridad rápida sobre la adicción de un ser querido.",
       },
       { property: "og:title", content: "Coaching familiar — AyudaSobria" },
-      { property: "og:description", content: "Sesiones privadas en español, desde US$150 (USD)." },
+      {
+        property: "og:description",
+        content: "Sesiones privadas en español. US$150 por sesión (US$125 para miembros).",
+      },
       { property: "og:url", content: "https://ayudasobria.com/coaching-familiar" },
     ],
     links: [{ rel: "canonical", href: "https://ayudasobria.com/coaching-familiar" }],
@@ -24,6 +27,12 @@ export const Route = createFileRoute("/coaching-familiar")({
         description="Cuando no puedes esperar al lunes. Sesiones privadas con orientación concreta."
       />
       <Prose>
+        <h2>Con quién trabajarás</h2>
+        <p>
+          Las sesiones son con <strong>Matt Brown</strong>, intervencionista profesional con más de
+          22 años acompañando a familias frente a la adicción de un ser querido — desde la primera
+          conversación difícil hasta la intervención formal y el ingreso a tratamiento.
+        </p>
         <h2>Para quién</h2>
         <p>
           Para la familia — no para la persona con adicción. Padres, parejas, hijos adultos y
@@ -35,11 +44,17 @@ export const Route = createFileRoute("/coaching-familiar")({
           <li>
             Por Zoom, en español y tratado con privacidad, sujeto a límites legales y de seguridad.
           </li>
-          <li>Desde US$150 (USD) la sesión.</li>
+          <li>US$150 (USD) por sesión · US$125 para miembros activos.</li>
         </ul>
         <p>
-          Reserva escribiendo a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o
-          al (458) 298-8011.
+          <Link to="/coaching-pago">Reserva y paga tu sesión en línea</Link>, o si prefieres
+          coordinar primero, escribe a{" "}
+          <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o llama al (458)
+          298-8011.
+        </p>
+        <p>
+          ¿Aún no estás para una sesión privada? Empieza por el{" "}
+          <Link to="/registro">Círculo Familiar gratuito de los lunes</Link>.
         </p>
       </Prose>
       <CTAStrip />

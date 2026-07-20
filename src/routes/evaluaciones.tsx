@@ -46,7 +46,10 @@ function EvaluacionesPage() {
         </p>
         <h2>Próximo paso</h2>
         <ul>
-          <li>Ante peligro inmediato, llama al 911 o al servicio local de emergencias.</li>
+          <li>
+            Ante peligro inmediato, llama al 911 o al servicio local de emergencias. En EE. UU.,
+            para crisis emocionales llama o envía texto al 988 (oprime 2 para español).
+          </li>
           <li>
             Para ordenar la situación, consulta las{" "}
             <Link to="/respuestas-familia">respuestas para familias</Link>.

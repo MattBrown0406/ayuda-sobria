@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/registro")({
@@ -25,12 +25,13 @@ export const Route = createFileRoute("/registro")({
   component: RegistroPage,
 });
 
-const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
-
 function RegistroPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  // Anti-bot time trap: humans take a while to fill a form; bots submit
+  // instantly. The server silently drops submissions that arrive too fast.
+  const [openedAt] = useState(() => Date.now());
   const [form, setForm] = useState({
     nombre: "",
     email: "",
@@ -43,16 +44,6 @@ function RegistroPage() {
     website: "",
   });
 
-  useEffect(() => {
-    if (!TURNSTILE_SITE_KEY || document.getElementById("cloudflare-turnstile-script")) return;
-    const script = document.createElement("script");
-    script.id = "cloudflare-turnstile-script";
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-  }, []);
-
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
@@ -60,23 +51,12 @@ function RegistroPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!TURNSTILE_SITE_KEY) {
-      setError("La verificación de seguridad no está configurada todavía.");
-      return;
-    }
-    const turnstileToken = String(
-      new FormData(e.currentTarget as HTMLFormElement).get("cf-turnstile-response") || "",
-    );
-    if (!turnstileToken) {
-      setError("Completa la verificación de seguridad antes de enviar el formulario.");
-      return;
-    }
     setLoading(true);
     try {
       const response = await fetch("/api/registro", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, turnstileToken }),
+        body: JSON.stringify({ ...form, formMs: Date.now() - openedAt }),
       });
       const result = (await response.json().catch(() => ({}))) as { error?: string };
       if (!response.ok) throw new Error(result.error || "No se pudo enviar el registro.");
@@ -269,14 +249,6 @@ function RegistroPage() {
               onChange={(e) => update("website", e.target.value)}
             />
           </div>
-
-          {TURNSTILE_SITE_KEY ? (
-            <div className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-language="es" />
-          ) : (
-            <p role="alert" className="text-sm text-destructive">
-              La verificación de seguridad debe configurarse antes de publicar este formulario.
-            </p>
-          )}
 
           <button
             type="submit"

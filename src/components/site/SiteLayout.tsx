@@ -277,7 +277,8 @@ export function CTAStrip() {
       <div className="mx-auto max-w-7xl px-4 pt-8">
         <p className="rounded-lg border border-destructive/30 bg-background p-4 text-sm text-muted-foreground">
           <strong className="text-foreground">¿Hay peligro inmediato o sobredosis?</strong> Llama al
-          911 o al servicio local de emergencias. En Estados Unidos, usa el 988 para una crisis
+          911 o al servicio local de emergencias. En Estados Unidos, llama o envía texto al 988
+          (oprime 2 para español) para una crisis
           suicida o de salud mental. Estos servicios no sustituyen atención de emergencia.
         </p>
       </div>

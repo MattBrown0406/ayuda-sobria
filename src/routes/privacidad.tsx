@@ -54,6 +54,13 @@ export const Route = createFileRoute("/privacidad")({
           sensibles que no sean necesarios para responderte. El sitio no está dirigido a menores de
           13 años y no buscamos recopilar intencionalmente sus datos personales.
         </p>
+        <h2>Mensajes SMS</h2>
+        <p>
+          Si aceptas recibir SMS, usamos tu número solo para enviarte el enlace de Zoom,
+          recordatorios y avisos del servicio. Nunca compartimos tu número con terceros con fines
+          de mercadeo y puedes darte de baja respondiendo <strong>STOP</strong> (ver{" "}
+          <a href="/terminos-sms">términos SMS</a>).
+        </p>
         <h2>Limitaciones de seguridad</h2>
         <p>
           Aplicamos medidas razonables para proteger la información, pero ningún sistema de internet
