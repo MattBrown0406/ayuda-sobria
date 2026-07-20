@@ -25,8 +25,6 @@ export const Route = createFileRoute("/registro")({
   component: RegistroPage,
 });
 
-const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
-
 function RegistroPage() {
   const [submitted, setSubmitted] = useState(false);
   const [registrationResult, setRegistrationResult] = useState<{
@@ -57,16 +55,6 @@ function RegistroPage() {
     website: "",
   });
 
-  useEffect(() => {
-    if (!TURNSTILE_SITE_KEY || document.getElementById("cloudflare-turnstile-script")) return;
-    const script = document.createElement("script");
-    script.id = "cloudflare-turnstile-script";
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-  }, []);
-
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
@@ -74,23 +62,12 @@ function RegistroPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!TURNSTILE_SITE_KEY) {
-      setError("La verificación de seguridad no está configurada todavía.");
-      return;
-    }
-    const turnstileToken = String(
-      new FormData(e.currentTarget as HTMLFormElement).get("cf-turnstile-response") || "",
-    );
-    if (!turnstileToken) {
-      setError("Completa la verificación de seguridad antes de enviar el formulario.");
-      return;
-    }
     setLoading(true);
     try {
       const response = await fetch("/api/zoom/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, formMs: Date.now() - openedAt, turnstileToken }),
+        body: JSON.stringify({ ...form, formMs: Date.now() - openedAt }),
       });
       const result = (await response.json().catch(() => ({}))) as {
         error?: string;
@@ -383,17 +360,9 @@ function RegistroPage() {
             />
           </div>
 
-          {TURNSTILE_SITE_KEY ? (
-            <div className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-language="es" />
-          ) : (
-            <p role="alert" className="text-sm text-destructive">
-              La verificación de seguridad debe configurarse antes de publicar este formulario.
-            </p>
-          )}
-
           <button
             type="submit"
-            disabled={loading || !TURNSTILE_SITE_KEY}
+            disabled={loading}
             className="w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
           >
             {loading ? "Enviando…" : "Reservar mi lugar del lunes"}
