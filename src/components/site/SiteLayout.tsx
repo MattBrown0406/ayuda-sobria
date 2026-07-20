@@ -218,9 +218,15 @@ function Footer() {
       </div>
       <div className="border-t border-border py-4">
         <p className="mx-auto max-w-7xl px-4 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} AyudaSobria. Contenido educativo. No sustituye atención
-          médica de emergencia. Si tu familia enfrenta una crisis inmediata, llama al 911 o al
-          servicio local de emergencias.
+          <Link
+            to="/admin"
+            aria-label="Admin login"
+            className="text-muted-foreground no-underline hover:text-muted-foreground focus:outline-none"
+          >
+            © {new Date().getFullYear()} AyudaSobria.
+          </Link>{" "}
+          Contenido educativo. No sustituye atención médica de emergencia. Si tu familia
+          enfrenta una crisis inmediata, llama al 911 o al servicio local de emergencias.
         </p>
       </div>
     </footer>
