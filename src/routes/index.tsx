@@ -151,7 +151,7 @@ function Hero() {
             </a>
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            <span>Apoyo gratuito los lunes a las 7 PM (Pacífico)</span>
+            <span>Apoyo gratuito los lunes a las 8 PM (Pacífico)</span>
             <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
             <span>Sesiones privadas: US$150 (US$125 para miembros)</span>
             <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
@@ -427,7 +427,7 @@ function Programs() {
     {
       icon: Users,
       tag: "Apoyo semanal gratuito",
-      title: "«La Sobremesa» cada lunes a las 7 PM (hora del Pacífico)",
+      title: "«La Sobremesa» cada lunes a las 8 PM (hora del Pacífico)",
       body: "Apoyo grupal en vivo cada lunes para cualquier familiar. No requiere membresía.",
       cta: "Regístrate ahora",
       href: "/registro",

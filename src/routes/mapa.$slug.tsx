@@ -48,7 +48,7 @@ function StepPage() {
         <h2>Qué hacer esta semana</h2>
         <ol>
           <li>
-            Únete al <Link to="/circulo-familiar">La Sobremesa</Link> del lunes 7:00 PM (PT).
+            Únete al <Link to="/circulo-familiar">La Sobremesa</Link> del lunes 8:00 PM (PT).
           </li>
           <li>
             Reserva <Link to="/coaching-familiar">coaching privado</Link> si no puedes esperar.

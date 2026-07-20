@@ -91,7 +91,7 @@ The 29 Spanish pages now answer their actual questions, but the English pages co
 
 - Provider directory stays out of the Spanish sitemap, navigation and global footer.
 - A treatment-type page must never imply that a listed English provider serves Spanish-speaking families.
-- All meeting references remain Monday at 7 PM Pacific.
+- All AyudaSobria meeting references use Monday at 8 PM Pacific; this is an additional Spanish meeting and does not replace or alter SoberHelpline’s English 7 PM meeting.
 - Spanish copy uses AyudaSobria’s `(458) 298-8011` number.
 - Transactional and thin pages remain noindexed.
 - New Spanish member benefits must be exercised end to end before being advertised.

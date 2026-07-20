@@ -41,7 +41,7 @@ I'll generate pages programmatically from data files rather than hand-writing 27
 
 - **Blog posts** (~140) — you said skip these
 - **AI chat backends** — the AI tool pages will be landing pages that describe the tool and link to a "coming soon" or contact CTA. Wiring real AI (translator, coaches) is a separate build and needs Lovable Cloud + AI Gateway. I can add it after, per tool.
-- **Zoom-automated meeting scheduler** — already discussed; still waiting on your Zoom credentials.
+- **Zoom scheduler lifecycle:** implemented for the additional Spanish Monday 8 PM meeting, including a tracked hourly GitHub Actions workflow; still requires reviewed migrations, Zoom/server and GitHub secrets, deployment, and live testing. It does not replace SoberHelpline's English 7 PM meeting.
 - **Member login / billing portal** — real auth + payments is a separate project; I'll build the marketing/landing pages for membership only.
 - **City/country data verification** — Spanish-language crisis hotlines and local resources will be included only where I can source them reliably; otherwise the page focuses on family support + the Monday 8 PM PT meeting (which is timezone-friendly for all of LATAM). Tell me if you have preferred local resource lists per country.
 

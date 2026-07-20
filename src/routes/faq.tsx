@@ -4,7 +4,7 @@ import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 const FAQS = [
   {
     q: "¿La reunión de La Sobremesa realmente es gratis?",
-    a: "Sí. La reunión semanal del lunes 7:00 PM PT no tiene costo. Solo necesitas el enlace de Zoom.",
+    a: "Sí. La reunión semanal del lunes 8:00 PM PT no tiene costo. Solo necesitas el enlace de Zoom.",
   },
   {
     q: "¿Necesito que mi ser querido acepte ayuda primero?",

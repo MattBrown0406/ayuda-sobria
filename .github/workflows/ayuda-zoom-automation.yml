@@ -1,0 +1,71 @@
+name: AyudaSobria Zoom automation
+
+on:
+  schedule:
+    # Hourly. The application computes the correct Monday 8 PM Pacific occurrence,
+    # including DST, and every action is idempotent/retryable.
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ayuda-zoom-automation
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      AYUDA_ZOOM_BASE_URL: ${{ secrets.AYUDA_ZOOM_BASE_URL }}
+      ZOOM_AUTOMATION_SECRET: ${{ secrets.ZOOM_AUTOMATION_SECRET }}
+    steps:
+      - name: Schedule and process La Sobremesa
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${AYUDA_ZOOM_BASE_URL:-}" || -z "${ZOOM_AUTOMATION_SECRET:-}" ]]; then
+            echo "AyudaSobria Zoom automation is not configured; add both repository secrets."
+            exit 1
+          fi
+
+          base_url="${AYUDA_ZOOM_BASE_URL%/}"
+          auth_header="Authorization: Bearer ${ZOOM_AUTOMATION_SECRET}"
+
+          schedule_json="$({
+            curl --silent --show-error --fail-with-body \
+              --request POST \
+              --header "$auth_header" \
+              --header "Content-Type: application/json" \
+              --data '{}' \
+              "$base_url/api/zoom/schedule"
+          })"
+
+          occurrence_id="$(SCHEDULE_JSON="$schedule_json" python - <<'PY'
+          import json, os
+          body = json.loads(os.environ["SCHEDULE_JSON"])
+          occurrence_id = body.get("occurrence", {}).get("id")
+          if not isinstance(occurrence_id, str) or not occurrence_id:
+              raise SystemExit("Scheduling response omitted occurrence.id")
+          print(occurrence_id)
+          PY
+          )"
+
+          post_action() {
+            local payload="$1"
+            curl --silent --show-error --fail-with-body \
+              --request POST \
+              --header "$auth_header" \
+              --header "Content-Type: application/json" \
+              --data "$payload" \
+              "$base_url/api/zoom/automation" >/dev/null
+          }
+
+          post_action "{\"action\":\"auto-register\",\"occurrenceId\":\"$occurrence_id\"}"
+          post_action '{"action":"reminders"}'
+          post_action '{"action":"followups"}'
+
+          echo "AyudaSobria Zoom automation completed for occurrence $occurrence_id."

@@ -5,17 +5,17 @@ import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 export const Route = createFileRoute("/registro")({
   head: () => ({
     meta: [
-      { title: "Registro — La Sobremesa (lunes 7 PM PT) — AyudaSobria" },
+      { title: "Registro — La Sobremesa (lunes 8 PM PT) — AyudaSobria" },
       {
         name: "description",
         content:
-          "Reserva tu lugar en la reunión gratuita de La Sobremesa cada lunes a las 7:00 PM hora del Pacífico. En español, por Zoom.",
+          "Reserva tu lugar en la reunión gratuita de La Sobremesa cada lunes a las 8:00 PM hora del Pacífico. En español, por Zoom.",
       },
       { property: "og:title", content: "Registro a La Sobremesa — AyudaSobria" },
       {
         property: "og:description",
         content:
-          "Reunión semanal en español para familias afectadas por la adicción. Cada lunes 7:00 PM PT por Zoom.",
+          "Reunión semanal en español para familias afectadas por la adicción. Cada lunes 8:00 PM PT por Zoom.",
       },
       { name: "robots", content: "noindex, follow" },
       { property: "og:url", content: "https://ayudasobria.com/registro" },
@@ -29,6 +29,10 @@ const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | u
 
 function RegistroPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [registrationResult, setRegistrationResult] = useState<{
+    joinUrl?: string;
+    emailSent?: boolean;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   // Anti-bot time trap: humans take a while to fill a form; bots submit
@@ -41,7 +45,14 @@ function RegistroPage() {
     pais: "",
     relacion: "",
     situacion: "",
+    pregunta: "",
     primera: "si",
+    autoRegister: false,
+    requestFollowUp: false,
+    preferredContactDate: "",
+    preferredContactTime: "",
+    preferredTimezone: "America/Los_Angeles",
+    consentConfidentiality: false,
     consentSms: false,
     website: "",
   });
@@ -76,13 +87,23 @@ function RegistroPage() {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/registro", {
+      const response = await fetch("/api/zoom/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, formMs: Date.now() - openedAt, turnstileToken }),
       });
-      const result = (await response.json().catch(() => ({}))) as { error?: string };
-      if (!response.ok) throw new Error(result.error || "No se pudo enviar el registro.");
+      const result = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        accepted?: boolean;
+        emailSent?: boolean;
+      };
+      if (!response.ok) throw new Error(result.error || "No se pudo completar el registro.");
+      if (result.accepted === false) {
+        throw new Error(
+          "No se pudo confirmar el registro. Revisa el formulario e inténtalo de nuevo.",
+        );
+      }
+      setRegistrationResult(result);
       setSubmitted(true);
     } catch (submissionError) {
       setError(
@@ -99,23 +120,34 @@ function RegistroPage() {
     return (
       <>
         <PageHero
-          eyebrow="Registro recibido"
-          title="Recibimos tu solicitud"
-          description="Revisaremos tu registro y te enviaremos por correo la información para entrar a La Sobremesa."
+          eyebrow="Registro confirmado"
+          title="Tu lugar está reservado"
+          description={
+            registrationResult?.emailSent
+              ? "Enviamos tu enlace personal por correo."
+              : "Tu registro quedó guardado, pero el correo con tu enlace no pudo enviarse."
+          }
         />
         <div className="mx-auto max-w-2xl px-4 py-12 space-y-4 text-muted-foreground">
           <p>
             Gracias, <strong className="text-foreground">{form.nombre || "familia"}</strong>.
             Recibimos tu solicitud para{" "}
             <strong className="text-foreground">
-              La Sobremesa del lunes a las 7:00 PM (hora del Pacífico)
+              La Sobremesa del lunes a las 8:00 PM (hora del Pacífico)
             </strong>
             .
           </p>
           <p>
-            Revisaremos los datos y enviaremos a{" "}
-            <strong className="text-foreground">{form.email}</strong> la información para entrar. Si
-            no recibes respuesta, llama o escribe directamente antes del lunes.
+            {registrationResult?.emailSent ? (
+              <>
+                Enviamos la información a <strong className="text-foreground">{form.email}</strong>.
+              </>
+            ) : (
+              <>
+                El correo automático no llegó. Escríbenos o llama para que podamos ayudarte a
+                recuperar el acceso; el enlace personal no se muestra públicamente por seguridad.
+              </>
+            )}
           </p>
           <p>
             Si necesitas hablar con alguien antes del lunes, escribe a{" "}
@@ -139,7 +171,7 @@ function RegistroPage() {
       <PageHero
         eyebrow="Reunión semanal · Gratis · En español"
         title="Regístrate a La Sobremesa"
-        description="Cada lunes a las 7:00 PM hora del Pacífico (EE. UU.), por Zoom. Para familias que aman a alguien con adicción."
+        description="Cada lunes a las 8:00 PM hora del Pacífico (EE. UU.), por Zoom. Para familias que aman a alguien con adicción."
       />
       <div className="mx-auto max-w-3xl px-4 py-12 grid gap-8 lg:grid-cols-[1fr_320px]">
         <form
@@ -215,7 +247,19 @@ function RegistroPage() {
             </p>
           </Field>
 
-          <Field label="¿Es tu primera vez en La Sobremesa?">
+          <Field label="¿Qué pregunta te gustaría que respondamos? (opcional)">
+            <textarea
+              value={form.pregunta}
+              onChange={(e) => update("pregunta", e.target.value)}
+              className={`${inputCls} min-h-24`}
+              placeholder="Por ejemplo: ¿cómo pongo un límite sin abandonar a mi ser querido?"
+            />
+          </Field>
+
+          <fieldset className="space-y-1.5">
+            <legend className="text-sm font-medium text-foreground">
+              ¿Es tu primera vez en La Sobremesa?
+            </legend>
             <div className="flex gap-4 text-sm">
               <label className="inline-flex items-center gap-2">
                 <input
@@ -236,7 +280,76 @@ function RegistroPage() {
                 No, ya he asistido
               </label>
             </div>
-          </Field>
+          </fieldset>
+
+          <label className="flex items-start gap-3 text-sm text-muted-foreground">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={form.autoRegister}
+              onChange={(e) => update("autoRegister", e.target.checked)}
+            />
+            <span>
+              Quiero quedar registrado/a automáticamente para las próximas reuniones de La
+              Sobremesa.
+            </span>
+          </label>
+
+          <label className="flex items-start gap-3 text-sm text-muted-foreground">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={form.requestFollowUp}
+              onChange={(e) => update("requestFollowUp", e.target.checked)}
+            />
+            <span>Quiero que Matt se comunique conmigo para hablar de mi situación.</span>
+          </label>
+
+          {form.requestFollowUp && (
+            <div className="grid gap-4 rounded-lg border border-border bg-secondary/30 p-4 sm:grid-cols-2">
+              <Field label="Fecha preferida">
+                <input
+                  type="date"
+                  value={form.preferredContactDate}
+                  onChange={(e) => update("preferredContactDate", e.target.value)}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Hora preferida">
+                <input
+                  type="time"
+                  value={form.preferredContactTime}
+                  onChange={(e) => update("preferredContactTime", e.target.value)}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Zona horaria">
+                <select
+                  value={form.preferredTimezone}
+                  onChange={(e) => update("preferredTimezone", e.target.value)}
+                  className={inputCls}
+                >
+                  <option value="America/Los_Angeles">Pacífico</option>
+                  <option value="America/Denver">Montaña</option>
+                  <option value="America/Chicago">Central</option>
+                  <option value="America/New_York">Este</option>
+                </select>
+              </Field>
+            </div>
+          )}
+
+          <label className="flex items-start gap-3 text-sm text-muted-foreground">
+            <input
+              type="checkbox"
+              className="mt-1"
+              required
+              checked={form.consentConfidentiality}
+              onChange={(e) => update("consentConfidentiality", e.target.checked)}
+            />
+            <span>
+              Entiendo que debo respetar la privacidad y confidencialidad de las demás familias. *
+            </span>
+          </label>
 
           <label className="flex items-start gap-3 text-sm text-muted-foreground">
             <input
@@ -246,12 +359,8 @@ function RegistroPage() {
               onChange={(e) => update("consentSms", e.target.checked)}
             />
             <span>
-              Acepto que AyudaSobria me contacte por correo o SMS para coordinar el acceso y enviar
-              recordatorios. Consulta los{" "}
-              <a className="text-primary hover:underline" href="/terminos-sms">
-                términos SMS
-              </a>{" "}
-              y la{" "}
+              Acepto que AyudaSobria me contacte por correo para coordinar el acceso, enviar
+              recordatorios y compartir seguimiento relacionado. Consulta la{" "}
               <a className="text-primary hover:underline" href="/privacidad">
                 política de privacidad
               </a>
@@ -307,7 +416,7 @@ function RegistroPage() {
                 <strong className="text-foreground">Día:</strong> cada lunes
               </li>
               <li>
-                <strong className="text-foreground">Hora:</strong> 7:00 PM PT (hora del Pacífico)
+                <strong className="text-foreground">Hora:</strong> 8:00 PM PT (hora del Pacífico)
               </li>
               <li>
                 <strong className="text-foreground">Duración:</strong> 60–75 minutos

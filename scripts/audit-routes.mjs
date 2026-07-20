@@ -17,6 +17,9 @@ const rootSource = fs.readFileSync("src/routes/__root.tsx", "utf8");
 const homeSource = fs.readFileSync("src/routes/index.tsx", "utf8");
 const membershipSource = fs.readFileSync("src/routes/membresia.index.tsx", "utf8");
 const registrationSource = fs.readFileSync("src/routes/registro.tsx", "utf8");
+const meetingSource = ["src/routes/registro.tsx", "src/routes/circulo-familiar.tsx"]
+  .map((file) => fs.readFileSync(file, "utf8"))
+  .join("\n");
 const layoutRoutes = [
   "apoyo-familiar.tsx",
   "apoyo-familiar.$state.tsx",
@@ -31,7 +34,10 @@ const layoutRoutes = [
 ];
 const checks = [
   [!source.includes('lang="en"'), "No English document language declarations"],
-  [!source.includes("8:00 PM") && !source.includes("8 PM"), "Meeting time is consistently 7 PM"],
+  [
+    meetingSource.includes("8:00 PM") && !meetingSource.includes("7:00 PM"),
+    "Spanish-facing La Sobremesa routes say Monday at 8 PM Pacific",
+  ],
   [
     !source.includes("4582988008") && !source.includes("298-8008"),
     "Legacy English phone number is absent",
