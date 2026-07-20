@@ -5,7 +5,8 @@ import { membershipAllowsRecordingAccess } from "@/lib/zoom/recording-access";
 export const getMemberZoomRecordings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin: typedAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = typedAdmin as any;
     const now = new Date().toISOString();
     const { data: memberships, error: membershipError } = await supabaseAdmin
       .from("memberships")
