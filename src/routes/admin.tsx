@@ -659,7 +659,7 @@ function AdminPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </SiteLayout>
+    </div>
   );
 }
 
