@@ -36,6 +36,16 @@ export const adminGetOverview = createServerFn({ method: "GET" })
     const { supabaseAdmin: typedAdmin } = await import("@/integrations/supabase/client.server");
     const supabaseAdmin = typedAdmin as any;
 
+    const safe = async (p: Promise<any>) => {
+      try {
+        const r = await p;
+        if (r.error) return { data: [], error: null };
+        return r;
+      } catch {
+        return { data: [], error: null };
+      }
+    };
+
     const [regs, memberships, coaching, profiles, occurrences, attendance, recordings] =
       await Promise.all([
         supabaseAdmin
@@ -45,24 +55,16 @@ export const adminGetOverview = createServerFn({ method: "GET" })
         supabaseAdmin.from("memberships").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("coaching_orders").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("profiles").select("id, first_name, last_name"),
-        supabaseAdmin
+        safe(supabaseAdmin
           .from("zoom_occurrences")
           .select("*")
           .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
-          .order("starts_at", { ascending: false }),
-        supabaseAdmin.from("zoom_attendance").select("*").order("joined_at", { ascending: false }),
-        supabaseAdmin.from("zoom_recordings").select("*").order("started_at", { ascending: false }),
+          .order("starts_at", { ascending: false })),
+        safe(supabaseAdmin.from("zoom_attendance").select("*").order("joined_at", { ascending: false })),
+        safe(supabaseAdmin.from("zoom_recordings").select("*").order("started_at", { ascending: false })),
       ]);
 
-    for (const result of [
-      regs,
-      memberships,
-      coaching,
-      profiles,
-      occurrences,
-      attendance,
-      recordings,
-    ]) {
+    for (const result of [regs, memberships, coaching, profiles]) {
       if (result.error) throw new Error(result.error.message);
     }
 
@@ -71,7 +73,7 @@ export const adminGetOverview = createServerFn({ method: "GET" })
     const occurrenceIds = new Set((occurrences.data ?? []).map((occurrence: any) => occurrence.id));
     const zoomRegistrations = ((regs.data ?? []) as any[]).filter(
       (registration: any) =>
-        registration.occurrence_id !== null && occurrenceIds.has(registration.occurrence_id),
+        !registration.occurrence_id || occurrenceIds.has(registration.occurrence_id),
     );
     const zoomAttendance = (attendance.data ?? []).filter((entry: any) =>
       occurrenceIds.has(entry.occurrence_id),
