@@ -30,6 +30,7 @@ import { Route as EvaluacionesRouteImport } from './routes/evaluaciones'
 import { Route as CoachingPagoRouteImport } from './routes/coaching-pago'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
@@ -150,6 +151,11 @@ const CirculoFamiliarRoute = CirculoFamiliarRouteImport.update({
   path: '/circulo-familiar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -225,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRouteWithChildren
@@ -262,6 +269,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRouteWithChildren
@@ -300,6 +308,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRouteWithChildren
@@ -339,6 +348,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/auth'
+    | '/blog'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -376,6 +386,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/auth'
+    | '/blog'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -413,6 +424,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/auth'
+    | '/blog'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -451,6 +463,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
   AuthRoute: typeof AuthRoute
+  BlogRoute: typeof BlogRoute
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
   CoachingPagoRoute: typeof CoachingPagoRouteWithChildren
@@ -622,6 +635,13 @@ declare module '@tanstack/react-router' {
       path: '/circulo-familiar'
       fullPath: '/circulo-familiar'
       preLoaderRoute: typeof CirculoFamiliarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -834,6 +854,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
   AuthRoute: AuthRoute,
+  BlogRoute: BlogRoute,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
   CoachingPagoRoute: CoachingPagoRouteWithChildren,
