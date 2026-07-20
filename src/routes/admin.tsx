@@ -190,7 +190,7 @@ function AdminPage() {
             Sign in with an authorized account to continue.
           </p>
           <Button onClick={() => navigate({ to: "/auth", search: { redirect: "/admin" } })}>
-            Iniciar sesión
+            Sign in
           </Button>
         </div>
       </SiteLayout>
