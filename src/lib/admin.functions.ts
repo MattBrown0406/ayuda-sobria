@@ -33,7 +33,8 @@ export const adminGetOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin: typedAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = typedAdmin as any;
 
     const [regs, memberships, coaching, profiles, occurrences, attendance, recordings] =
       await Promise.all([
@@ -66,22 +67,22 @@ export const adminGetOverview = createServerFn({ method: "GET" })
     }
 
     const profileMap = new Map<string, { first_name: string | null; last_name: string | null }>();
-    (profiles.data ?? []).forEach((profile) => profileMap.set(profile.id, profile));
-    const occurrenceIds = new Set((occurrences.data ?? []).map((occurrence) => occurrence.id));
-    const zoomRegistrations = (regs.data ?? []).filter(
-      (registration) =>
+    (profiles.data ?? []).forEach((profile: any) => profileMap.set(profile.id, profile));
+    const occurrenceIds = new Set((occurrences.data ?? []).map((occurrence: any) => occurrence.id));
+    const zoomRegistrations = ((regs.data ?? []) as any[]).filter(
+      (registration: any) =>
         registration.occurrence_id !== null && occurrenceIds.has(registration.occurrence_id),
     );
-    const zoomAttendance = (attendance.data ?? []).filter((entry) =>
+    const zoomAttendance = (attendance.data ?? []).filter((entry: any) =>
       occurrenceIds.has(entry.occurrence_id),
     );
-    const zoomRecordings = (recordings.data ?? []).filter((recording) =>
+    const zoomRecordings = (recordings.data ?? []).filter((recording: any) =>
       occurrenceIds.has(recording.occurrence_id),
     );
 
     return {
       registrations: zoomRegistrations,
-      memberships: (memberships.data ?? []).map((membership) => ({
+      memberships: (memberships.data ?? []).map((membership: any) => ({
         ...membership,
         profile: profileMap.get(membership.user_id) ?? null,
       })),
@@ -92,7 +93,7 @@ export const adminGetOverview = createServerFn({ method: "GET" })
       stats: {
         registrations: zoomRegistrations.length,
         activeMembers:
-          memberships.data?.filter((membership) => membership.status === "active").length ?? 0,
+          memberships.data?.filter((membership: any) => membership.status === "active").length ?? 0,
         coachingOrders: coaching.data?.length ?? 0,
       },
     };
@@ -134,7 +135,8 @@ export const adminUpdateZoomRecording = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin: typedAdmin2 } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = typedAdmin2 as any;
     const { data: current, error: readError } = await supabaseAdmin
       .from("zoom_recordings")
       .select("id, public_url")
@@ -169,7 +171,8 @@ export const adminDeleteRegistration = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin: typedAdmin3 } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = typedAdmin3 as any;
     const { data: registration, error: registrationError } = await supabaseAdmin
       .from("meeting_registrations")
       .select("id,occurrence_id,zoom_registrant_id,zoom_registration_status")

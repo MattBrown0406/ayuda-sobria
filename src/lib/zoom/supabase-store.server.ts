@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database, Json } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types";
 import {
   AYUDA_ZOOM_SERIES_KEY,
   type AutomationStore,
@@ -14,9 +14,9 @@ import {
   type ZoomRecordingCompleted,
 } from "./types.ts";
 
-// The generated Database type is updated in the same change. Keeping this alias centralized
-// avoids weakening browser-side clients; this store is imported only by server routes.
-type Client = SupabaseClient<Database>;
+// The zoom_* tables are managed outside the generated Database type, so this
+// store uses an untyped SupabaseClient. It is imported only by server routes.
+type Client = SupabaseClient<any, any, any>;
 
 function occurrence(row: Record<string, unknown>): Occurrence {
   return {
@@ -403,7 +403,7 @@ export function createSupabaseZoomStore(
         .limit(5000);
       assertNoError(error);
       const seen = new Set<string>();
-      return (data ?? []).flatMap((row) => {
+      return (data ?? []).flatMap((row: any) => {
         const email = row.email.trim().toLowerCase();
         if (!email || seen.has(email)) return [];
         seen.add(email);
@@ -430,7 +430,7 @@ export function createSupabaseZoomStore(
       assertNoError(error);
       const rows = data ?? [];
       const ids = [
-        ...new Set(rows.flatMap((row) => (row.occurrence_id ? [row.occurrence_id] : []))),
+        ...new Set(rows.flatMap((row: any) => (row.occurrence_id ? [row.occurrence_id] : []))),
       ];
       if (!ids.length) return [];
       const { data: occurrences, error: occurrenceError } = await client
@@ -440,12 +440,12 @@ export function createSupabaseZoomStore(
         .in("id", ids);
       assertNoError(occurrenceError);
       const byId = new Map(
-        (occurrences ?? []).map((row) => [
+        (occurrences ?? []).map((row: any) => [
           row.id,
           occurrence(row as unknown as Record<string, unknown>),
         ]),
       );
-      return rows.flatMap((row) => {
+      return rows.flatMap((row: any) => {
         const item = row.occurrence_id ? byId.get(row.occurrence_id) : undefined;
         return item && row.zoom_join_url
           ? [
@@ -495,15 +495,15 @@ export function createSupabaseZoomStore(
       });
       assertNoError(error);
       const rows = data ?? [];
-      const registrationIds = [...new Set(rows.map((row) => row.registration_id))];
+      const registrationIds = [...new Set(rows.map((row: any) => row.registration_id))];
       if (!registrationIds.length) return [];
       const { data: registrations, error: registrationError } = await client
         .from("meeting_registrations")
         .select("id,full_name,email")
         .in("id", registrationIds);
       assertNoError(registrationError);
-      const byId = new Map((registrations ?? []).map((row) => [row.id, row]));
-      return rows.flatMap((row) => {
+      const byId = new Map((registrations ?? []).map((row: any) => [row.id, row]));
+      return rows.flatMap((row: any) => {
         const registrant = byId.get(row.registration_id);
         return registrant
           ? [
