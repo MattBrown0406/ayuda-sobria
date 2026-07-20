@@ -69,8 +69,8 @@ export const adminGetOverview = createServerFn({ method: "GET" })
     const profileMap = new Map<string, { first_name: string | null; last_name: string | null }>();
     (profiles.data ?? []).forEach((profile: any) => profileMap.set(profile.id, profile));
     const occurrenceIds = new Set((occurrences.data ?? []).map((occurrence: any) => occurrence.id));
-    const zoomRegistrations = (regs.data ?? []).filter(
-      (registration) =>
+    const zoomRegistrations = ((regs.data ?? []) as any[]).filter(
+      (registration: any) =>
         registration.occurrence_id !== null && occurrenceIds.has(registration.occurrence_id),
     );
     const zoomAttendance = (attendance.data ?? []).filter((entry: any) =>
