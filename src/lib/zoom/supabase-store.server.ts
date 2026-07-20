@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database, Json } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types";
 import {
   AYUDA_ZOOM_SERIES_KEY,
   type AutomationStore,
@@ -14,9 +14,9 @@ import {
   type ZoomRecordingCompleted,
 } from "./types.ts";
 
-// The generated Database type is updated in the same change. Keeping this alias centralized
-// avoids weakening browser-side clients; this store is imported only by server routes.
-type Client = SupabaseClient<Database>;
+// The zoom_* tables are managed outside the generated Database type, so this
+// store uses an untyped SupabaseClient. It is imported only by server routes.
+type Client = SupabaseClient<any, any, any>;
 
 function occurrence(row: Record<string, unknown>): Occurrence {
   return {
