@@ -46,7 +46,7 @@ function BlogPost() {
   return (
     <>
       <PageHero eyebrow="Blog" title={post.title} description={post.description} />
-      <article className="mx-auto max-w-3xl px-4 py-12 prose prose-neutral prose-headings:font-semibold prose-headings:tracking-tight prose-h2:mt-10 prose-h2:text-2xl prose-h3:mt-6 prose-h3:text-xl prose-a:text-primary prose-a:underline prose-li:my-1 max-w-none">
+      <article className="mx-auto max-w-3xl px-4 py-12 text-base leading-relaxed text-foreground/90 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-1 [&_a]:text-primary [&_a]:underline [&_blockquote]:mt-4 [&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_strong]:font-semibold [&_hr]:my-8 [&_hr]:border-border">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
         <hr className="my-10" />
         <p className="text-sm text-muted-foreground">
