@@ -67,22 +67,22 @@ export const adminGetOverview = createServerFn({ method: "GET" })
     }
 
     const profileMap = new Map<string, { first_name: string | null; last_name: string | null }>();
-    (profiles.data ?? []).forEach((profile) => profileMap.set(profile.id, profile));
-    const occurrenceIds = new Set((occurrences.data ?? []).map((occurrence) => occurrence.id));
+    (profiles.data ?? []).forEach((profile: any) => profileMap.set(profile.id, profile));
+    const occurrenceIds = new Set((occurrences.data ?? []).map((occurrence: any) => occurrence.id));
     const zoomRegistrations = (regs.data ?? []).filter(
       (registration) =>
         registration.occurrence_id !== null && occurrenceIds.has(registration.occurrence_id),
     );
-    const zoomAttendance = (attendance.data ?? []).filter((entry) =>
+    const zoomAttendance = (attendance.data ?? []).filter((entry: any) =>
       occurrenceIds.has(entry.occurrence_id),
     );
-    const zoomRecordings = (recordings.data ?? []).filter((recording) =>
+    const zoomRecordings = (recordings.data ?? []).filter((recording: any) =>
       occurrenceIds.has(recording.occurrence_id),
     );
 
     return {
       registrations: zoomRegistrations,
-      memberships: (memberships.data ?? []).map((membership) => ({
+      memberships: (memberships.data ?? []).map((membership: any) => ({
         ...membership,
         profile: profileMap.get(membership.user_id) ?? null,
       })),
@@ -93,7 +93,7 @@ export const adminGetOverview = createServerFn({ method: "GET" })
       stats: {
         registrations: zoomRegistrations.length,
         activeMembers:
-          memberships.data?.filter((membership) => membership.status === "active").length ?? 0,
+          memberships.data?.filter((membership: any) => membership.status === "active").length ?? 0,
         coachingOrders: coaching.data?.length ?? 0,
       },
     };

@@ -233,13 +233,13 @@ function AdminPage() {
   }
 
   const attendanceByOccurrence = new Map<string, Set<string>>();
-  data.attendance.forEach((entry) => {
+  data.attendance.forEach((entry: any) => {
     const participants = attendanceByOccurrence.get(entry.occurrence_id) ?? new Set<string>();
     participants.add(entry.participant_key);
     attendanceByOccurrence.set(entry.occurrence_id, participants);
   });
-  const occurrenceById = new Map(data.occurrences.map((occurrence) => [occurrence.id, occurrence]));
-  const publishedCount = data.recordings.filter((recording) => recording.published).length;
+  const occurrenceById = new Map(data.occurrences.map((occurrence: any) => [occurrence.id, occurrence]));
+  const publishedCount = data.recordings.filter((recording: any) => recording.published).length;
 
   return (
     <SiteLayout>
@@ -303,7 +303,7 @@ function AdminPage() {
                     {data.occurrences.length === 0 && (
                       <EmptyTable colSpan={7}>Aún no hay reuniones programadas.</EmptyTable>
                     )}
-                    {data.occurrences.map((occurrence) => {
+                    {data.occurrences.map((occurrence: any) => {
                       const registrationCount = data.registrations.filter(
                         (registration) => registration.occurrence_id === occurrence.id,
                       ).length;
@@ -400,7 +400,7 @@ function AdminPage() {
                     {data.registrations.length === 0 && (
                       <EmptyTable colSpan={9}>Sin inscripciones aún.</EmptyTable>
                     )}
-                    {data.registrations.map((registration) => {
+                    {data.registrations.map((registration: any) => {
                       const occurrence = registration.occurrence_id
                         ? occurrenceById.get(registration.occurrence_id)
                         : null;
@@ -524,7 +524,7 @@ function AdminPage() {
                     {data.attendance.length === 0 && (
                       <EmptyTable colSpan={6}>Zoom todavía no ha reportado asistencia.</EmptyTable>
                     )}
-                    {data.attendance.map((entry) => {
+                    {data.attendance.map((entry: any) => {
                       const occurrence = occurrenceById.get(entry.occurrence_id);
                       return (
                         <tr key={entry.id} className="border-t">
@@ -560,7 +560,7 @@ function AdminPage() {
               </Card>
             ) : (
               <div className="grid gap-4">
-                {data.recordings.map((recording) => (
+                {data.recordings.map((recording: any) => (
                   <RecordingEditor
                     key={`${recording.id}-${recording.updated_at}`}
                     recording={recording}
@@ -590,7 +590,7 @@ function AdminPage() {
                     {data.memberships.length === 0 && (
                       <EmptyTable colSpan={7}>Sin membresías aún.</EmptyTable>
                     )}
-                    {data.memberships.map((membership) => (
+                    {data.memberships.map((membership: any) => (
                       <tr key={membership.id} className="border-t">
                         <td className="p-3">{formatDateTime(membership.created_at)}</td>
                         <td className="p-3">
@@ -640,7 +640,7 @@ function AdminPage() {
                     {data.coaching.length === 0 && (
                       <EmptyTable colSpan={6}>Sin pagos aún.</EmptyTable>
                     )}
-                    {data.coaching.map((order) => (
+                    {data.coaching.map((order: any) => (
                       <tr key={order.id} className="border-t">
                         <td className="p-3">{formatDateTime(order.created_at)}</td>
                         <td className="p-3">{order.customer_name ?? "—"}</td>
