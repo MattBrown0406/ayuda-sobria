@@ -30,6 +30,7 @@ import { Route as EvaluacionesRouteImport } from './routes/evaluaciones'
 import { Route as CoachingPagoRouteImport } from './routes/coaching-pago'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as IndexRouteImport } from './routes/index'
@@ -41,6 +42,7 @@ import { Route as MembresiaCanceladoRouteImport } from './routes/membresia.cance
 import { Route as MapaSlugRouteImport } from './routes/mapa.$slug'
 import { Route as HerramientasIaSlugRouteImport } from './routes/herramientas-ia.$slug'
 import { Route as CoachingPagoExitoRouteImport } from './routes/coaching-pago.exito'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
 import { Route as ApiRegistroRouteImport } from './routes/api.registro'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
@@ -150,6 +152,11 @@ const CirculoFamiliarRoute = CirculoFamiliarRouteImport.update({
   path: '/circulo-familiar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -205,6 +212,11 @@ const CoachingPagoExitoRoute = CoachingPagoExitoRouteImport.update({
   path: '/exito',
   getParentRoute: () => CoachingPagoRoute,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
 const ApoyoFamiliarStateRoute = ApoyoFamiliarStateRouteImport.update({
   id: '/$state',
   path: '/$state',
@@ -225,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRouteWithChildren
@@ -248,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/testimonios': typeof TestimoniosRoute
   '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/coaching-pago/exito': typeof CoachingPagoExitoRoute
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -262,6 +276,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRouteWithChildren
@@ -285,6 +300,7 @@ export interface FileRoutesByTo {
   '/testimonios': typeof TestimoniosRoute
   '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/coaching-pago/exito': typeof CoachingPagoExitoRoute
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -300,6 +316,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/coaching-pago': typeof CoachingPagoRouteWithChildren
@@ -323,6 +340,7 @@ export interface FileRoutesById {
   '/testimonios': typeof TestimoniosRoute
   '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/coaching-pago/exito': typeof CoachingPagoExitoRoute
   '/herramientas-ia/$slug': typeof HerramientasIaSlugRoute
   '/mapa/$slug': typeof MapaSlugRoute
@@ -339,6 +357,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/auth'
+    | '/blog'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -362,6 +381,7 @@ export interface FileRouteTypes {
     | '/testimonios'
     | '/api/registro'
     | '/apoyo-familiar/$state'
+    | '/blog/$slug'
     | '/coaching-pago/exito'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -376,6 +396,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/auth'
+    | '/blog'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -399,6 +420,7 @@ export interface FileRouteTypes {
     | '/testimonios'
     | '/api/registro'
     | '/apoyo-familiar/$state'
+    | '/blog/$slug'
     | '/coaching-pago/exito'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -413,6 +435,7 @@ export interface FileRouteTypes {
     | '/'
     | '/apoyo-familiar'
     | '/auth'
+    | '/blog'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/coaching-pago'
@@ -436,6 +459,7 @@ export interface FileRouteTypes {
     | '/testimonios'
     | '/api/registro'
     | '/apoyo-familiar/$state'
+    | '/blog/$slug'
     | '/coaching-pago/exito'
     | '/herramientas-ia/$slug'
     | '/mapa/$slug'
@@ -451,6 +475,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
   AuthRoute: typeof AuthRoute
+  BlogRoute: typeof BlogRouteWithChildren
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
   CoachingPagoRoute: typeof CoachingPagoRouteWithChildren
@@ -624,6 +649,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CirculoFamiliarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -701,6 +733,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoachingPagoExitoRouteImport
       parentRoute: typeof CoachingPagoRoute
     }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
+    }
     '/apoyo-familiar/$state': {
       id: '/apoyo-familiar/$state'
       path: '/$state'
@@ -747,6 +786,16 @@ const ApoyoFamiliarRouteChildren: ApoyoFamiliarRouteChildren = {
 const ApoyoFamiliarRouteWithChildren = ApoyoFamiliarRoute._addFileChildren(
   ApoyoFamiliarRouteChildren,
 )
+
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface CoachingPagoRouteChildren {
   CoachingPagoExitoRoute: typeof CoachingPagoExitoRoute
@@ -834,6 +883,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
   AuthRoute: AuthRoute,
+  BlogRoute: BlogRouteWithChildren,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
   CoachingPagoRoute: CoachingPagoRouteWithChildren,

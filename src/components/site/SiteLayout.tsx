@@ -16,6 +16,7 @@ function Header() {
     { to: "/mapa", label: "Mapa" },
     { to: "/herramientas-ia", label: "Guías educativas" },
     { to: "/membresia", label: "Membresía" },
+    { to: "/blog", label: "Blog" },
     { to: "/recursos", label: "Recursos" },
   ] as const;
   return (
