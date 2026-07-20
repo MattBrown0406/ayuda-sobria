@@ -307,7 +307,7 @@ function AdminPage() {
                     )}
                     {data.occurrences.map((occurrence: any) => {
                       const registrationCount = data.registrations.filter(
-                        (registration) => registration.occurrence_id === occurrence.id,
+                        (registration: any) => registration.occurrence_id === occurrence.id,
                       ).length;
                       return (
                         <tr key={occurrence.id} className="border-t align-top">
