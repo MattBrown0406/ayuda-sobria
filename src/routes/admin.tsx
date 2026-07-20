@@ -22,7 +22,7 @@ import {
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Portal de administración — Ayuda Sobria" },
+      { title: "Admin Portal — Ayuda Sobria" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -34,12 +34,12 @@ type Recording = Overview["recordings"][number];
 
 type PageStatus = "loading" | "unauth" | "forbidden" | "error" | "ready";
 
-const dateTimeFormatter = new Intl.DateTimeFormat("es-US", {
+const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
   dateStyle: "medium",
   timeStyle: "short",
   timeZone: "America/Los_Angeles",
 });
-const dateFormatter = new Intl.DateTimeFormat("es-US", {
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
   dateStyle: "medium",
   timeZone: "America/Los_Angeles",
 });
@@ -59,23 +59,23 @@ function formatLocalDate(value: string | null) {
 function occurrenceLabel(status: string) {
   return (
     {
-      scheduling: "Programando",
-      ready: "Lista",
-      started: "En curso",
-      ended: "Finalizada",
-      failed: "Falló",
+      scheduling: "Scheduling",
+      ready: "Ready",
+      started: "In progress",
+      ended: "Ended",
+      failed: "Failed",
     }[status] ?? status
   );
 }
 
 function registrationLabel(status: string) {
   return (
-    { registering: "Registrando", registered: "Registrado", failed: "Falló" }[status] ?? status
+    { registering: "Registering", registered: "Registered", failed: "Failed" }[status] ?? status
   );
 }
 
 function emailLabel(status: string) {
-  return { pending: "Pendiente", sent: "Enviado", failed: "Falló" }[status] ?? status;
+  return { pending: "Pending", sent: "Sent", failed: "Failed" }[status] ?? status;
 }
 
 function statusVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
@@ -120,7 +120,7 @@ function AdminPage() {
       setStatus("ready");
     } catch (error) {
       console.error(error);
-      setPageError(error instanceof Error ? error.message : "No se pudo cargar el panel.");
+      setPageError(error instanceof Error ? error.message : "Could not load the dashboard.");
       setStatus("error");
     } finally {
       setRefreshing(false);
@@ -129,23 +129,23 @@ function AdminPage() {
 
   useEffect(() => {
     void refresh();
-    // La comprobación de acceso y el resumen se cargan una sola vez al abrir el portal.
+    // Access check and overview load once when the portal opens.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleDelete(id: string) {
     if (
       !confirm(
-        "¿Revocar el acceso de Zoom y eliminar esta inscripción? Esta acción no se puede deshacer.",
+        "Revoke Zoom access and delete this registration? This cannot be undone.",
       )
     )
       return;
     try {
       await del({ data: { id } });
-      toast.success("Inscripción eliminada");
+      toast.success("Registration deleted");
       await refresh({ preserveStatus: true });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "No se pudo eliminar la inscripción");
+      toast.error(error instanceof Error ? error.message : "Could not delete the registration");
     }
   }
 
@@ -164,7 +164,7 @@ function AdminPage() {
         publicPasscode: draft.publicPasscode,
       },
     });
-    toast.success(published ? "Grabación guardada y publicada" : "Grabación guardada sin publicar");
+    toast.success(published ? "Recording saved and published" : "Recording saved (unpublished)");
     await refresh({ preserveStatus: true });
   }
 
@@ -175,7 +175,7 @@ function AdminPage() {
           className="mx-auto max-w-6xl px-4 py-16 text-center text-muted-foreground"
           role="status"
         >
-          Cargando el portal de administración…
+          Loading admin portal…
         </div>
       </SiteLayout>
     );
@@ -185,9 +185,9 @@ function AdminPage() {
     return (
       <SiteLayout>
         <div className="mx-auto max-w-md space-y-4 px-4 py-16 text-center">
-          <h1 className="text-2xl font-semibold">Portal de administración</h1>
+          <h1 className="text-2xl font-semibold">Admin Portal</h1>
           <p className="text-muted-foreground">
-            Inicia sesión con una cuenta autorizada para continuar.
+            Sign in with an authorized account to continue.
           </p>
           <Button onClick={() => navigate({ to: "/auth", search: { redirect: "/admin" } })}>
             Iniciar sesión
@@ -201,10 +201,10 @@ function AdminPage() {
     return (
       <SiteLayout>
         <div className="mx-auto max-w-md space-y-4 px-4 py-16 text-center">
-          <h1 className="text-2xl font-semibold">Sin acceso</h1>
-          <p className="text-muted-foreground">Tu cuenta no tiene permisos de administrador.</p>
+          <h1 className="text-2xl font-semibold">No access</h1>
+          <p className="text-muted-foreground">Your account does not have admin permissions.</p>
           <Link to="/" className="text-primary underline">
-            Volver al inicio
+            Back to home
           </Link>
         </div>
       </SiteLayout>
@@ -215,13 +215,13 @@ function AdminPage() {
     return (
       <SiteLayout>
         <div className="mx-auto max-w-md space-y-4 px-4 py-16 text-center">
-          <h1 className="text-2xl font-semibold">No pudimos cargar el portal</h1>
+          <h1 className="text-2xl font-semibold">We could not load the portal</h1>
           <p className="text-muted-foreground">
-            {pageError ?? "Ocurrió un error inesperado. Intenta nuevamente."}
+            {pageError ?? "An unexpected error occurred. Please try again."}
           </p>
-          <Button onClick={() => void refresh()}>Intentar de nuevo</Button>
+          <Button onClick={() => void refresh()}>Try again</Button>
           <p className="text-sm text-muted-foreground">
-            Si el problema continúa, llama al{" "}
+            If the problem persists, call{" "}
             <a className="font-medium text-primary underline" href="tel:+14582988011">
               458-298-8011
             </a>
@@ -248,9 +248,9 @@ function AdminPage() {
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-10">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div>
-            <h1 className="text-3xl font-semibold">Portal de administración</h1>
+            <h1 className="text-3xl font-semibold">Admin Portal</h1>
             <p className="text-muted-foreground">
-              Ayuda Sobria — panel interno de membresías y La Sobremesa
+              Ayuda Sobria — internal dashboard for memberships and La Sobremesa
             </p>
           </div>
           <Button
@@ -259,51 +259,51 @@ function AdminPage() {
             disabled={refreshing}
           >
             <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-            {refreshing ? "Actualizando…" : "Actualizar datos"}
+            {refreshing ? "Refreshing…" : "Refresh data"}
           </Button>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard title="Inscripciones" value={data.stats.registrations} />
-          <StatCard title="Miembros activos" value={data.stats.activeMembers} />
-          <StatCard title="Pagos de coaching" value={data.stats.coachingOrders} />
-          <StatCard title="Grabaciones publicadas" value={publishedCount} />
+          <StatCard title="Registrations" value={data.stats.registrations} />
+          <StatCard title="Active members" value={data.stats.activeMembers} />
+          <StatCard title="Coaching payments" value={data.stats.coachingOrders} />
+          <StatCard title="Published recordings" value={publishedCount} />
         </div>
 
         <Tabs defaultValue="occurrences">
           <div className="overflow-x-auto pb-1">
             <TabsList className="h-auto min-w-max flex-wrap justify-start">
-              <TabsTrigger value="occurrences">Reuniones</TabsTrigger>
-              <TabsTrigger value="registrations">Inscritos y preguntas</TabsTrigger>
-              <TabsTrigger value="attendance">Asistencia</TabsTrigger>
-              <TabsTrigger value="recordings">Grabaciones</TabsTrigger>
-              <TabsTrigger value="memberships">Membresías</TabsTrigger>
+              <TabsTrigger value="occurrences">Meetings</TabsTrigger>
+              <TabsTrigger value="registrations">Registrants & questions</TabsTrigger>
+              <TabsTrigger value="attendance">Attendance</TabsTrigger>
+              <TabsTrigger value="recordings">Recordings</TabsTrigger>
+              <TabsTrigger value="memberships">Memberships</TabsTrigger>
               <TabsTrigger value="coaching">Coaching</TabsTrigger>
             </TabsList>
           </div>
 
           <TabsContent value="occurrences" className="space-y-3">
             <SectionIntro
-              title="Reuniones de La Sobremesa"
-              description="Programación, estado de Zoom, enlaces y asistencia de cada lunes a las 8:00 p. m. (hora del Pacífico)."
+              title="La Sobremesa meetings"
+              description="Schedule, Zoom status, links, and attendance for each Monday at 8:00 PM Pacific."
             />
             <Card>
               <CardContent className="overflow-x-auto p-0">
                 <table className="w-full min-w-[850px] text-sm">
                   <thead className="bg-muted/50 text-left">
                     <tr>
-                      <th className="p-3">Fecha programada</th>
-                      <th className="p-3">Estado</th>
+                      <th className="p-3">Scheduled date</th>
+                      <th className="p-3">Status</th>
                       <th className="p-3">Zoom ID</th>
-                      <th className="p-3">Inscritos</th>
-                      <th className="p-3">Asistentes</th>
-                      <th className="p-3">Enlaces</th>
-                      <th className="p-3">Detalle operativo</th>
+                      <th className="p-3">Registered</th>
+                      <th className="p-3">Attendees</th>
+                      <th className="p-3">Links</th>
+                      <th className="p-3">Operations detail</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.occurrences.length === 0 && (
-                      <EmptyTable colSpan={7}>Aún no hay reuniones programadas.</EmptyTable>
+                      <EmptyTable colSpan={7}>No meetings scheduled yet.</EmptyTable>
                     )}
                     {data.occurrences.map((occurrence: any) => {
                       const registrationCount = data.registrations.filter(
@@ -316,7 +316,7 @@ function AdminPage() {
                               {formatLocalDate(occurrence.occurrence_date)}
                             </div>
                             <div className="text-xs text-muted-foreground">
-                              {formatDateTime(occurrence.starts_at)} · Pacífico
+                              {formatDateTime(occurrence.starts_at)} · Pacific
                             </div>
                           </td>
                           <td className="p-3">
@@ -340,10 +340,10 @@ function AdminPage() {
                                   rel="noreferrer"
                                   className="inline-flex items-center gap-1 text-primary hover:underline"
                                 >
-                                  Participante <ExternalLink className="h-3 w-3" />
+                                  Attendee <ExternalLink className="h-3 w-3" />
                                 </a>
                               ) : (
-                                <span className="text-muted-foreground">Sin enlace</span>
+                                <span className="text-muted-foreground">No link</span>
                               )}
                               {occurrence.start_url && (
                                 <a
@@ -352,7 +352,7 @@ function AdminPage() {
                                   rel="noreferrer"
                                   className="inline-flex items-center gap-1 text-primary hover:underline"
                                 >
-                                  Anfitrión <ExternalLink className="h-3 w-3" />
+                                  Host <ExternalLink className="h-3 w-3" />
                                 </a>
                               )}
                             </div>
@@ -361,7 +361,7 @@ function AdminPage() {
                             {occurrence.failure_reason ? (
                               <span className="text-destructive">{occurrence.failure_reason}</span>
                             ) : occurrence.ended_at ? (
-                              `Finalizó ${formatDateTime(occurrence.ended_at)}`
+                              `Ended ${formatDateTime(occurrence.ended_at)}`
                             ) : (
                               "—"
                             )}
@@ -377,30 +377,30 @@ function AdminPage() {
 
           <TabsContent value="registrations" className="space-y-3">
             <SectionIntro
-              title="Inscritos, preguntas y entregas"
-              description="Revisa lo que preguntó cada persona y confirma el estado real de su registro y correo."
+              title="Registrants, questions & deliveries"
+              description="Review each person's question and confirm the real status of their registration and email."
             />
             <Card>
               <CardContent className="overflow-x-auto p-0">
                 <table className="w-full min-w-[1200px] text-sm">
                   <thead className="bg-muted/50 text-left">
                     <tr>
-                      <th className="p-3">Fecha</th>
-                      <th className="p-3">Persona</th>
-                      <th className="p-3">Contacto</th>
-                      <th className="p-3">Reunión</th>
-                      <th className="p-3">Pregunta</th>
-                      <th className="p-3">Registro Zoom</th>
-                      <th className="p-3">Correo</th>
-                      <th className="p-3">Preferencias</th>
+                      <th className="p-3">Date</th>
+                      <th className="p-3">Person</th>
+                      <th className="p-3">Contact</th>
+                      <th className="p-3">Meeting</th>
+                      <th className="p-3">Question</th>
+                      <th className="p-3">Zoom registration</th>
+                      <th className="p-3">Email</th>
+                      <th className="p-3">Preferences</th>
                       <th className="p-3">
-                        <span className="sr-only">Acciones</span>
+                        <span className="sr-only">Actions</span>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.registrations.length === 0 && (
-                      <EmptyTable colSpan={9}>Sin inscripciones aún.</EmptyTable>
+                      <EmptyTable colSpan={9}>No registrations yet.</EmptyTable>
                     )}
                     {data.registrations.map((registration: any) => {
                       const occurrence = registration.occurrence_id
@@ -414,7 +414,7 @@ function AdminPage() {
                           <td className="p-3">
                             <div className="font-medium">{registration.full_name}</div>
                             <div className="text-xs text-muted-foreground">
-                              {registration.relationship ?? "Relación no indicada"}
+                              {registration.relationship ?? "Relationship not provided"}
                             </div>
                           </td>
                           <td className="p-3">
@@ -436,10 +436,10 @@ function AdminPage() {
                           <td className="p-3">
                             {occurrence
                               ? formatLocalDate(occurrence.occurrence_date)
-                              : "Sin asignar"}
+                              : "Unassigned"}
                           </td>
                           <td className="max-w-sm whitespace-pre-wrap p-3">
-                            {registration.submitted_question || "Sin pregunta"}
+                            {registration.submitted_question || "No question"}
                           </td>
                           <td className="p-3">
                             <Badge variant={statusVariant(registration.zoom_registration_status)}>
@@ -464,22 +464,22 @@ function AdminPage() {
                           <td className="p-3 text-xs">
                             <div>
                               {registration.auto_register
-                                ? "Registro semanal"
-                                : "Solo esta reunión"}
+                                ? "Weekly registration"
+                                : "This meeting only"}
                             </div>
                             {registration.request_follow_up && (
                               <div className="mt-1">
-                                <div>Solicitó seguimiento</div>
+                                <div>Requested follow-up</div>
                                 <div className="text-muted-foreground">
-                                  Preferencia: {registration.preferred_contact_date || "sin fecha"}{" "}
-                                  · {registration.preferred_contact_time || "sin hora"} ·{" "}
-                                  {registration.preferred_timezone || "sin zona horaria"}
+                                  Preference: {registration.preferred_contact_date || "no date"}{" "}
+                                  · {registration.preferred_contact_time || "no time"} ·{" "}
+                                  {registration.preferred_timezone || "no timezone"}
                                 </div>
                               </div>
                             )}
                             {registration.reminder_sent_at && (
                               <div className="text-muted-foreground">
-                                Recordatorio: {formatDateTime(registration.reminder_sent_at)}
+                                Reminder: {formatDateTime(registration.reminder_sent_at)}
                               </div>
                             )}
                             {registration.reminder_error && (
@@ -506,25 +506,25 @@ function AdminPage() {
 
           <TabsContent value="attendance" className="space-y-3">
             <SectionIntro
-              title="Asistencia registrada por Zoom"
-              description="Entradas, salidas y duración reportadas por los eventos de Zoom."
+              title="Attendance reported by Zoom"
+              description="Joins, leaves, and duration reported by Zoom events."
             />
             <Card>
               <CardContent className="overflow-x-auto p-0">
                 <table className="w-full min-w-[850px] text-sm">
                   <thead className="bg-muted/50 text-left">
                     <tr>
-                      <th className="p-3">Reunión</th>
-                      <th className="p-3">Participante</th>
-                      <th className="p-3">Correo</th>
-                      <th className="p-3">Entrada</th>
-                      <th className="p-3">Salida</th>
-                      <th className="p-3">Duración</th>
+                      <th className="p-3">Meeting</th>
+                      <th className="p-3">Participant</th>
+                      <th className="p-3">Email</th>
+                      <th className="p-3">Joined</th>
+                      <th className="p-3">Left</th>
+                      <th className="p-3">Duration</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.attendance.length === 0 && (
-                      <EmptyTable colSpan={6}>Zoom todavía no ha reportado asistencia.</EmptyTable>
+                      <EmptyTable colSpan={6}>Zoom has not reported attendance yet.</EmptyTable>
                     )}
                     {data.attendance.map((entry: any) => {
                       const occurrence = occurrenceById.get(entry.occurrence_id);
@@ -533,7 +533,7 @@ function AdminPage() {
                           <td className="p-3">
                             {occurrence
                               ? formatLocalDate(occurrence.occurrence_date)
-                              : "Reunión no disponible"}
+                              : "Meeting unavailable"}
                           </td>
                           <td className="p-3 font-medium">{entry.participant_name}</td>
                           <td className="p-3">{entry.participant_email ?? "—"}</td>
@@ -551,13 +551,13 @@ function AdminPage() {
 
           <TabsContent value="recordings" className="space-y-3">
             <SectionIntro
-              title="Archivo de grabaciones"
-              description="Añade el título, la descripción y una URL pública HTTPS. Nada aparece para miembros hasta que lo publiques."
+              title="Recording archive"
+              description="Add a title, description, and a public HTTPS URL. Nothing appears to members until you publish it."
             />
             {data.recordings.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center text-muted-foreground">
-                  Aún no se han recibido grabaciones de Zoom.
+                  No Zoom recordings received yet.
                 </CardContent>
               </Card>
             ) : (
@@ -579,18 +579,18 @@ function AdminPage() {
                 <table className="w-full min-w-[850px] text-sm">
                   <thead className="bg-muted/50 text-left">
                     <tr>
-                      <th className="p-3">Fecha</th>
-                      <th className="p-3">Usuario</th>
+                      <th className="p-3">Date</th>
+                      <th className="p-3">User</th>
                       <th className="p-3">Plan</th>
-                      <th className="p-3">Estado</th>
-                      <th className="p-3">Monto</th>
-                      <th className="p-3">Próximo cobro</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3">Amount</th>
+                      <th className="p-3">Next charge</th>
                       <th className="p-3">PayPal ID</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.memberships.length === 0 && (
-                      <EmptyTable colSpan={7}>Sin membresías aún.</EmptyTable>
+                      <EmptyTable colSpan={7}>No memberships yet.</EmptyTable>
                     )}
                     {data.memberships.map((membership: any) => (
                       <tr key={membership.id} className="border-t">
@@ -630,17 +630,17 @@ function AdminPage() {
                 <table className="w-full min-w-[750px] text-sm">
                   <thead className="bg-muted/50 text-left">
                     <tr>
-                      <th className="p-3">Fecha</th>
-                      <th className="p-3">Cliente</th>
-                      <th className="p-3">Correo</th>
-                      <th className="p-3">Sesión</th>
-                      <th className="p-3">Monto</th>
-                      <th className="p-3">Estado</th>
+                      <th className="p-3">Date</th>
+                      <th className="p-3">Customer</th>
+                      <th className="p-3">Email</th>
+                      <th className="p-3">Session</th>
+                      <th className="p-3">Amount</th>
+                      <th className="p-3">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.coaching.length === 0 && (
-                      <EmptyTable colSpan={6}>Sin pagos aún.</EmptyTable>
+                      <EmptyTable colSpan={6}>No payments yet.</EmptyTable>
                     )}
                     {data.coaching.map((order: any) => (
                       <tr key={order.id} className="border-t">
@@ -719,12 +719,12 @@ function RecordingEditor({
         const parsed = new URL(normalizedUrl);
         if (parsed.protocol !== "https:") throw new Error();
       } catch {
-        setError("La URL pública debe ser un enlace HTTPS válido.");
+        setError("The public URL must be a valid HTTPS link.");
         return;
       }
     }
     if (published && !normalizedUrl) {
-      setError("Añade una URL pública HTTPS antes de publicar.");
+      setError("Add a public HTTPS URL before publishing.");
       return;
     }
 
@@ -737,7 +737,7 @@ function RecordingEditor({
       );
     } catch (saveError) {
       const message =
-        saveError instanceof Error ? saveError.message : "No se pudo guardar la grabación.";
+        saveError instanceof Error ? saveError.message : "Could not save the recording.";
       setError(message);
       toast.error(message);
     } finally {
@@ -751,7 +751,7 @@ function RecordingEditor({
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
           <div>
             <CardTitle className="text-lg">
-              {recording.title || recording.topic || "Grabación de La Sobremesa"}
+              {recording.title || recording.topic || "La Sobremesa recording"}
             </CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">
               {formatDateTime(recording.started_at)}
@@ -759,24 +759,24 @@ function RecordingEditor({
             </p>
           </div>
           <Badge variant={recording.published ? "default" : "secondary"}>
-            {recording.published ? "Publicada" : "Sin publicar"}
+            {recording.published ? "Published" : "Unpublished"}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor={`recording-title-${recording.id}`}>Título para miembros</Label>
+            <Label htmlFor={`recording-title-${recording.id}`}>Title for members</Label>
             <Input
               id={`recording-title-${recording.id}`}
               value={title}
               maxLength={200}
               onChange={(event) => setTitle(event.target.value)}
-              placeholder="La Sobremesa — tema de la semana"
+              placeholder="La Sobremesa — topic of the week"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`recording-url-${recording.id}`}>URL pública HTTPS</Label>
+            <Label htmlFor={`recording-url-${recording.id}`}>Public HTTPS URL</Label>
             <Input
               id={`recording-url-${recording.id}`}
               type="url"
@@ -787,8 +787,7 @@ function RecordingEditor({
               aria-describedby={`recording-url-help-${recording.id}`}
             />
             <p id={`recording-url-help-${recording.id}`} className="text-xs text-muted-foreground">
-              Usa únicamente un enlace seguro preparado para compartir con miembros. El enlace
-              recibido de Zoom permanece privado hasta que lo revises y lo copies aquí.
+              Use only a safe link ready to share with members. The Zoom-provided link stays private until you review it and copy it here.
             </p>
             {recording.provider_share_url && !publicUrl && (
               <Button
@@ -797,22 +796,21 @@ function RecordingEditor({
                 size="sm"
                 onClick={() => setPublicUrl(recording.provider_share_url ?? "")}
               >
-                Usar enlace recibido de Zoom
+                Use link received from Zoom
               </Button>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`recording-passcode-${recording.id}`}>Código para miembros</Label>
+            <Label htmlFor={`recording-passcode-${recording.id}`}>Passcode for members</Label>
             <Input
               id={`recording-passcode-${recording.id}`}
               value={publicPasscode}
               maxLength={128}
               onChange={(event) => setPublicPasscode(event.target.value)}
-              placeholder="Opcional"
+              placeholder="Optional"
             />
             <p className="text-xs text-muted-foreground">
-              Si Zoom exige un código, publícalo junto al enlace para que los miembros puedan abrir
-              la grabación.
+              If Zoom requires a passcode, publish it alongside the link so members can open the recording.
             </p>
             {recording.provider_play_passcode && !publicPasscode && (
               <Button
@@ -821,20 +819,20 @@ function RecordingEditor({
                 size="sm"
                 onClick={() => setPublicPasscode(recording.provider_play_passcode ?? "")}
               >
-                Usar código recibido de Zoom
+                Use passcode received from Zoom
               </Button>
             )}
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`recording-description-${recording.id}`}>Descripción</Label>
+          <Label htmlFor={`recording-description-${recording.id}`}>Description</Label>
           <Textarea
             id={`recording-description-${recording.id}`}
             value={description}
             maxLength={4000}
             rows={3}
             onChange={(event) => setDescription(event.target.value)}
-            placeholder="Resume los temas tratados en esta reunión."
+            placeholder="Summarize the topics covered in this meeting."
           />
         </div>
         {error && (
@@ -844,21 +842,21 @@ function RecordingEditor({
         )}
         <div className="flex flex-wrap gap-2">
           <Button onClick={() => void save(recording.published)} disabled={saving}>
-            {saving ? "Guardando…" : "Guardar cambios"}
+            {saving ? "Saving…" : "Save changes"}
           </Button>
           {recording.published ? (
             <Button variant="outline" onClick={() => void save(false)} disabled={saving}>
-              Retirar de miembros
+              Unpublish for members
             </Button>
           ) : (
             <Button variant="outline" onClick={() => void save(true)} disabled={saving}>
-              Publicar para miembros
+              Publish for members
             </Button>
           )}
           {recording.public_url && (
             <Button variant="ghost" asChild>
               <a href={recording.public_url} target="_blank" rel="noreferrer">
-                Abrir enlace <ExternalLink className="ml-2 h-4 w-4" />
+                Open link <ExternalLink className="ml-2 h-4 w-4" />
               </a>
             </Button>
           )}
