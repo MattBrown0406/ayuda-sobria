@@ -99,10 +99,10 @@ function Footer() {
     <footer className="border-t border-border bg-secondary/40">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-4">
         <div>
-          <div className="flex items-center gap-2">
+          <Link to="/admin" className="flex items-center gap-2" aria-label="Panel de administración">
             <img src={logo} alt="AyudaSobria" width={32} height={32} className="h-8 w-8" />
             <span className="text-base font-semibold">Ayuda Sobria</span>
-          </div>
+          </Link>
           <p className="mt-3 text-sm text-muted-foreground">
             Apoyo en español para familias que enfrentan la adicción de un ser querido.
           </p>
