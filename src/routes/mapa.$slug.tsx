@@ -18,9 +18,9 @@ export const Route = createFileRoute("/mapa/$slug")({
         { name: "robots", content: "noindex, follow" },
         { property: "og:title", content: `${loaderData.step.title} — AyudaSobria` },
         { property: "og:description", content: loaderData.step.blurb },
-        { property: "og:url", content: `/mapa/${params.slug}` },
+        { property: "og:url", content: `https://ayudasobria.com/mapa/${params.slug}` },
       ],
-      links: [{ rel: "canonical", href: `/mapa/${params.slug}` }],
+      links: [{ rel: "canonical", href: `https://ayudasobria.com/mapa/${params.slug}` }],
     };
   },
   component: StepPage,

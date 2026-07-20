@@ -15,9 +15,9 @@ export const Route = createFileRoute("/circulo-familiar")({
         property: "og:description",
         content: "Cada lunes 7:00 PM PT. Gratis. En español. Registro en línea disponible.",
       },
-      { property: "og:url", content: "/circulo-familiar" },
+      { property: "og:url", content: "https://ayudasobria.com/circulo-familiar" },
     ],
-    links: [{ rel: "canonical", href: "/circulo-familiar" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/circulo-familiar" }],
   }),
   component: () => (
     <>

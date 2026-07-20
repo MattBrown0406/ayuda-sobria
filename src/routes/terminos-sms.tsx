@@ -10,9 +10,9 @@ export const Route = createFileRoute("/terminos-sms")({
         content: "Condiciones para comunicación por mensajes de texto con AyudaSobria.",
       },
       { property: "og:title", content: "Términos SMS — AyudaSobria" },
-      { property: "og:url", content: "/terminos-sms" },
+      { property: "og:url", content: "https://ayudasobria.com/terminos-sms" },
     ],
-    links: [{ rel: "canonical", href: "/terminos-sms" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/terminos-sms" }],
   }),
   component: () => (
     <>

@@ -16,7 +16,7 @@ const FAQS = [
   },
   {
     q: "¿Es confidencial?",
-    a: "Sí. Lo que compartes en el Círculo y en las sesiones privadas queda ahí.",
+    a: "Tratamos lo compartido con privacidad. En una reunión grupal no podemos garantizar la conducta de cada participante, y pueden existir excepciones legales o de seguridad.",
   },
   { q: "¿Cuánto cuesta el coaching privado?", a: "Desde US$150 (USD) la sesión de 60 minutos." },
 ];
@@ -35,9 +35,9 @@ export const Route = createFileRoute("/faq")({
         property: "og:description",
         content: "Lo básico que las familias preguntan antes de empezar.",
       },
-      { property: "og:url", content: "/faq" },
+      { property: "og:url", content: "https://ayudasobria.com/faq" },
     ],
-    links: [{ rel: "canonical", href: "/faq" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/faq" }],
     scripts: [
       {
         type: "application/ld+json",

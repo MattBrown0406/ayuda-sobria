@@ -12,9 +12,9 @@ export const Route = createFileRoute("/coaching-familiar")({
       },
       { property: "og:title", content: "Coaching familiar — AyudaSobria" },
       { property: "og:description", content: "Sesiones privadas en español, desde US$150 (USD)." },
-      { property: "og:url", content: "/coaching-familiar" },
+      { property: "og:url", content: "https://ayudasobria.com/coaching-familiar" },
     ],
-    links: [{ rel: "canonical", href: "/coaching-familiar" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/coaching-familiar" }],
   }),
   component: () => (
     <>
@@ -32,7 +32,9 @@ export const Route = createFileRoute("/coaching-familiar")({
         <h2>Cómo funciona</h2>
         <ul>
           <li>Sesión inicial de 60 minutos.</li>
-          <li>Por Zoom, en español, confidencial.</li>
+          <li>
+            Por Zoom, en español y tratado con privacidad, sujeto a límites legales y de seguridad.
+          </li>
           <li>Desde US$150 (USD) la sesión.</li>
         </ul>
         <p>

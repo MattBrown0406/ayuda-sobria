@@ -10,7 +10,11 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Ingresar o registrarse — Ayuda Sobria" },
-      { name: "description", content: "Ingresa a tu cuenta o crea una nueva para acceder a la membresía familiar." },
+      {
+        name: "description",
+        content: "Ingresa a tu cuenta o crea una nueva para acceder a la membresía familiar.",
+      },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   validateSearch: (s: Record<string, unknown>): AuthSearch => ({
@@ -71,7 +75,9 @@ function AuthPage() {
     setError(null);
     try {
       sessionStorage.setItem("post_auth_redirect", redirectTo);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
@@ -100,26 +106,61 @@ function AuthPage() {
             Continuar con Google
           </button>
           <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="h-px flex-1 bg-border" /> o con correo <div className="h-px flex-1 bg-border" />
+            <div className="h-px flex-1 bg-border" /> o con correo{" "}
+            <div className="h-px flex-1 bg-border" />
           </div>
           <form onSubmit={handleSubmit} className="space-y-3">
             {mode === "signup" && (
               <div className="grid grid-cols-2 gap-2">
-                <input required placeholder="Nombre" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-sm" />
-                <input required placeholder="Apellido" value={lastName} onChange={(e) => setLastName(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                <input
+                  required
+                  placeholder="Nombre"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                />
+                <input
+                  required
+                  placeholder="Apellido"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                />
               </div>
             )}
-            <input required type="email" placeholder="Correo electrónico" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
-            <input required type="password" minLength={8} placeholder="Contraseña (mín. 8)" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+            <input
+              required
+              type="email"
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+            <input
+              required
+              type="password"
+              minLength={8}
+              placeholder="Contraseña (mín. 8)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
             {error && <p className="text-sm text-destructive">{error}</p>}
             {info && <p className="text-sm text-emerald-700">{info}</p>}
-            <button disabled={loading} className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
+            <button
+              disabled={loading}
+              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
               {loading ? "Procesando..." : mode === "signin" ? "Ingresar" : "Crear cuenta"}
             </button>
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
             {mode === "signin" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
-            <button type="button" onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="font-medium text-primary hover:underline">
+            <button
+              type="button"
+              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+              className="font-medium text-primary hover:underline"
+            >
               {mode === "signin" ? "Regístrate" : "Ingresa"}
             </button>
           </p>

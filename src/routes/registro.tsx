@@ -17,9 +17,10 @@ export const Route = createFileRoute("/registro")({
         content:
           "Reunión semanal en español para familias afectadas por la adicción. Cada lunes 7:00 PM PT por Zoom.",
       },
-      { property: "og:url", content: "/registro" },
+      { name: "robots", content: "noindex, follow" },
+      { property: "og:url", content: "https://ayudasobria.com/registro" },
     ],
-    links: [{ rel: "canonical", href: "/registro" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/registro" }],
   }),
   component: RegistroPage,
 });
@@ -203,8 +204,12 @@ function RegistroPage() {
               value={form.situacion}
               onChange={(e) => update("situacion", e.target.value)}
               className={`${inputCls} min-h-28`}
-              placeholder="Solo lo que quieras compartir. Es confidencial."
+              placeholder="Comparte solo lo necesario. No incluyas diagnósticos ni información sensible."
             />
+            <p className="mt-2 text-xs text-muted-foreground">
+              La información se usa para responder y coordinar el servicio. Consulta nuestra
+              política de privacidad para conocer proveedores y límites de seguridad.
+            </p>
           </Field>
 
           <Field label="¿Es tu primera vez en el Círculo Familiar?">

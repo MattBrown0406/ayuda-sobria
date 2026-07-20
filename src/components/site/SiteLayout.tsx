@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Phone, LogIn, Menu } from "lucide-react";
 import { type ReactNode, useState } from "react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.webp";
 
 export const PHONE_DISPLAY = "(458) 298-8011";
 export const PHONE_HREF = "tel:4582988011";
@@ -10,14 +10,12 @@ export const EMAIL = "matt@soberhelpline.com";
 function Header() {
   const [open, setOpen] = useState(false);
   const links = [
-    { to: "/apoyo-familiar", label: "Estados" },
-    { to: "/paises", label: "Países" },
-    { to: "/respuestas-familia", label: "Respuestas" },
-    { to: "/mapa", label: "Mapa" },
-    { to: "/herramientas-ia", label: "Guías educativas" },
-    { to: "/membresia", label: "Membresía" },
+    { to: "/circulo-familiar", label: "Círculo Familiar" },
+    { to: "/coaching-familiar", label: "Coaching" },
+    { to: "/intervencion", label: "Intervención" },
     { to: "/blog", label: "Blog" },
     { to: "/recursos", label: "Recursos" },
+    { to: "/membresia", label: "Membresía" },
   ] as const;
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
@@ -182,6 +180,11 @@ function Footer() {
           <p className="text-sm font-semibold">Empresa</p>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li>
+              <Link to="/sobre-nosotros" className="hover:text-foreground">
+                Sobre AyudaSobria
+              </Link>
+            </li>
+            <li>
               <Link to="/testimonios" className="hover:text-foreground">
                 Testimonios
               </Link>
@@ -271,7 +274,14 @@ export function PageHero({
 export function CTAStrip() {
   return (
     <section className="border-y border-border bg-primary/5">
-      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-3">
+      <div className="mx-auto max-w-7xl px-4 pt-8">
+        <p className="rounded-lg border border-destructive/30 bg-background p-4 text-sm text-muted-foreground">
+          <strong className="text-foreground">¿Hay peligro inmediato o sobredosis?</strong> Llama al
+          911 o al servicio local de emergencias. En Estados Unidos, usa el 988 para una crisis
+          suicida o de salud mental. Estos servicios no sustituyen atención de emergencia.
+        </p>
+      </div>
+      <div className="mx-auto grid max-w-7xl gap-4 px-4 pb-10 pt-4 md:grid-cols-3">
         <Link
           to="/circulo-familiar"
           className="rounded-xl border-2 border-primary bg-primary p-5 text-primary-foreground hover:bg-primary/90"
@@ -293,7 +303,7 @@ export function CTAStrip() {
           className="rounded-xl border-2 border-destructive/50 bg-card p-5 hover:border-destructive"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Alto riesgo
+            Cuando no es una emergencia
           </p>
           <p className="mt-1 text-lg font-semibold">Evaluación de intervención</p>
         </Link>

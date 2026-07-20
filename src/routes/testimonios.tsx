@@ -12,7 +12,7 @@ export const Route = createFileRoute("/testimonios")({
       },
       { name: "robots", content: "noindex, follow" },
     ],
-    links: [{ rel: "canonical", href: "/testimonios" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/testimonios" }],
   }),
   component: TestimoniosPage,
 });

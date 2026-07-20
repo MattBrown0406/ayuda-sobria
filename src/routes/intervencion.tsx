@@ -15,9 +15,9 @@ export const Route = createFileRoute("/intervencion")({
         property: "og:description",
         content: "Cuando hay rechazo repetido al tratamiento o riesgo de seguridad.",
       },
-      { property: "og:url", content: "/intervencion" },
+      { property: "og:url", content: "https://ayudasobria.com/intervencion" },
     ],
-    links: [{ rel: "canonical", href: "/intervencion" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/intervencion" }],
   }),
   component: () => (
     <>

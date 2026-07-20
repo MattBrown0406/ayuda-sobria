@@ -96,13 +96,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://ayudasobria.com/" },
+      { property: "og:site_name", content: "AyudaSobria" },
+      { property: "og:locale", content: "es_US" },
       {
         property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/32277b46-2ea7-40bc-97e1-71ce54a6813c/id-preview-22a88477--a39a5f6e-8dc8-4833-ba8b-559c3b7d91bc.lovable.app-1784500821188.png",
+        content: "https://ayudasobria.com/og-ayudasobria.png",
+      },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "AyudaSobria: apoyo para familias afectadas por la adicción",
       },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@AyudaSobria" },
       {
         name: "twitter:title",
         content: "AyudaSobria — Apoyo para familias afectadas por la adicción",
@@ -114,8 +120,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/32277b46-2ea7-40bc-97e1-71ce54a6813c/id-preview-22a88477--a39a5f6e-8dc8-4833-ba8b-559c3b7d91bc.lovable.app-1784500821188.png",
+        content: "https://ayudasobria.com/og-ayudasobria.png",
+      },
+      {
+        name: "twitter:image:alt",
+        content: "AyudaSobria: apoyo para familias afectadas por la adicción",
       },
     ],
     links: [
@@ -127,12 +136,40 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
-        async: true,
-        src: "https://www.googletagmanager.com/gtag/js?id=G-2LM6ETY3C9",
+        children:
+          "(()=>{let loaded=false;const load=()=>{if(loaded)return;loaded=true;window.dataLayer=window.dataLayer||[];function gtag(){window.dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','G-2LM6ETY3C9');const s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-2LM6ETY3C9';document.head.appendChild(s)};['pointerdown','keydown','scroll'].forEach((event)=>window.addEventListener(event,load,{once:true,passive:true}))})();",
       },
       {
-        children:
-          "window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-2LM6ETY3C9');",
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://ayudasobria.com/#organization",
+              name: "AyudaSobria",
+              url: "https://ayudasobria.com/",
+              logo: "https://ayudasobria.com/logo.png",
+              image: "https://ayudasobria.com/og-ayudasobria.png",
+              email: "matt@soberhelpline.com",
+              telephone: "+1-458-298-8011",
+              description:
+                "Orientación en español para familias afectadas por la adicción de un ser querido.",
+              founder: {
+                "@type": "Person",
+                name: "Matt Brown",
+              },
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://ayudasobria.com/#website",
+              url: "https://ayudasobria.com/",
+              name: "AyudaSobria",
+              inLanguage: "es",
+              publisher: { "@id": "https://ayudasobria.com/#organization" },
+            },
+          ],
+        }),
       },
     ],
   }),

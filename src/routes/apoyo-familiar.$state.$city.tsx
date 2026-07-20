@@ -13,17 +13,26 @@ export const Route = createFileRoute("/apoyo-familiar/$state/$city")({
   head: ({ loaderData, params }) => {
     if (!loaderData)
       return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
-    const t = `${loaderData.city.name}, ${loaderData.state.name}: apoyo familiar para adicción — AyudaSobria`;
+    const t = `${loaderData.city.name}, ${loaderData.state.name}: apoyo familiar para la adicción`;
     const d = `Familias en ${loaderData.city.name}, ${loaderData.state.name} encuentran apoyo en español, coaching y reuniones semanales del Círculo Familiar.`;
     return {
       meta: [
         { title: t },
         { name: "description", content: d },
+        { name: "robots", content: "noindex, follow" },
         { property: "og:title", content: t },
         { property: "og:description", content: d },
-        { property: "og:url", content: `/apoyo-familiar/${params.state}/${params.city}` },
+        {
+          property: "og:url",
+          content: `https://ayudasobria.com/apoyo-familiar/${params.state}/${params.city}`,
+        },
       ],
-      links: [{ rel: "canonical", href: `/apoyo-familiar/${params.state}/${params.city}` }],
+      links: [
+        {
+          rel: "canonical",
+          href: `https://ayudasobria.com/apoyo-familiar/${params.state}/${params.city}`,
+        },
+      ],
     };
   },
   component: CityPage,
@@ -58,8 +67,8 @@ function CityPage() {
         </ol>
         <p className="mt-8 text-muted-foreground">
           Muchas familias latinas en {city.name} llegan a AyudaSobria cuando los recursos en inglés
-          no las alcanzan. Puedes hacer todo el proceso — reunión, coaching, evaluación — en
-          español, con confidencialidad y sin juicio.
+          no responden a sus necesidades. Puedes recibir orientación — reunión, coaching y
+          evaluación — en español, con privacidad y sin juicio.
         </p>
         <div className="mt-8">
           <Link

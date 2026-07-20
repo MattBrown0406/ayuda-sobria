@@ -15,9 +15,9 @@ export const Route = createFileRoute("/proveedores")({
         property: "og:description",
         content: "Referencias, colaboración clínica y directorio en español.",
       },
-      { property: "og:url", content: "/proveedores" },
+      { property: "og:url", content: "https://ayudasobria.com/proveedores" },
     ],
-    links: [{ rel: "canonical", href: "/proveedores" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/proveedores" }],
   }),
   component: () => (
     <>

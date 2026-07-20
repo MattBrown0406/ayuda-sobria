@@ -25,17 +25,18 @@ export const Route = createFileRoute("/paises/$country")({
   head: ({ loaderData, params }) => {
     if (!loaderData)
       return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
-    const t = `Apoyo familiar para la adicción en ${loaderData.country.name} — AyudaSobria`;
+    const t = `Apoyo familiar para la adicción en ${loaderData.country.name}`;
     const d = `Familias en ${loaderData.country.name} enfrentando la adicción de un ser querido: reunión semanal, coaching privado y evaluación de intervención, todo en español.`;
     return {
       meta: [
         { title: t },
         { name: "description", content: d },
+        { name: "robots", content: "noindex, follow" },
         { property: "og:title", content: t },
         { property: "og:description", content: d },
-        { property: "og:url", content: `/paises/${params.country}` },
+        { property: "og:url", content: `https://ayudasobria.com/paises/${params.country}` },
       ],
-      links: [{ rel: "canonical", href: `/paises/${params.country}` }],
+      links: [{ rel: "canonical", href: `https://ayudasobria.com/paises/${params.country}` }],
     };
   },
   component: CountryPage,
@@ -78,13 +79,12 @@ function CountryPage() {
           </ol>
         </section>
         <section>
-          <h2 className="text-xl font-semibold">Cultura, familia y adicción en {country.name}</h2>
+          <h2 className="text-xl font-semibold">Apoyo en línea desde {country.name}</h2>
           <p className="mt-3 text-muted-foreground">
-            En muchas familias latinas la adicción se vive en silencio, por vergüenza, por proteger
-            la reputación o porque nadie sabe qué decir. En {country.name} eso se combina con
-            recursos limitados en español pensados para la familia (no solo para la persona que
-            consume). AyudaSobria existe para llenar ese vacío: la familia también necesita
-            orientación, aunque el ser querido todavía no acepte ayuda.
+            AyudaSobria ofrece educación, reuniones y coaching en línea para familias que se
+            conectan desde {country.name}. La disponibilidad, los métodos de pago y los servicios de
+            crisis varían según el país. La familia puede buscar orientación aunque el ser querido
+            todavía no acepte ayuda.
           </p>
         </section>
         {lines && (

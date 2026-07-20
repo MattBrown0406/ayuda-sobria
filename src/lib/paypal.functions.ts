@@ -47,7 +47,11 @@ const PLAN_CONFIG: Record<PlanType, { interval: "MONTH" | "YEAR"; price: string;
   annual: { interval: "YEAR", price: "149.00", name: "Family Membership - Annual" },
 };
 
-async function createPlan(accessToken: string, productId: string, planType: PlanType): Promise<string> {
+async function createPlan(
+  accessToken: string,
+  productId: string,
+  planType: PlanType,
+): Promise<string> {
   const cfg = PLAN_CONFIG[planType];
   const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/plans`, {
     method: "POST",
@@ -108,10 +112,9 @@ async function createSubscription(
 }
 
 async function getSubscriptionDetails(accessToken: string, subscriptionId: string) {
-  const res = await fetch(
-    `${PAYPAL_API_BASE}/v1/billing/subscriptions/${subscriptionId}`,
-    { headers: { Authorization: `Bearer ${accessToken}` } },
-  );
+  const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/subscriptions/${subscriptionId}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
   if (!res.ok) throw new Error(`PayPal get subscription failed: ${await res.text()}`);
   return res.json() as Promise<{
     status: string;
@@ -240,7 +243,11 @@ export const getMyMembership = createServerFn({ method: "GET" })
 
 const COACHING_SESSIONS = {
   initial: { label: "Consulta inicial (60 min)", memberPrice: "125.00", nonMemberPrice: "150.00" },
-  followup: { label: "Sesión de seguimiento (60 min)", memberPrice: "125.00", nonMemberPrice: "150.00" },
+  followup: {
+    label: "Sesión de seguimiento (60 min)",
+    memberPrice: "125.00",
+    nonMemberPrice: "150.00",
+  },
 } as const;
 type SessionType = keyof typeof COACHING_SESSIONS;
 
@@ -271,24 +278,38 @@ export const getCoachingPricing = createServerFn({ method: "GET" }).handler(asyn
       const { data: userData } = await sb.auth.getUser();
       if (userData.user) isMember = await userHasActiveMembership(userData.user.id);
     }
-  } catch { /* ignore, treat as non-member */ }
+  } catch {
+    /* ignore, treat as non-member */
+  }
   return {
     isMember,
     sessions: {
-      initial: { label: COACHING_SESSIONS.initial.label, price: isMember ? COACHING_SESSIONS.initial.memberPrice : COACHING_SESSIONS.initial.nonMemberPrice },
-      followup: { label: COACHING_SESSIONS.followup.label, price: isMember ? COACHING_SESSIONS.followup.memberPrice : COACHING_SESSIONS.followup.nonMemberPrice },
+      initial: {
+        label: COACHING_SESSIONS.initial.label,
+        price: isMember
+          ? COACHING_SESSIONS.initial.memberPrice
+          : COACHING_SESSIONS.initial.nonMemberPrice,
+      },
+      followup: {
+        label: COACHING_SESSIONS.followup.label,
+        price: isMember
+          ? COACHING_SESSIONS.followup.memberPrice
+          : COACHING_SESSIONS.followup.nonMemberPrice,
+      },
     },
   };
 });
 
 export const createCoachingOrder = createServerFn({ method: "POST" })
-  .inputValidator((input: {
-    sessionType: SessionType;
-    returnUrl: string;
-    cancelUrl: string;
-    customerEmail: string;
-    customerName: string;
-  }) => input)
+  .inputValidator(
+    (input: {
+      sessionType: SessionType;
+      returnUrl: string;
+      cancelUrl: string;
+      customerEmail: string;
+      customerName: string;
+    }) => input,
+  )
   .handler(async ({ data }) => {
     const cfg = COACHING_SESSIONS[data.sessionType];
     if (!cfg) throw new Error("Invalid session type");
@@ -311,7 +332,9 @@ export const createCoachingOrder = createServerFn({ method: "POST" })
           isMember = await userHasActiveMembership(userId);
         }
       }
-    } catch { /* guest checkout */ }
+    } catch {
+      /* guest checkout */
+    }
 
     const price = isMember ? cfg.memberPrice : cfg.nonMemberPrice;
     const accessToken = await getAccessToken();
@@ -320,10 +343,12 @@ export const createCoachingOrder = createServerFn({ method: "POST" })
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         intent: "CAPTURE",
-        purchase_units: [{
-          description: `Ayuda Sobria — ${cfg.label}`,
-          amount: { currency_code: "USD", value: price },
-        }],
+        purchase_units: [
+          {
+            description: `Ayuda Sobria — ${cfg.label}`,
+            amount: { currency_code: "USD", value: price },
+          },
+        ],
         application_context: {
           brand_name: "Ayuda Sobria",
           locale: "es-ES",
@@ -361,7 +386,8 @@ export const captureCoachingOrder = createServerFn({ method: "POST" })
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
     });
-    if (!res.ok && res.status !== 422) throw new Error(`PayPal capture failed: ${await res.text()}`);
+    if (!res.ok && res.status !== 422)
+      throw new Error(`PayPal capture failed: ${await res.text()}`);
     const result = (await res.json()) as { status: string };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

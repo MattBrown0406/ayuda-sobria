@@ -19,9 +19,14 @@ export const Route = createFileRoute("/respuestas-familia/$slug")({
         { name: "robots", content: "noindex, follow" },
         { property: "og:title", content: `${loaderData.answer.question} — AyudaSobria` },
         { property: "og:description", content: d },
-        { property: "og:url", content: `/respuestas-familia/${params.slug}` },
+        {
+          property: "og:url",
+          content: `https://ayudasobria.com/respuestas-familia/${params.slug}`,
+        },
       ],
-      links: [{ rel: "canonical", href: `/respuestas-familia/${params.slug}` }],
+      links: [
+        { rel: "canonical", href: `https://ayudasobria.com/respuestas-familia/${params.slug}` },
+      ],
     };
   },
   component: AnswerPage,

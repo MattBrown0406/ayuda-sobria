@@ -9,8 +9,9 @@ export const Route = createFileRoute("/ingresar")({
         name: "description",
         content: "Ingresa al portal seguro de miembros de AyudaSobria y SoberHelpline.",
       },
+      { name: "robots", content: "noindex, follow" },
     ],
-    links: [{ rel: "canonical", href: "/ingresar" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/ingresar" }],
   }),
   component: IngresarPage,
 });

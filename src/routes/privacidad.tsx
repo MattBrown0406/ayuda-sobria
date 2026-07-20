@@ -10,9 +10,9 @@ export const Route = createFileRoute("/privacidad")({
         content: "Cómo AyudaSobria recopila, usa y protege la información de las familias.",
       },
       { property: "og:title", content: "Privacidad — AyudaSobria" },
-      { property: "og:url", content: "/privacidad" },
+      { property: "og:url", content: "https://ayudasobria.com/privacidad" },
     ],
-    links: [{ rel: "canonical", href: "/privacidad" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/privacidad" }],
   }),
   component: () => (
     <>
@@ -40,6 +40,24 @@ export const Route = createFileRoute("/privacidad")({
           prestar el servicio. Solo reciben la información necesaria para su función y pueden
           procesarla en Estados Unidos. Conservamos los registros durante el tiempo necesario para
           coordinar el servicio, cumplir obligaciones legales y resolver disputas.
+        </p>
+        <h2>Analítica y datos técnicos</h2>
+        <p>
+          Usamos Google Analytics para comprender de forma agregada cómo se utiliza el sitio. Este
+          servicio puede procesar la dirección IP, datos del dispositivo, páginas visitadas y
+          cookies o identificadores similares. Puedes limitar las cookies desde la configuración de
+          tu navegador.
+        </p>
+        <h2>Información sensible y menores</h2>
+        <p>
+          No incluyas diagnósticos, números de expediente, información financiera ni otros detalles
+          sensibles que no sean necesarios para responderte. El sitio no está dirigido a menores de
+          13 años y no buscamos recopilar intencionalmente sus datos personales.
+        </p>
+        <h2>Limitaciones de seguridad</h2>
+        <p>
+          Aplicamos medidas razonables para proteger la información, pero ningún sistema de internet
+          o correo electrónico puede garantizar seguridad absoluta.
         </p>
         <h2>Tus opciones</h2>
         <p>

@@ -18,9 +18,9 @@ export const Route = createFileRoute("/recursos/$slug")({
         { name: "robots", content: "noindex, follow" },
         { property: "og:title", content: `${loaderData.topic.title} — AyudaSobria` },
         { property: "og:description", content: loaderData.topic.description },
-        { property: "og:url", content: `/recursos/${params.slug}` },
+        { property: "og:url", content: `https://ayudasobria.com/recursos/${params.slug}` },
       ],
-      links: [{ rel: "canonical", href: `/recursos/${params.slug}` }],
+      links: [{ rel: "canonical", href: `https://ayudasobria.com/recursos/${params.slug}` }],
     };
   },
   component: TopicPage,

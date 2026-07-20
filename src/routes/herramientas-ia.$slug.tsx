@@ -18,9 +18,9 @@ export const Route = createFileRoute("/herramientas-ia/$slug")({
         { name: "robots", content: "noindex, follow" },
         { property: "og:title", content: `${loaderData.tool.title} — AyudaSobria` },
         { property: "og:description", content: loaderData.tool.blurb },
-        { property: "og:url", content: `/herramientas-ia/${params.slug}` },
+        { property: "og:url", content: `https://ayudasobria.com/herramientas-ia/${params.slug}` },
       ],
-      links: [{ rel: "canonical", href: `/herramientas-ia/${params.slug}` }],
+      links: [{ rel: "canonical", href: `https://ayudasobria.com/herramientas-ia/${params.slug}` }],
     };
   },
   component: ToolPage,

@@ -10,8 +10,15 @@ export const Route = createFileRoute("/evaluaciones")({
         content:
           "Herramientas educativas en español para reconocer patrones de adicción, riesgo y codependencia, y decidir el próximo paso familiar.",
       },
+      { property: "og:title", content: "Evaluaciones familiares — AyudaSobria" },
+      {
+        property: "og:description",
+        content:
+          "Herramientas educativas en español para reconocer patrones y decidir el próximo paso familiar.",
+      },
+      { property: "og:url", content: "https://ayudasobria.com/evaluaciones" },
     ],
-    links: [{ rel: "canonical", href: "/evaluaciones" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/evaluaciones" }],
   }),
   component: EvaluacionesPage,
 });

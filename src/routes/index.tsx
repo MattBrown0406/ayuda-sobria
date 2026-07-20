@@ -16,9 +16,8 @@ import {
   Sparkles,
   ClipboardList,
 } from "lucide-react";
-import logo from "@/assets/logo.png";
-import counselorAsset from "@/assets/counselor.png.asset.json";
-const counselor = counselorAsset.url;
+import logo from "@/assets/logo.webp";
+import counselor from "@/assets/counselor.webp";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -36,9 +35,9 @@ export const Route = createFileRoute("/")({
         content:
           "Deja de adivinar el próximo paso. Recibe el nivel adecuado de ayuda familiar frente a la adicción.",
       },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: "https://ayudasobria.com/" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/" }],
   }),
 });
 
@@ -236,9 +235,9 @@ function PressureLevel() {
       color: "border-chart-4/60",
     },
     {
-      tag: "Cuando el riesgo va en aumento",
+      tag: "Cuando no hay peligro inmediato",
       title: "Camino a la intervención",
-      body: "Avanza hacia una intervención cuando se rechaza el tratamiento, la familia está dividida, la recaída se repite o la seguridad se ve amenazada.",
+      body: "Evalúa una intervención cuando se rechaza el tratamiento, la familia está dividida o la recaída se repite. No es un servicio de emergencia.",
       cta: "Habla con nuestro equipo",
       href: "#intervencion",
       color: "border-destructive/50",
@@ -258,6 +257,15 @@ function PressureLevel() {
         calma, avanzar más rápido o pasar directamente al apoyo de intervención cuando la situación
         lo requiere.
       </p>
+      <div className="mt-6 max-w-3xl rounded-xl border border-destructive/40 bg-destructive/5 p-5">
+        <p className="font-semibold">Primero descarta una emergencia.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Si hay una sobredosis, peligro inmediato o una amenaza activa, llama al 911 o al servicio
+          local de emergencias. En Estados Unidos, llama o envía un mensaje al 988 ante una crisis
+          suicida o de salud mental. El coaching y la intervención no sustituyen la respuesta de
+          emergencia.
+        </p>
+      </div>
       <div className="mt-10 grid gap-6 md:grid-cols-3">
         {items.map((it) => (
           <a
@@ -422,7 +430,7 @@ function Programs() {
     {
       icon: Users,
       tag: "Apoyo semanal gratuito",
-      title: "«El Círculo Familiar» cada lunes a las 7 PM (PST)",
+      title: "«El Círculo Familiar» cada lunes a las 7 PM (hora del Pacífico)",
       body: "Apoyo grupal en vivo cada lunes para cualquier familiar. No requiere membresía.",
       cta: "Regístrate ahora",
       href: "/registro",
@@ -554,8 +562,8 @@ function Assessments() {
           <ClipboardList className="h-6 w-6 text-primary" />
           <h3 className="mt-3 text-xl font-semibold">¿Mi ser querido tiene una adicción?</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Herramienta de tamizaje basada en criterios clínicos DSM-5 para familias. 11 criterios
-            clínicos y puntaje de severidad.
+            Lista educativa y no diagnóstica para ordenar las señales que observa la familia y
+            decidir cuándo solicitar una evaluación profesional.
           </p>
           <a href="/evaluaciones" className="mt-4 inline-block text-sm font-semibold text-primary">
             Revisar señales →

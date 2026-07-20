@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { STATES } from "@/data/locations";
-import { COUNTRIES } from "@/data/locations";
+
 import { BLOG_POSTS } from "@/data/blog";
 
 const BASE_URL = "https://ayudasobria.com";
@@ -21,7 +21,6 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/privacidad",
           "/terminos",
           "/terminos-sms",
-          "/ingresar",
           "/apoyo-familiar",
           "/paises",
           "/recursos",
@@ -29,14 +28,12 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/mapa",
           "/herramientas-ia",
           "/evaluaciones",
-          "/registro",
           "/blog",
+          "/sobre-nosotros",
         ];
         for (const s of STATES) {
           paths.push(`/apoyo-familiar/${s.slug}`);
-          for (const c of s.cities) paths.push(`/apoyo-familiar/${s.slug}/${c.slug}`);
         }
-        for (const c of COUNTRIES) paths.push(`/paises/${c.slug}`);
         for (const p of BLOG_POSTS) paths.push(`/blog/${p.slug}`);
 
         const urls = paths.map((p) => `  <url><loc>${BASE_URL}${p}</loc></url>`).join("\n");

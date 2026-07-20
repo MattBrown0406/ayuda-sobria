@@ -7,9 +7,9 @@ export const Route = createFileRoute("/terminos")({
       { title: "Términos de servicio — AyudaSobria" },
       { name: "description", content: "Condiciones de uso del sitio y servicios de AyudaSobria." },
       { property: "og:title", content: "Términos — AyudaSobria" },
-      { property: "og:url", content: "/terminos" },
+      { property: "og:url", content: "https://ayudasobria.com/terminos" },
     ],
-    links: [{ rel: "canonical", href: "/terminos" }],
+    links: [{ rel: "canonical", href: "https://ayudasobria.com/terminos" }],
   }),
   component: () => (
     <>
