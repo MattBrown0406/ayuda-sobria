@@ -64,9 +64,9 @@ function CountryPage() {
           <h2 className="text-xl font-semibold">Empieza esta semana</h2>
           <ol className="mt-4 space-y-3 text-muted-foreground">
             <li>
-              <strong className="text-foreground">La Sobremesa (gratis):</strong> reunión por
-              Zoom cada lunes a las 7:00 PM (hora del Pacífico de EE. UU.). Consulta la conversión
-              de horario en {country.name} antes de conectarte.
+              <strong className="text-foreground">La Sobremesa (gratis):</strong> reunión por Zoom
+              cada lunes a las 7:00 PM (hora del Pacífico de EE. UU.). Consulta la conversión de
+              horario en {country.name} antes de conectarte.
             </li>
             <li>
               <strong className="text-foreground">Coaching familiar privado:</strong> sesiones uno a

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/registro")({
@@ -25,6 +25,8 @@ export const Route = createFileRoute("/registro")({
   component: RegistroPage,
 });
 
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
+
 function RegistroPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -44,6 +46,16 @@ function RegistroPage() {
     website: "",
   });
 
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY || document.getElementById("cloudflare-turnstile-script")) return;
+    const script = document.createElement("script");
+    script.id = "cloudflare-turnstile-script";
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }, []);
+
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
@@ -51,12 +63,23 @@ function RegistroPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (!TURNSTILE_SITE_KEY) {
+      setError("La verificación de seguridad no está configurada todavía.");
+      return;
+    }
+    const turnstileToken = String(
+      new FormData(e.currentTarget as HTMLFormElement).get("cf-turnstile-response") || "",
+    );
+    if (!turnstileToken) {
+      setError("Completa la verificación de seguridad antes de enviar el formulario.");
+      return;
+    }
     setLoading(true);
     try {
       const response = await fetch("/api/registro", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, formMs: Date.now() - openedAt }),
+        body: JSON.stringify({ ...form, formMs: Date.now() - openedAt, turnstileToken }),
       });
       const result = (await response.json().catch(() => ({}))) as { error?: string };
       if (!response.ok) throw new Error(result.error || "No se pudo enviar el registro.");
@@ -77,22 +100,22 @@ function RegistroPage() {
       <>
         <PageHero
           eyebrow="Registro recibido"
-          title="¡Nos vemos el lunes!"
-          description="Recibirás el enlace de Zoom por correo antes de la reunión."
+          title="Recibimos tu solicitud"
+          description="Revisaremos tu registro y te enviaremos por correo la información para entrar a La Sobremesa."
         />
         <div className="mx-auto max-w-2xl px-4 py-12 space-y-4 text-muted-foreground">
           <p>
             Gracias, <strong className="text-foreground">{form.nombre || "familia"}</strong>.
-            Registramos tu lugar para{" "}
+            Recibimos tu solicitud para{" "}
             <strong className="text-foreground">
               La Sobremesa del lunes a las 7:00 PM (hora del Pacífico)
             </strong>
             .
           </p>
           <p>
-            En las próximas horas te enviaremos a{" "}
-            <strong className="text-foreground">{form.email}</strong> el enlace de Zoom, un
-            recordatorio 24 horas antes y una breve guía para prepararte.
+            Revisaremos los datos y enviaremos a{" "}
+            <strong className="text-foreground">{form.email}</strong> la información para entrar. Si
+            no recibes respuesta, llama o escribe directamente antes del lunes.
           </p>
           <p>
             Si necesitas hablar con alguien antes del lunes, escribe a{" "}
@@ -223,7 +246,8 @@ function RegistroPage() {
               onChange={(e) => update("consentSms", e.target.checked)}
             />
             <span>
-              Acepto recibir el enlace de Zoom y recordatorios por correo o SMS. Consulta los{" "}
+              Acepto que AyudaSobria me contacte por correo o SMS para coordinar el acceso y enviar
+              recordatorios. Consulta los{" "}
               <a className="text-primary hover:underline" href="/terminos-sms">
                 términos SMS
               </a>{" "}
@@ -250,9 +274,17 @@ function RegistroPage() {
             />
           </div>
 
+          {TURNSTILE_SITE_KEY ? (
+            <div className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-language="es" />
+          ) : (
+            <p role="alert" className="text-sm text-destructive">
+              La verificación de seguridad debe configurarse antes de publicar este formulario.
+            </p>
+          )}
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !TURNSTILE_SITE_KEY}
             className="w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
           >
             {loading ? "Enviando…" : "Reservar mi lugar del lunes"}

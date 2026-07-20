@@ -443,12 +443,7 @@ export const TOPICS: Topic[] = [
     description:
       "Guía en español para familias sobre flexibilidad vs. inestabilidad. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
-  {
-    slug: "for-providers",
-    title: "Para proveedores",
-    description:
-      "Guía en español para familias sobre para proveedores. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
+
   {
     slug: "free-guide",
     title: "Guía gratuita para familias",

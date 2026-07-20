@@ -59,14 +59,14 @@ function StatePage() {
             Cómo trabajamos con familias en {state.name}
           </h3>
           <p className="mt-2">
-            Aunque estés en {state.name}, la reunión del <strong>La Sobremesa</strong> se
-            realiza en línea cada lunes a las 7:00 PM (hora del Pacífico). No importa si vives en
-            una ciudad grande o en una zona rural: tu familia puede empezar esta semana sin viajar.
+            Aunque estés en {state.name}, la reunión del <strong>La Sobremesa</strong> se realiza en
+            línea cada lunes a las 7:00 PM (hora del Pacífico). No importa si vives en una ciudad
+            grande o en una zona rural: tu familia puede empezar esta semana sin viajar.
           </p>
           <p className="mt-2">
-            El coaching privado, la evaluación de intervención y el directorio de tratamiento
-            también están disponibles a distancia. Muchas familias en {state.name} nos llaman cuando
-            el sistema local en inglés no las alcanza.
+            El coaching privado y la evaluación de intervención también están disponibles a
+            distancia. Si buscas tratamiento, confirma directamente con cada programa que ofrezca
+            todos los servicios que tu familia necesita en español.
           </p>
         </div>
       </div>

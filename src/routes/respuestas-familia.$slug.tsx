@@ -11,7 +11,7 @@ export const Route = createFileRoute("/respuestas-familia/$slug")({
   head: ({ loaderData, params }) => {
     if (!loaderData)
       return { meta: [{ title: "No encontrado" }, { name: "robots", content: "noindex" }] };
-    const d = `Respuesta clara en español para familias: ${loaderData.answer.question}`;
+    const d = loaderData.answer.shortAnswer;
     return {
       meta: [
         { title: `${loaderData.answer.question} — AyudaSobria` },
@@ -37,15 +37,10 @@ function AnswerPage() {
   const { answer } = Route.useLoaderData();
   return (
     <>
-      <PageHero eyebrow="Pregunta frecuente" title={answer.question} />
+      <PageHero eyebrow={answer.category} title={answer.question} />
       <Prose>
         <h2>Respuesta corta</h2>
-        <p>
-          Cada familia es distinta, pero el patrón se repite: la pregunta suele llegar cuando la
-          situación ya lleva tiempo desgastando a todos. La respuesta empieza por bajar el ritmo,
-          ordenar lo que sabes y decidir cuál es el próximo paso <em>de la familia</em>, no del ser
-          querido.
-        </p>
+        <p>{answer.shortAnswer}</p>
         <h2>Cómo pensarlo con calma</h2>
         <ul>
           <li>Identifica cuánto de la decisión es miedo y cuánto es información.</li>
@@ -59,8 +54,7 @@ function AnswerPage() {
         <h2>Qué hacer esta semana</h2>
         <ol className="mt-4 list-decimal pl-6 space-y-2">
           <li>
-            Únete al <Link to="/circulo-familiar">La Sobremesa</Link> del lunes a las 7:00 PM
-            (PT).
+            Únete al <Link to="/circulo-familiar">La Sobremesa</Link> del lunes a las 7:00 PM (PT).
           </li>
           <li>
             Si la situación no puede esperar, reserva{" "}
@@ -71,6 +65,19 @@ function AnswerPage() {
             <Link to="/intervencion">intervención</Link>.
           </li>
         </ol>
+        <p>
+          {answer.bestNextStep === "family_squares" && (
+            <Link to="/circulo-familiar">Empieza con La Sobremesa gratuita.</Link>
+          )}
+          {answer.bestNextStep === "private_coaching" && (
+            <Link to="/coaching-familiar">Solicita orientación familiar privada.</Link>
+          )}
+          {answer.bestNextStep === "intervention_readiness" && (
+            <Link to="/intervencion">
+              Revisa si la situación requiere planificar una intervención.
+            </Link>
+          )}
+        </p>
         <p>
           Ver todas las <Link to="/respuestas-familia">preguntas frecuentes de familias</Link>.
         </p>

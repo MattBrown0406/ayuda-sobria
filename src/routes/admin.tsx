@@ -52,7 +52,9 @@ function AdminPage() {
   }
 
   useEffect(() => {
-    refresh();
+    void refresh();
+    // The access and overview check should run once when the portal mounts.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleDelete(id: string) {
@@ -61,8 +63,8 @@ function AdminPage() {
       await del({ data: { id } });
       toast.success("Inscripción eliminada");
       refresh();
-    } catch (e: any) {
-      toast.error(e?.message ?? "Error al eliminar");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Error al eliminar");
     }
   }
 
@@ -93,10 +95,10 @@ function AdminPage() {
       <SiteLayout>
         <div className="mx-auto max-w-md px-4 py-16 text-center space-y-4">
           <h1 className="text-2xl font-semibold">Sin acceso</h1>
-          <p className="text-muted-foreground">
-            Tu cuenta no tiene permisos de administrador.
-          </p>
-          <Link to="/" className="text-primary underline">Volver al inicio</Link>
+          <p className="text-muted-foreground">Tu cuenta no tiene permisos de administrador.</p>
+          <Link to="/" className="text-primary underline">
+            Volver al inicio
+          </Link>
         </div>
       </SiteLayout>
     );
@@ -113,9 +115,24 @@ function AdminPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          <Card><CardHeader><CardTitle className="text-sm text-muted-foreground">Inscripciones</CardTitle></CardHeader><CardContent className="text-3xl font-semibold">{d.stats.registrations}</CardContent></Card>
-          <Card><CardHeader><CardTitle className="text-sm text-muted-foreground">Miembros activos</CardTitle></CardHeader><CardContent className="text-3xl font-semibold">{d.stats.activeMembers}</CardContent></Card>
-          <Card><CardHeader><CardTitle className="text-sm text-muted-foreground">Pagos de coaching</CardTitle></CardHeader><CardContent className="text-3xl font-semibold">{d.stats.coachingOrders}</CardContent></Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm text-muted-foreground">Inscripciones</CardTitle>
+            </CardHeader>
+            <CardContent className="text-3xl font-semibold">{d.stats.registrations}</CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm text-muted-foreground">Miembros activos</CardTitle>
+            </CardHeader>
+            <CardContent className="text-3xl font-semibold">{d.stats.activeMembers}</CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm text-muted-foreground">Pagos de coaching</CardTitle>
+            </CardHeader>
+            <CardContent className="text-3xl font-semibold">{d.stats.coachingOrders}</CardContent>
+          </Card>
         </div>
 
         <Tabs defaultValue="registrations">
@@ -141,9 +158,13 @@ function AdminPage() {
                   </thead>
                   <tbody>
                     {d.registrations.length === 0 && (
-                      <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Sin inscripciones aún.</td></tr>
+                      <tr>
+                        <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                          Sin inscripciones aún.
+                        </td>
+                      </tr>
                     )}
-                    {d.registrations.map((r: any) => (
+                    {d.registrations.map((r) => (
                       <tr key={r.id} className="border-t">
                         <td className="p-3">{new Date(r.created_at).toLocaleString("es")}</td>
                         <td className="p-3">{r.full_name}</td>
@@ -151,7 +172,9 @@ function AdminPage() {
                         <td className="p-3">{r.phone ?? "—"}</td>
                         <td className="p-3">{r.relationship ?? "—"}</td>
                         <td className="p-3 text-right">
-                          <Button variant="ghost" size="sm" onClick={() => handleDelete(r.id)}>Eliminar</Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleDelete(r.id)}>
+                            Eliminar
+                          </Button>
                         </td>
                       </tr>
                     ))}
@@ -178,16 +201,29 @@ function AdminPage() {
                   </thead>
                   <tbody>
                     {d.memberships.length === 0 && (
-                      <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Sin membresías aún.</td></tr>
+                      <tr>
+                        <td colSpan={7} className="p-6 text-center text-muted-foreground">
+                          Sin membresías aún.
+                        </td>
+                      </tr>
                     )}
-                    {d.memberships.map((m: any) => (
+                    {d.memberships.map((m) => (
                       <tr key={m.id} className="border-t">
                         <td className="p-3">{new Date(m.created_at).toLocaleDateString("es")}</td>
-                        <td className="p-3">{m.profile ? `${m.profile.first_name ?? ""} ${m.profile.last_name ?? ""}`.trim() || m.user_id.slice(0, 8) : m.user_id.slice(0, 8)}</td>
+                        <td className="p-3">
+                          {m.profile
+                            ? `${m.profile.first_name ?? ""} ${m.profile.last_name ?? ""}`.trim() ||
+                              m.user_id.slice(0, 8)
+                            : m.user_id.slice(0, 8)}
+                        </td>
                         <td className="p-3">{m.plan_type ?? "monthly"}</td>
                         <td className="p-3">{m.status}</td>
                         <td className="p-3">${m.amount}</td>
-                        <td className="p-3">{m.next_billing_date ? new Date(m.next_billing_date).toLocaleDateString("es") : "—"}</td>
+                        <td className="p-3">
+                          {m.next_billing_date
+                            ? new Date(m.next_billing_date).toLocaleDateString("es")
+                            : "—"}
+                        </td>
                         <td className="p-3 font-mono text-xs">{m.paypal_subscription_id}</td>
                       </tr>
                     ))}
@@ -213,9 +249,13 @@ function AdminPage() {
                   </thead>
                   <tbody>
                     {d.coaching.length === 0 && (
-                      <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Sin pagos aún.</td></tr>
+                      <tr>
+                        <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                          Sin pagos aún.
+                        </td>
+                      </tr>
                     )}
-                    {d.coaching.map((c: any) => (
+                    {d.coaching.map((c) => (
                       <tr key={c.id} className="border-t">
                         <td className="p-3">{new Date(c.created_at).toLocaleDateString("es")}</td>
                         <td className="p-3">{c.customer_name ?? "—"}</td>

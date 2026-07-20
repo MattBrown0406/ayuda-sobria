@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Deja de adivinar el próximo paso. Recibe el nivel adecuado de ayuda familiar frente a la adicción.",
+          "No tienes que resolver esto a ciegas. Encuentra el nivel adecuado de apoyo familiar frente a la adicción.",
       },
       { property: "og:url", content: "https://ayudasobria.com/" },
     ],
@@ -81,13 +81,13 @@ function Nav() {
             <Phone className="h-4 w-4" /> {PHONE_DISPLAY}
           </a>
           <a
-            href="#circulo"
+            href="/registro"
             className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
           >
             Reunión gratis del lunes
           </a>
           <a
-            href="/ingresar"
+            href="/auth"
             className="hidden items-center gap-1 rounded-md border border-input px-3 py-2 text-sm font-medium lg:inline-flex"
           >
             <LogIn className="h-4 w-4" /> Ingresar
@@ -111,19 +111,19 @@ function Hero() {
             pasos para familias
           </span>
           <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Deja de adivinar qué hacer.
+            No tienes que resolver esto a ciegas.
             <span className="mt-2 block bg-gradient-to-r from-chart-3 via-primary to-chart-5 bg-clip-text text-transparent">
               Encuentra el nivel adecuado de ayuda familiar frente a la adicción.
             </span>
           </h1>
           <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
-            AyudaSobria acompaña a las familias a pasar de la preocupación a la acción. Únete al
-            La Sobremesa los lunes, agenda una sesión privada si no puedes esperar, o evalúa si
-            es el momento de una intervención.
+            AyudaSobria acompaña a las familias a pasar de la preocupación a la acción. Únete a La
+            Sobremesa los lunes, agenda una sesión privada si necesitas ayuda antes del lunes, o
+            evalúa si una intervención es el paso adecuado.
           </p>
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
             <a
-              href="#circulo"
+              href="/registro"
               className="flex items-start gap-3 rounded-lg border-2 border-primary/80 bg-primary p-4 text-left text-primary-foreground hover:bg-primary/90"
             >
               <Calendar className="mt-0.5 h-5 w-5 shrink-0" />
@@ -141,7 +141,7 @@ function Hero() {
               </span>
             </a>
             <a
-              href="#intervencion"
+              href="/intervencion"
               className="flex items-start gap-3 rounded-lg border-2 border-chart-4/40 bg-accent p-4 text-left text-foreground hover:bg-accent/70"
             >
               <Shield className="mt-0.5 h-5 w-5 shrink-0 text-chart-4" />
@@ -200,11 +200,11 @@ function Hero() {
               Empieza gratis. Avanza más rápido cuando la situación lo requiera.
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Si el apoyo del lunes es suficiente, comienza con La Sobremesa. Si tu familia
-              necesita respuestas ya, reserva una sesión privada o evalúa la intervención.
+              Si el apoyo del lunes es suficiente, comienza con La Sobremesa. Si tu familia necesita
+              respuestas ya, reserva una sesión privada o evalúa la intervención.
             </p>
             <a
-              href="#circulo"
+              href="/registro"
               className="mt-3 inline-block text-sm font-semibold text-primary hover:underline"
             >
               Regístrate en La Sobremesa →
@@ -223,23 +223,23 @@ function PressureLevel() {
       title: "La Sobremesa gratuita",
       body: "Usa la reunión gratuita de los lunes cuando tu familia necesita educación, perspectiva y un espacio de menor presión para hacer preguntas.",
       cta: "Únete a la reunión gratis",
-      href: "#circulo",
+      href: "/registro",
       color: "border-primary/50",
     },
     {
-      tag: "Cuando el lunes queda muy lejos",
+      tag: "Si necesitas ayuda antes del lunes",
       title: "Coaching o consulta privada",
       body: "Reserva una sesión cuando necesites respuestas directas sobre límites, tratamiento, recaída, dinero, vivienda o qué decir a continuación.",
       cta: "Reservar ayuda privada",
-      href: "#consulta",
+      href: "/coaching-familiar",
       color: "border-chart-4/60",
     },
     {
       tag: "Cuando no hay peligro inmediato",
-      title: "Camino a la intervención",
+      title: "Evaluar si una intervención es el paso adecuado",
       body: "Evalúa una intervención cuando se rechaza el tratamiento, la familia está dividida o la recaída se repite. No es un servicio de emergencia.",
       cta: "Habla con nuestro equipo",
-      href: "#intervencion",
+      href: "/intervencion",
       color: "border-destructive/50",
     },
   ];
@@ -331,9 +331,9 @@ function FAQ() {
           Convierte tu búsqueda en el próximo paso correcto.
         </h2>
         <p className="mt-4 max-w-3xl text-muted-foreground">
-          Las familias suelen llegar con una pregunta urgente. Estas respuestas te guían hacia el
-          La Sobremesa, coaching privado o evaluación de intervención sin interrumpir el camino
-          de apoyo gratuito.
+          Las familias suelen llegar con una pregunta urgente. Estas respuestas te guían hacia el La
+          Sobremesa, coaching privado o evaluación de intervención sin interrumpir el camino de
+          apoyo gratuito.
         </p>
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {qs.map((it) => (
@@ -389,15 +389,15 @@ function Situations() {
           </ul>
         </div>
         <div className="rounded-2xl border-2 border-primary/40 bg-primary/5 p-6">
-          <h3 className="font-semibold">Con apoyo constante</h3>
+          <h3 className="font-semibold">Con apoyo real y opciones claras</h3>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             {[
               "Reuniones gratuitas de La Sobremesa con otras familias que entienden",
               "Coaching por hora cuando necesitas guía uno a uno",
               "Educación clara que explica lo que estás viendo",
-              "Un foro privado de familias que realmente comprenden",
+              "Respuestas en español para las preguntas que más se repiten",
               "Herramientas prácticas para límites que puedas sostener",
-              "Meditaciones guiadas para los momentos de mayor estrés",
+              "Artículos extensos para comprender tratamiento, límites y recaídas",
               "Guías educativas para decisiones familiares",
               "Más claridad para responder en vez de reaccionar",
             ].map((t) => (
@@ -407,18 +407,15 @@ function Situations() {
             ))}
           </ul>
           <p className="mt-6 text-sm text-muted-foreground">
-            No tienes que resolver esto sola. Consigue herramientas prácticas, apoyo constante y un
-            lugar para pensar con claridad de nuevo.
+            No tienes que resolver esto sola o solo. Empieza con el apoyo gratuito y usa coaching
+            privado cuando necesites un plan concreto.
           </p>
           <a
-            href="/membresia"
+            href="/coaching-familiar"
             className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
           >
-            Explorar la membresía
+            Ver opciones de coaching
           </a>
-          <p className="mt-2 text-xs text-muted-foreground">
-            US$14.99 al mes o US$149 al año. Cancela cuando quieras.
-          </p>
         </div>
       </div>
     </section>
@@ -438,8 +435,8 @@ function Programs() {
     {
       icon: BookOpen,
       tag: "Apoyo continuo",
-      title: "Membresía Familiar para acompañamiento entre crisis",
-      body: "Accede al foro, biblioteca de educación, grabaciones y precios preferenciales de coaching.",
+      title: "Membresía de ahorro para coaching familiar",
+      body: "Los miembros activos pagan US$125 por sesión privada en lugar de US$150 y pueden administrar o cancelar su plan en línea.",
       cta: "Explorar la membresía",
       href: "/membresia",
     },
@@ -523,7 +520,9 @@ function Providers() {
         Comprende las opciones de tratamiento
       </h2>
       <p className="mt-4 max-w-2xl text-muted-foreground">
-        Información educativa y próximos pasos prácticos para familias que necesitan claridad.
+        Estas tarjetas explican tipos de atención y próximos pasos prácticos; no son recomendaciones
+        de proveedores. Confirma directamente que cada programa ofrezca atención clínica y familiar
+        adecuada en español.
       </p>
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
@@ -591,7 +590,7 @@ function FinalCTA() {
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <a
-            href="#circulo"
+            href="/registro"
             className="rounded-md bg-background px-5 py-3 text-sm font-semibold text-foreground hover:bg-background/90"
           >
             Únete a La Sobremesa
@@ -612,76 +611,6 @@ function FinalCTA() {
         </div>
       </div>
     </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="bg-background">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="AyudaSobria" width={32} height={32} className="h-8 w-8" />
-            <span className="font-semibold">AyudaSobria</span>
-          </div>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Apoyo en español para familias afectadas por la adicción. Guía ética, sin presión de la
-            industria.
-          </p>
-        </div>
-        <div>
-          <h4 className="text-sm font-semibold">Contacto</h4>
-          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li>
-              <a href={PHONE_HREF} className="hover:text-foreground">
-                {PHONE_DISPLAY}
-              </a>
-            </li>
-            <li>
-              <a href={`mailto:${EMAIL}`} className="hover:text-foreground">
-                {EMAIL}
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-sm font-semibold">Programas</h4>
-          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li>
-              <a href="#circulo">La Sobremesa</a>
-            </li>
-            <li>
-              <a href="/coaching-familiar">Coaching privado</a>
-            </li>
-            <li>
-              <a href="#intervencion">Intervención</a>
-            </li>
-            <li>
-              <a href="#tratamiento">Directorio de tratamiento</a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-sm font-semibold">Recursos</h4>
-          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li>
-              <a href="/recursos">Recursos</a>
-            </li>
-            <li>
-              <a href="/evaluaciones">Evaluaciones</a>
-            </li>
-            <li>
-              <a href="/membresia">Membresía familiar</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div className="border-t border-border">
-        <p className="mx-auto max-w-7xl px-4 py-6 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} AyudaSobria. Todos los derechos reservados.
-        </p>
-      </div>
-    </footer>
   );
 }
 

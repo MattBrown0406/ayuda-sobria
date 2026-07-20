@@ -41,6 +41,25 @@ export const Route = createFileRoute("/intervencion")({
           <li>Preparación de participantes y opciones de tratamiento.</li>
           <li>Día de la intervención y seguimiento.</li>
         </ol>
+        <h2>Elige el nivel adecuado</h2>
+        <ul>
+          <li>
+            Usa <a href="/circulo-familiar">La Sobremesa</a> si la situación puede esperar y
+            necesitas educación y apoyo gratuito.
+          </li>
+          <li>
+            Usa <a href="/coaching-familiar">coaching privado</a> cuando la familia necesita ordenar
+            una decisión específica o alinearse antes de avanzar.
+          </li>
+          <li>
+            Habla sobre una intervención formal cuando el tratamiento se rechaza, el riesgo aumenta
+            y las conversaciones improvisadas ya no cambian el patrón.
+          </li>
+        </ul>
+        <p>
+          Una intervención no sustituye la respuesta de emergencia. Ante una sobredosis, peligro
+          inmediato o amenaza activa, llama al 911 o al servicio local de emergencias.
+        </p>
         <p>
           Escríbenos a <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o llama al
           (458) 298-8011.

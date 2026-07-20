@@ -36,8 +36,7 @@ function ToolPage() {
         <h2>Para qué sirve</h2>
         <p>
           Esta guía está pensada para familias hispanohablantes que necesitan ordenar una decisión
-          concreta cuando La Sobremesa todavía no empieza y no hay una sesión de coaching a
-          la mano.
+          concreta cuando La Sobremesa todavía no empieza y no hay una sesión de coaching a la mano.
         </p>
         <h2>Cómo usarla</h2>
         <ol>

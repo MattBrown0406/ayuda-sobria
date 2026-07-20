@@ -16,7 +16,7 @@ export const Route = createFileRoute("/membresia/")({
       {
         name: "description",
         content:
-          "Membresía familiar por US$14.99 al mes: biblioteca educativa, comunidad, sesiones en vivo y herramientas.",
+          "Membresía familiar desde US$14.99 al mes con precio preferencial de US$125 por sesión privada de coaching.",
       },
       { property: "og:title", content: "Membresía — AyudaSobria" },
       { property: "og:description", content: "Acompañamiento continuo para la familia." },
@@ -106,19 +106,22 @@ function MembresiaPage() {
       <PageHero
         eyebrow="Desde US$14.99 al mes"
         title="Membresía familiar"
-        description="Acompañamiento entre crisis: educación, comunidad, sesiones en vivo y herramientas prácticas para la familia."
+        description="Ahorra en sesiones privadas de coaching familiar y administra tu plan en línea."
       />
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Prose>
-            <h2>Qué incluye</h2>
+            <h2>Qué incluye actualmente</h2>
             <ul>
-              <li>Biblioteca completa de educación familiar en español.</li>
-              <li>Foro privado para miembros.</li>
-              <li>Webinarios, grabaciones y sesiones de apoyo en vivo.</li>
-              <li>Herramientas y evaluaciones premium.</li>
+              <li>Precio preferencial de US$125 por sesión privada de coaching.</li>
+              <li>Administración del plan y cancelación en línea.</li>
               <li>Cancelación en cualquier momento.</li>
             </ul>
+            <p>
+              La Sobremesa y los recursos públicos del sitio siguen siendo gratuitos y no requieren
+              membresía. El foro, la biblioteca privada, los webinarios y las herramientas premium
+              todavía no forman parte de este plan.
+            </p>
             <h2>Precio</h2>
             <p>
               <strong>Mensual:</strong> US$14.99 al mes. <strong>Anual:</strong> US$149 al año

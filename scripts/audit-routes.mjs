@@ -14,6 +14,9 @@ walk(root);
 const source = files.map((file) => fs.readFileSync(file, "utf8")).join("\n");
 const sitemapSource = fs.readFileSync("src/routes/sitemap[.]xml.ts", "utf8");
 const rootSource = fs.readFileSync("src/routes/__root.tsx", "utf8");
+const homeSource = fs.readFileSync("src/routes/index.tsx", "utf8");
+const membershipSource = fs.readFileSync("src/routes/membresia.index.tsx", "utf8");
+const registrationSource = fs.readFileSync("src/routes/registro.tsx", "utf8");
 const layoutRoutes = [
   "apoyo-familiar.tsx",
   "apoyo-familiar.$state.tsx",
@@ -59,14 +62,30 @@ const checks = [
   ],
   [source.includes('"@type": "BlogPosting"'), "Blog posts include structured data"],
   [
+    !source.includes("Directorio en español") &&
+      !source.includes("directorio de tratamiento") &&
+      !fs
+        .readFileSync("src/components/site/SiteLayout.tsx", "utf8")
+        .includes('to="/proveedores"') &&
+      !sitemapSource.includes('"/proveedores"'),
+    "Spanish site does not advertise or globally link a copied provider directory",
+  ],
+  [
     fs.readFileSync("src/routes/api.registro.ts", "utf8").includes("TURNSTILE_SECRET_KEY") &&
       fs.readFileSync("src/routes/api.registro.ts", "utf8").includes("MAX_BODY_BYTES"),
     "Registration endpoint has Turnstile verification and a body-size limit",
   ],
   [
-    fs.readFileSync("src/routes/registro.tsx", "utf8").includes("cf-turnstile") &&
-      fs.readFileSync("src/routes/registro.tsx", "utf8").includes('name="website"'),
+    registrationSource.includes("cf-turnstile") && registrationSource.includes('name="website"'),
     "Registration form includes Turnstile and honeypot controls",
+  ],
+  [
+    !membershipSource.includes("Biblioteca completa de educación familiar") &&
+      !membershipSource.includes("Foro privado para miembros") &&
+      !homeSource.includes("Un foro privado de familias") &&
+      !membershipSource.toLowerCase().includes("prueba gratis") &&
+      !registrationSource.includes("recordatorio 24 horas antes"),
+    "Sales and registration copy only promises currently implemented fulfillment",
   ],
 ];
 let failed = false;

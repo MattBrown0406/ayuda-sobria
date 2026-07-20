@@ -38,6 +38,16 @@ export const Route = createFileRoute("/coaching-familiar")({
           Para la familia — no para la persona con adicción. Padres, parejas, hijos adultos y
           hermanos que necesitan una respuesta clara sobre qué hacer ahora.
         </p>
+        <h2>Qué puede ayudarte a resolver</h2>
+        <ul>
+          <li>Límites sobre dinero, vivienda, transporte y comunicación.</li>
+          <li>Cómo responder a una recaída o al rechazo del tratamiento.</li>
+          <li>Qué decir en una conversación difícil sin entrar en otra pelea.</li>
+          <li>Cómo alinear a la familia y decidir el próximo paso para esta semana.</li>
+          <li>
+            Si la situación todavía corresponde a coaching o necesita evaluar una intervención.
+          </li>
+        </ul>
         <h2>Cómo funciona</h2>
         <ul>
           <li>Sesión inicial de 60 minutos.</li>
@@ -47,13 +57,27 @@ export const Route = createFileRoute("/coaching-familiar")({
           <li>US$150 (USD) por sesión · US$125 para miembros activos.</li>
         </ul>
         <p>
-          <Link to="/coaching-pago">Reserva y paga tu sesión en línea</Link>, o si prefieres
-          coordinar primero, escribe a{" "}
-          <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a> o llama al (458)
-          298-8011.
+          El coaching es orientación educativa y práctica para la familia. No es psicoterapia,
+          tratamiento médico ni un servicio de emergencia.
         </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            to="/coaching-pago"
+            className="rounded-md bg-primary px-5 py-3 font-semibold text-primary-foreground no-underline hover:bg-primary/90"
+          >
+            Reservar y pagar una sesión
+          </Link>
+          <a
+            href="tel:4582988011"
+            className="rounded-md border border-input px-5 py-3 font-semibold no-underline hover:bg-accent"
+          >
+            Llamar antes de reservar
+          </a>
+        </div>
         <p>
-          ¿Aún no estás para una sesión privada? Empieza por{" "}
+          También puedes escribir a{" "}
+          <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>. Si aún no necesitas
+          una sesión privada, empieza por{" "}
           <Link to="/registro">La Sobremesa gratuita de los lunes</Link>.
         </p>
       </Prose>

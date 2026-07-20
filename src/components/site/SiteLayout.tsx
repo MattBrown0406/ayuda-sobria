@@ -38,15 +38,17 @@ function Header() {
         <div className="flex items-center gap-2">
           <a
             href={PHONE_HREF}
-            className="hidden items-center gap-2 rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-semibold sm:inline-flex"
+            aria-label={`Llamar a AyudaSobria al ${PHONE_DISPLAY}`}
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary p-2 text-xs font-semibold sm:px-3 sm:py-1.5"
           >
-            <Phone className="h-3.5 w-3.5" /> {PHONE_DISPLAY}
+            <Phone className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">{PHONE_DISPLAY}</span>
           </a>
           <Link
             to="/registro"
             className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
           >
-            Reservar lugar
+            Reunión gratis
           </Link>
           <button
             onClick={() => setOpen((o) => !o)}
@@ -79,7 +81,7 @@ function Header() {
               </Link>
             ))}
             <Link
-              to="/ingresar"
+              to="/auth"
               onClick={() => setOpen(false)}
               className="rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
             >
@@ -194,11 +196,7 @@ function Footer() {
                 Preguntas frecuentes
               </Link>
             </li>
-            <li>
-              <Link to="/proveedores" className="hover:text-foreground">
-                Para proveedores
-              </Link>
-            </li>
+
             <li>
               <Link to="/privacidad" className="hover:text-foreground">
                 Privacidad
@@ -278,8 +276,8 @@ export function CTAStrip() {
         <p className="rounded-lg border border-destructive/30 bg-background p-4 text-sm text-muted-foreground">
           <strong className="text-foreground">¿Hay peligro inmediato o sobredosis?</strong> Llama al
           911 o al servicio local de emergencias. En Estados Unidos, llama o envía texto al 988
-          (oprime 2 para español) para una crisis
-          suicida o de salud mental. Estos servicios no sustituyen atención de emergencia.
+          (oprime 2 para español) para una crisis suicida o de salud mental. Estos servicios no
+          sustituyen atención de emergencia.
         </p>
       </div>
       <div className="mx-auto grid max-w-7xl gap-4 px-4 pb-10 pt-4 md:grid-cols-3">

@@ -57,8 +57,8 @@ export const Route = createFileRoute("/privacidad")({
         <h2>Mensajes SMS</h2>
         <p>
           Si aceptas recibir SMS, usamos tu número solo para enviarte el enlace de Zoom,
-          recordatorios y avisos del servicio. Nunca compartimos tu número con terceros con fines
-          de mercadeo y puedes darte de baja respondiendo <strong>STOP</strong> (ver{" "}
+          recordatorios y avisos del servicio. Nunca compartimos tu número con terceros con fines de
+          mercadeo y puedes darte de baja respondiendo <strong>STOP</strong> (ver{" "}
           <a href="/terminos-sms">términos SMS</a>).
         </p>
         <h2>Limitaciones de seguridad</h2>

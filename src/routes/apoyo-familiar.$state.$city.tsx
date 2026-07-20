@@ -52,9 +52,9 @@ function CityPage() {
         <h2 className="text-xl font-semibold">Cómo empezar esta semana</h2>
         <ol className="mt-4 space-y-3 text-muted-foreground">
           <li>
-            <strong className="text-foreground">1. Únete a La Sobremesa.</strong> Reunión
-            gratuita cada lunes 7:00 PM (hora del Pacífico) por Zoom. Puedes conectarte desde{" "}
-            {city.name} sin desplazarte.
+            <strong className="text-foreground">1. Únete a La Sobremesa.</strong> Reunión gratuita
+            cada lunes 7:00 PM (hora del Pacífico) por Zoom. Puedes conectarte desde {city.name} sin
+            desplazarte.
           </li>
           <li>
             <strong className="text-foreground">2. Reserva una sesión privada.</strong> Si no puedes

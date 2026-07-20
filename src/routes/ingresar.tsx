@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero, Prose } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/ingresar")({
@@ -7,7 +7,7 @@ export const Route = createFileRoute("/ingresar")({
       { title: "Ingresar — AyudaSobria" },
       {
         name: "description",
-        content: "Ingresa al portal seguro de miembros de AyudaSobria y SoberHelpline.",
+        content: "Ingresa a tu cuenta de AyudaSobria para administrar tu membresía.",
       },
       { name: "robots", content: "noindex, follow" },
     ],
@@ -22,16 +22,14 @@ function IngresarPage() {
       <PageHero
         eyebrow="Miembros"
         title="Ingresa a tu cuenta"
-        description="Tu membresía de AyudaSobria usa el portal seguro de SoberHelpline para proteger tu cuenta, pagos y contenido privado."
+        description="Usa tu cuenta de AyudaSobria para revisar y administrar tu membresía."
       />
       <Prose>
         <p>
-          <a href="https://soberhelpline.com/auth?redirect=/member-home">
-            Ingresar al portal seguro →
-          </a>
+          <Link to="/auth">Ingresar a AyudaSobria →</Link>
         </p>
         <p>
-          ¿Todavía no eres miembro? <a href="/membresia">Conoce los planes y la prueba gratuita</a>.
+          ¿Todavía no eres miembro? <Link to="/membresia">Conoce los planes disponibles</Link>.
         </p>
         <p>
           Si necesitas ayuda con tu acceso, escribe a{" "}

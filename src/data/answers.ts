@@ -1,3 +1,5 @@
+import { ANSWER_DETAILS, type AnswerDetail } from "@/data/answerDetails";
+
 export interface Answer {
   slug: string;
   question: string;
@@ -93,6 +95,12 @@ export const ANSWERS: Answer[] = [
     question: "¿Por dónde empezar cuando la adicción provoca caos?",
   },
 ];
-export const ANSWER_MAP: Record<string, Answer> = Object.fromEntries(
-  ANSWERS.map((a) => [a.slug, a]),
+export type CompleteAnswer = Answer & AnswerDetail;
+
+export const ANSWER_MAP: Record<string, CompleteAnswer> = Object.fromEntries(
+  ANSWERS.map((answer) => {
+    const detail = ANSWER_DETAILS[answer.slug];
+    if (!detail) throw new Error(`Falta contenido para la respuesta: ${answer.slug}`);
+    return [answer.slug, { ...answer, ...detail }];
+  }),
 );
