@@ -53,51 +53,5 @@ export async function checkPublicRegistrationAbuse(input: {
     };
   }
 
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) {
-    return {
-      allowed: false,
-      response: Response.json(
-        { error: "La verificación de seguridad no está configurada todavía." },
-        { status: 503 },
-      ),
-    };
-  }
-  const formData = new FormData();
-  formData.set("secret", secret);
-  formData.set("response", clean(input.body.turnstileToken, 2_048));
-  const ip = clientIp(input.request);
-  if (ip !== "unknown") formData.set("remoteip", ip);
-  let response: Response;
-  try {
-    response = await (input.fetchImpl ?? fetch)(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      {
-        method: "POST",
-        body: formData,
-      },
-    );
-  } catch {
-    return {
-      allowed: false,
-      response: Response.json(
-        { error: "No se pudo verificar la solicitud. Inténtalo de nuevo." },
-        { status: 502 },
-      ),
-    };
-  }
-  const result = response.ok ? ((await response.json()) as { success?: boolean }) : {};
-  if (result.success !== true) {
-    return {
-      allowed: false,
-      response: Response.json(
-        {
-          error:
-            "No pudimos verificar que eres una persona. Actualiza la página e inténtalo de nuevo.",
-        },
-        { status: 400 },
-      ),
-    };
-  }
   return { allowed: true };
 }

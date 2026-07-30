@@ -77,13 +77,13 @@ const checks = [
     "Spanish site does not advertise or globally link a copied provider directory",
   ],
   [
-    fs.readFileSync("src/routes/api.registro.ts", "utf8").includes("TURNSTILE_SECRET_KEY") &&
+    fs.readFileSync("src/routes/api.registro.ts", "utf8").includes("isRateLimited") &&
       fs.readFileSync("src/routes/api.registro.ts", "utf8").includes("MAX_BODY_BYTES"),
-    "Registration endpoint has Turnstile verification and a body-size limit",
+    "Registration endpoint has rate limiting and a body-size limit",
   ],
   [
-    registrationSource.includes("cf-turnstile") && registrationSource.includes('name="website"'),
-    "Registration form includes Turnstile and honeypot controls",
+    registrationSource.includes('name="website"') && registrationSource.includes("formMs"),
+    "Registration form includes honeypot and timing controls",
   ],
   [
     !membershipSource.includes("Biblioteca completa de educación familiar") &&
