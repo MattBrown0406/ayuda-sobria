@@ -64,11 +64,21 @@ function RegistroPage() {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch("/api/zoom/register", {
+      const payload = JSON.stringify({ ...form, formMs: Date.now() - openedAt });
+      let response = await fetch("/api/zoom/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, formMs: Date.now() - openedAt }),
+        body: payload,
       });
+      // Zoom automation is optional: when it isn't configured yet, fall back to
+      // the email registration endpoint so no one's request is lost.
+      if (response.status === 503) {
+        response = await fetch("/api/registro", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+        });
+      }
       const result = (await response.json().catch(() => ({}))) as {
         error?: string;
         accepted?: boolean;
