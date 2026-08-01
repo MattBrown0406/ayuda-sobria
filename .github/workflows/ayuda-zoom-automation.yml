@@ -22,15 +22,22 @@ jobs:
       AYUDA_ZOOM_BASE_URL: ${{ secrets.AYUDA_ZOOM_BASE_URL }}
       ZOOM_AUTOMATION_SECRET: ${{ secrets.ZOOM_AUTOMATION_SECRET }}
     steps:
+      - name: Check configuration
+        id: config
+        shell: bash
+        run: |
+          if [[ -z "${AYUDA_ZOOM_BASE_URL:-}" || -z "${ZOOM_AUTOMATION_SECRET:-}" ]]; then
+            echo "Zoom automation secrets are not configured; skipping this run."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Schedule and process La Sobremesa
+        if: steps.config.outputs.configured == 'true'
         shell: bash
         run: |
           set -euo pipefail
-
-          if [[ -z "${AYUDA_ZOOM_BASE_URL:-}" || -z "${ZOOM_AUTOMATION_SECRET:-}" ]]; then
-            echo "AyudaSobria Zoom automation is not configured; add both repository secrets."
-            exit 1
-          fi
 
           base_url="${AYUDA_ZOOM_BASE_URL%/}"
           auth_header="Authorization: Bearer ${ZOOM_AUTOMATION_SECRET}"
@@ -44,15 +51,7 @@ jobs:
               "$base_url/api/zoom/schedule"
           })"
 
-          occurrence_id="$(SCHEDULE_JSON="$schedule_json" python - <<'PY'
-          import json, os
-          body = json.loads(os.environ["SCHEDULE_JSON"])
-          occurrence_id = body.get("occurrence", {}).get("id")
-          if not isinstance(occurrence_id, str) or not occurrence_id:
-              raise SystemExit("Scheduling response omitted occurrence.id")
-          print(occurrence_id)
-          PY
-          )"
+          occurrence_id="$(printf '%s' "$schedule_json" | jq -er '.occurrence.id')"
 
           post_action() {
             local payload="$1"
