@@ -50,7 +50,10 @@ export function createZoomClient(options: ZoomClientOptions): ZoomApi {
         "Content-Type": "application/json",
       },
     });
-    if (!response.ok) throw new Error(`Zoom API failed (${response.status})`);
+    if (!response.ok) {
+      const detail = await response.text().catch(() => "");
+      throw new Error(`Zoom API failed (${response.status}) ${detail.slice(0, 500)}`);
+    }
     return response;
   }
 
