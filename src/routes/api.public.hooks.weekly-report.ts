@@ -4,9 +4,16 @@ export const Route = createFileRoute("/api/public/hooks/weekly-report")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const anonKey = process.env.SUPABASE_ANON_KEY;
-        const providedKey = request.headers.get("apikey");
-        if (!anonKey || !providedKey || providedKey !== anonKey) {
+        const accepted = [
+          process.env.SUPABASE_ANON_KEY,
+          process.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          process.env.ZOOM_AUTOMATION_SECRET,
+        ].filter((value): value is string => Boolean(value));
+        const providedKey =
+          request.headers.get("apikey") ??
+          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
+          "";
+        if (!accepted.length || !accepted.includes(providedKey)) {
           return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
 
