@@ -64,10 +64,18 @@ export function createZoomClient(options: ZoomClientOptions): ZoomApi {
       for (let page = 0; page < 5; page += 1) {
         const params = new URLSearchParams({ type: "upcoming", page_size: "100" });
         if (pageToken) params.set("next_page_token", pageToken);
-        const response = await zoomFetch(
-          `/users/${encodeURIComponent(userId)}/meetings?${params}`,
-          { method: "GET" },
-        );
+        let response: Response;
+        try {
+          response = await zoomFetch(`/users/${encodeURIComponent(userId)}/meetings?${params}`, {
+            method: "GET",
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "";
+          // Listing meetings is only a duplicate-check optimization. If the Zoom app
+          // lacks the list scope, fall back to creating/using the stored meeting.
+          if (message.includes("list_meetings") || message.includes("4711")) return null;
+          throw error;
+        }
         const body = (await response.json()) as ZoomMeetingListResponse;
         const requestedStart = Date.parse(input.startTime);
         const found = body.meetings?.find(
