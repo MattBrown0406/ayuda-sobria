@@ -291,6 +291,16 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       </main>
       {showAppPromo && <AppPromo />}
       <Footer />
+      <a
+        href={WHATSAPP_HREF}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Escríbenos por WhatsApp"
+        className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-chart-2 px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105 active:scale-95"
+      >
+        <WhatsAppMark className="h-5 w-5" />
+        <span className="hidden sm:inline">WhatsApp</span>
+      </a>
     </div>
   );
 }
