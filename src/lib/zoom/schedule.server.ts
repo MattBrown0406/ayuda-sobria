@@ -82,6 +82,10 @@ export function createScheduleHandler(deps: {
       if (error instanceof Error && error.message === "OCCURRENCE_BUSY") {
         return Response.json({ error: "Scheduling already in progress" }, { status: 409 });
       }
+      console.error(
+        "Zoom scheduling failed",
+        error instanceof Error ? error.message : String(error),
+      );
       return Response.json({ error: "Unable to schedule meeting" }, { status: 502 });
     }
   };
