@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Phone, LogIn, Menu } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import logo from "@/assets/logo.webp";
+import { AppPromo } from "@/components/site/AppPromo";
 
 export const PHONE_DISPLAY = "(458) 298-8011";
 export const PHONE_HREF = "tel:4582988011";
@@ -246,6 +247,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <main id="contenido-principal" className="flex-1">
         {children}
       </main>
+      <AppPromo />
       <Footer />
     </div>
   );

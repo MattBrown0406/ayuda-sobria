@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import logo from "@/assets/logo.webp";
 import counselor from "@/assets/counselor.webp";
+import { AppPromo } from "@/components/site/AppPromo";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -618,6 +619,7 @@ function Index() {
   return (
     <>
       <Hero />
+      <AppPromo />
       <PressureLevel />
       <FAQ />
       <Situations />
