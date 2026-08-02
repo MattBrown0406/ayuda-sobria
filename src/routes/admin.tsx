@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ExternalLink, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { ZoomMeetingPanel } from "@/components/admin/ZoomMeetingPanel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -270,9 +271,10 @@ function AdminPage() {
           <StatCard title="Published recordings" value={publishedCount} />
         </div>
 
-        <Tabs defaultValue="occurrences">
+        <Tabs defaultValue="zoom">
           <div className="overflow-x-auto pb-1">
             <TabsList className="h-auto min-w-max flex-wrap justify-start">
+              <TabsTrigger value="zoom">Zoom meeting</TabsTrigger>
               <TabsTrigger value="occurrences">Meetings</TabsTrigger>
               <TabsTrigger value="registrations">Registrants & questions</TabsTrigger>
               <TabsTrigger value="attendance">Attendance</TabsTrigger>
@@ -281,6 +283,18 @@ function AdminPage() {
               <TabsTrigger value="coaching">Coaching</TabsTrigger>
             </TabsList>
           </div>
+
+          <TabsContent value="zoom" className="space-y-3">
+            <SectionIntro
+              title="La Sobremesa Zoom meeting"
+              description="Meeting settings, submitted questions, follow-up requests, the weekly registration archive, and attendance."
+            />
+            <ZoomMeetingPanel
+              occurrences={data.occurrences as any}
+              registrations={data.registrations as any}
+              attendance={data.attendance as any}
+            />
+          </TabsContent>
 
           <TabsContent value="occurrences" className="space-y-3">
             <SectionIntro
