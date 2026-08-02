@@ -1,7 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Phone, LogIn, Menu } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import logo from "@/assets/logo.webp";
+import { AppPromo } from "@/components/site/AppPromo";
 
 export const PHONE_DISPLAY = "(458) 298-8011";
 export const PHONE_HREF = "tel:4582988011";
@@ -234,6 +235,8 @@ function Footer() {
 }
 
 export function SiteLayout({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const showAppPromo = pathname !== "/";
   return (
     <div className="flex min-h-screen flex-col">
       <a
@@ -246,6 +249,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <main id="contenido-principal" className="flex-1">
         {children}
       </main>
+      {showAppPromo && <AppPromo />}
       <Footer />
     </div>
   );
