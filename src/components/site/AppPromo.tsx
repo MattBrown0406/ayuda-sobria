@@ -1,7 +1,15 @@
-import { MessageSquareHeart, Users, PlayCircle, Video, Languages, Apple } from "lucide-react";
+import { MessageSquareHeart, Users, PlayCircle, Video, Languages } from "lucide-react";
 import appLogo from "@/assets/sober-helpline-app.png.asset.json";
 
 const APP_STORE_URL = "https://apps.apple.com/us/app/sober-helpline/id6780034996";
+
+function AppleMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 384 512" aria-hidden="true" focusable="false" className={className} fill="currentColor">
+      <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-36.8-2.8-77 21.5-91.7 21.5-15.6 0-51.2-20.5-79.2-20.5C61.4 141.2 8 184.5 8 271.6c0 25.8 4.7 52.4 14.1 79.9 12.6 36.1 47.2 122.9 91.7 121.5 23.3-.6 39.7-16.5 70-16.5 29.4 0 44.6 16.5 70.6 16.5 44.9-.6 76.2-79.5 88.5-115.7-60.1-28.3-59.7-83.9-59.4-88.6zM256.8 84.4c17.4-21.1 26.7-46.2 25.2-72.4-25.4 1.5-49.5 13.8-66.6 33.9-16.3 18.9-27.4 44.2-25.2 69.3 27.8 2.2 51.4-11.2 66.6-30.8z" />
+    </svg>
+  );
+}
 
 const features = [
   {
@@ -50,7 +58,7 @@ export function AppPromo() {
               aria-label="Descargar Sober Helpline en el App Store"
               className="inline-flex items-center gap-2.5 rounded-xl border border-app-promo-foreground/25 bg-black px-4 py-2.5 no-underline shadow-lg transition-transform hover:scale-[1.03] active:scale-[0.98]"
             >
-              <Apple className="h-7 w-7 shrink-0 fill-white text-white" />
+              <AppleMark className="h-7 w-7 shrink-0 text-white" />
               <span className="flex flex-col items-start leading-none text-white">
                 <span className="text-[10px] font-normal tracking-wide">
                   Descargar en el
