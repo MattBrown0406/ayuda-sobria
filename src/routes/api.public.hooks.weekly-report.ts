@@ -7,6 +7,7 @@ export const Route = createFileRoute("/api/public/hooks/weekly-report")({
         const accepted = [
           process.env.SUPABASE_ANON_KEY,
           process.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          process.env.SUPABASE_PUBLISHABLE_KEY,
           process.env.ZOOM_AUTOMATION_SECRET,
         ].filter((value): value is string => Boolean(value));
         const providedKey =
