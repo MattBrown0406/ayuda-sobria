@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Phone, LogIn, Menu } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import logo from "@/assets/logo.webp";
@@ -235,6 +235,8 @@ function Footer() {
 }
 
 export function SiteLayout({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const showAppPromo = pathname !== "/";
   return (
     <div className="flex min-h-screen flex-col">
       <a
@@ -247,7 +249,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <main id="contenido-principal" className="flex-1">
         {children}
       </main>
-      <AppPromo />
+      {showAppPromo && <AppPromo />}
       <Footer />
     </div>
   );
