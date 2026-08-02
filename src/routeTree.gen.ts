@@ -63,6 +63,7 @@ import { Route as ApiZoomWebhookRouteImport } from './routes/api.zoom.webhook'
 import { Route as ApiZoomScheduleRouteImport } from './routes/api.zoom.schedule'
 import { Route as ApiZoomRegisterRouteImport } from './routes/api.zoom.register'
 import { Route as ApiZoomAutomationRouteImport } from './routes/api.zoom.automation'
+import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api.public.hooks.weekly-report'
 
 const TestimoniosRoute = TestimoniosRouteImport.update({
   id: '/testimonios',
@@ -334,6 +335,12 @@ const ApiZoomAutomationRoute = ApiZoomAutomationRouteImport.update({
   path: '/api/zoom/automation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksWeeklyReportRoute =
+  ApiPublicHooksWeeklyReportRouteImport.update({
+    id: '/api/public/hooks/weekly-report',
+    path: '/api/public/hooks/weekly-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -390,6 +397,7 @@ export interface FileRoutesByFullPath {
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
   '/apoyo-familiar/$state/': typeof ApoyoFamiliarStateIndexRoute
+  '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -436,6 +444,7 @@ export interface FileRoutesByTo {
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateIndexRoute
+  '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -493,6 +502,7 @@ export interface FileRoutesById {
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
   '/apoyo-familiar/$state/': typeof ApoyoFamiliarStateIndexRoute
+  '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -551,6 +561,7 @@ export interface FileRouteTypes {
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
     | '/apoyo-familiar/$state/'
+    | '/api/public/hooks/weekly-report'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -597,6 +608,7 @@ export interface FileRouteTypes {
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
     | '/apoyo-familiar/$state'
+    | '/api/public/hooks/weekly-report'
   id:
     | '__root__'
     | '/'
@@ -653,6 +665,7 @@ export interface FileRouteTypes {
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
     | '/apoyo-familiar/$state/'
+    | '/api/public/hooks/weekly-report'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -689,6 +702,7 @@ export interface RootRouteChildren {
   ApiZoomRegisterRoute: typeof ApiZoomRegisterRoute
   ApiZoomScheduleRoute: typeof ApiZoomScheduleRoute
   ApiZoomWebhookRoute: typeof ApiZoomWebhookRoute
+  ApiPublicHooksWeeklyReportRoute: typeof ApiPublicHooksWeeklyReportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1071,6 +1085,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiZoomAutomationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/weekly-report': {
+      id: '/api/public/hooks/weekly-report'
+      path: '/api/public/hooks/weekly-report'
+      fullPath: '/api/public/hooks/weekly-report'
+      preLoaderRoute: typeof ApiPublicHooksWeeklyReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1243,6 +1264,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiZoomRegisterRoute: ApiZoomRegisterRoute,
   ApiZoomScheduleRoute: ApiZoomScheduleRoute,
   ApiZoomWebhookRoute: ApiZoomWebhookRoute,
+  ApiPublicHooksWeeklyReportRoute: ApiPublicHooksWeeklyReportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
