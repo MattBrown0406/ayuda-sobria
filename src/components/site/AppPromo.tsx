@@ -55,13 +55,13 @@ export function AppPromo() {
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Descargar Sober Helpline en el App Store"
+              aria-label="Download Sober Helpline on the App Store"
               className="inline-flex items-center gap-2.5 rounded-xl border border-app-promo-foreground/25 bg-black px-4 py-2.5 no-underline shadow-lg transition-transform hover:scale-[1.03] active:scale-[0.98]"
             >
               <AppleMark className="h-7 w-7 shrink-0 text-white" />
               <span className="flex flex-col items-start leading-none text-white">
-                <span className="text-[10px] font-normal tracking-wide">
-                  Descargar en el
+                <span className="text-[11px] font-normal tracking-wide">
+                  Download on the
                 </span>
                 <span className="mt-0.5 text-lg font-medium tracking-tight">
                   App Store
