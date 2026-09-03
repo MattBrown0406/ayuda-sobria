@@ -42,7 +42,7 @@ function ToolPage() {
         <ol>
           <li>Describe brevemente tu situación: quién consume, hace cuánto, con quién vives.</li>
           <li>Pide una recomendación concreta, no una lista general.</li>
-          <li>Lleva las conclusiones al Círculo o a coaching para validar.</li>
+          <li>Lleva las conclusiones a La Sobremesa o a coaching para validar.</li>
         </ol>
         <p>
           La guía no sustituye orientación profesional. Es un espacio para pensar en voz alta y

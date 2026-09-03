@@ -59,7 +59,7 @@ function StatePage() {
             Cómo trabajamos con familias en {state.name}
           </h3>
           <p className="mt-2">
-            Aunque estés en {state.name}, la reunión del <strong>La Sobremesa</strong> se realiza en
+            Aunque estés en {state.name}, la reunión de <strong>La Sobremesa</strong> se realiza en
             línea cada lunes a las 8:00 PM (hora del Pacífico). No importa si vives en una ciudad
             grande o en una zona rural: tu familia puede empezar esta semana sin viajar.
           </p>

@@ -20,6 +20,7 @@ const registrationSource = fs.readFileSync("src/routes/registro.tsx", "utf8");
 const meetingSource = ["src/routes/registro.tsx", "src/routes/circulo-familiar.tsx"]
   .map((file) => fs.readFileSync(file, "utf8"))
   .join("\n");
+const blogSource = fs.readFileSync("src/data/blog.ts", "utf8");
 const layoutRoutes = [
   "apoyo-familiar.tsx",
   "apoyo-familiar.$state.tsx",
@@ -37,6 +38,10 @@ const checks = [
   [
     meetingSource.includes("8:00 PM") && !meetingSource.includes("7:00 PM"),
     "Spanish-facing La Sobremesa routes say Monday at 8 PM Pacific",
+  ],
+  [
+    !blogSource.includes("7:00 p. m.") && !blogSource.includes("7:00 PM"),
+    "Blog content says the Monday meeting is at 8 PM Pacific, not 7 PM",
   ],
   [
     !source.includes("4582988008") && !source.includes("298-8008"),

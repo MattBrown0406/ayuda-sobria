@@ -27,7 +27,7 @@ function TestimoniosPage() {
       />
       <Prose>
         <p>
-          Las familias suelen llegar sintiéndose aisladas, confundidas o agotadas. El objetivo del
+          Las familias suelen llegar sintiéndose aisladas, confundidas o agotadas. El objetivo de
           La Sobremesa y del coaching es ayudarlas a pensar con más claridad, aprender límites
           sostenibles y tomar decisiones con menos miedo.
         </p>

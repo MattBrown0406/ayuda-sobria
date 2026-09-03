@@ -5,7 +5,7 @@ import logo from "@/assets/logo.webp";
 import { AppPromo } from "@/components/site/AppPromo";
 
 export const PHONE_DISPLAY = "(458) 298-8011";
-export const PHONE_HREF = "tel:4582988011";
+export const PHONE_HREF = "tel:+14582988011";
 export const EMAIL = "matt@soberhelpline.com";
 export const WHATSAPP_HREF =
   "https://wa.me/15038362136?text=" +

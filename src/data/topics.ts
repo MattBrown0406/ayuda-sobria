@@ -102,12 +102,6 @@ export const TOPICS: Topic[] = [
       "Guía en español para familias sobre enojo y límites. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
-    slug: "app-terms",
-    title: "Términos del servicio",
-    description:
-      "Guía en español para familias sobre términos del servicio. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
     slug: "attachment-styles-and-addiction",
     title: "Estilos de apego y adicción",
     description:
@@ -118,12 +112,6 @@ export const TOPICS: Topic[] = [
     title: "Trastorno bipolar y consumo de sustancias",
     description:
       "Guía en español para familias sobre trastorno bipolar y consumo de sustancias. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "book-consultation",
-    title: "Reservar una consulta",
-    description:
-      "Guía en español para familias sobre reservar una consulta. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "boundaries-ultimatums",
@@ -148,18 +136,6 @@ export const TOPICS: Topic[] = [
     title: "Recuperación cerebral y espiritual",
     description:
       "Guía en español para familias sobre recuperación cerebral y espiritual. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "coaching-checkout",
-    title: "Pago del coaching",
-    description:
-      "Guía en español para familias sobre pago del coaching. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "coaching-onboarding",
-    title: "Incorporación al coaching",
-    description:
-      "Guía en español para familias sobre incorporación al coaching. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "communication-guide",
@@ -196,12 +172,6 @@ export const TOPICS: Topic[] = [
     title: "Adicción cruzada y sustitución de sustancia",
     description:
       "Guía en español para familias sobre adicción cruzada y sustitución de sustancia. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "delete-account",
-    title: "Eliminar cuenta",
-    description:
-      "Guía en español para familias sobre eliminar cuenta. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "depression-and-addiction-family-confusion",
@@ -313,9 +283,9 @@ export const TOPICS: Topic[] = [
   },
   {
     slug: "family-addiction-consult",
-    title: "Familia adiccion consulta",
+    title: "Consulta familiar sobre adicción",
     description:
-      "Guía en español para familias sobre familia adiccion consulta. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
+      "Guía en español para familias sobre la consulta familiar sobre adicción. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "family-advocacy-toolkit",
@@ -342,22 +312,10 @@ export const TOPICS: Topic[] = [
       "Guía en español para familias sobre educación para familias. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
-    slug: "family-forum",
-    title: "Foro Familiar",
-    description:
-      "Guía en español para familias sobre foro familiar. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
     slug: "family-interference",
     title: "Interferencia familiar",
     description:
       "Guía en español para familias sobre interferencia familiar. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "family-membership",
-    title: "Membresía Familiar",
-    description:
-      "Guía en español para familias sobre membresía familiar. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "family-readiness-intensive",
@@ -397,9 +355,9 @@ export const TOPICS: Topic[] = [
   },
   {
     slug: "family-support",
-    title: "Familia apoyo",
+    title: "Apoyo para la familia",
     description:
-      "Guía en español para familias sobre familia apoyo. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
+      "Guía en español para familias sobre el apoyo para la familia. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "family-support-forum",
@@ -418,12 +376,6 @@ export const TOPICS: Topic[] = [
     title: "Webinars para familias",
     description:
       "Guía en español para familias sobre webinars para familias. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "faqs",
-    title: "Preguntas frecuentes",
-    description:
-      "Guía en español para familias sobre preguntas frecuentes. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "fear-inventory-exercise",
@@ -583,12 +535,6 @@ export const TOPICS: Topic[] = [
       "Guía en español para familias sobre desintoxicación médica. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
-    slug: "member-billing",
-    title: "Facturación del miembro",
-    description:
-      "Guía en español para familias sobre facturación del miembro. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
     slug: "mental-health-cost-families-pay-waiting-for-change",
     title: "El costo emocional de esperar el cambio",
     description:
@@ -619,18 +565,6 @@ export const TOPICS: Topic[] = [
       "Guía en español para familias sobre zoom del lunes por la noche. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
-    slug: "monday-zoom",
-    title: "Reunión de los lunes por Zoom",
-    description:
-      "Guía en español para familias sobre reunión de los lunes por zoom. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "monday-zoom-registration",
-    title: "Registro para el Zoom del lunes",
-    description:
-      "Guía en español para familias sobre registro para el zoom del lunes. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
     slug: "motivation-vs-capacity-addiction-family-education",
     title: "Motivación vs. capacidad",
     description:
@@ -653,12 +587,6 @@ export const TOPICS: Topic[] = [
     title: "Modalidades fuera de los Doce Pasos",
     description:
       "Guía en español para familias sobre modalidades fuera de los doce pasos. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "onboarding-quiz",
-    title: "Cuestionario de incorporación",
-    description:
-      "Guía en español para familias sobre cuestionario de incorporación. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "outpatient-treatment",
@@ -689,12 +617,6 @@ export const TOPICS: Topic[] = [
     title: "Cambios de personalidad en la adicción",
     description:
       "Guía en español para familias sobre cambios de personalidad en la adicción. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "privacy",
-    title: "Política de privacidad",
-    description:
-      "Guía en español para familias sobre política de privacidad. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "psychiatrists",
@@ -817,12 +739,6 @@ export const TOPICS: Topic[] = [
       "Guía en español para familias sobre sueño y recuperación. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
-    slug: "sms-terms",
-    title: "Términos de mensajes SMS",
-    description:
-      "Guía en español para familias sobre términos de mensajes sms. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
     slug: "sober-coaches-companions",
     title: "Coaches y acompañantes de sobriedad",
     description:
@@ -875,12 +791,6 @@ export const TOPICS: Topic[] = [
     title: "Cómo hablar del tratamiento",
     description:
       "Guía en español para familias sobre cómo hablar del tratamiento. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
-  },
-  {
-    slug: "testimonials",
-    title: "Testimonios",
-    description:
-      "Guía en español para familias sobre testimonios. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
   {
     slug: "therapists",

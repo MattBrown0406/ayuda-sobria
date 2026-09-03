@@ -68,7 +68,7 @@ export const Route = createFileRoute("/coaching-familiar")({
             Reservar y pagar una sesión
           </Link>
           <a
-            href="tel:4582988011"
+            href="tel:+14582988011"
             className="rounded-md border border-input px-5 py-3 font-semibold no-underline hover:bg-accent"
           >
             Llamar antes de reservar

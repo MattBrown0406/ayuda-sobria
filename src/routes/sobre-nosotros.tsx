@@ -74,7 +74,7 @@ function AboutPage() {
         <h2>Contacto y correcciones</h2>
         <p>
           Para hacer una pregunta, solicitar una corrección o conocer nuestros servicios, llama al{" "}
-          <a href="tel:4582988011">(458) 298-8011</a> o escribe a{" "}
+          <a href="tel:+14582988011">(458) 298-8011</a> o escribe a{" "}
           <a href="mailto:matt@soberhelpline.com">matt@soberhelpline.com</a>. También puedes revisar
           nuestra <Link to="/privacidad">política de privacidad</Link> y nuestros{" "}
           <Link to="/terminos">términos de servicio</Link>.
