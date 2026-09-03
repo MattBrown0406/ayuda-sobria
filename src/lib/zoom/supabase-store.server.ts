@@ -301,6 +301,9 @@ export function createSupabaseZoomStore(
         .single();
       assertNoError(occurrenceError);
       if (!occurrenceRow) throw new Error("Managed occurrence not found");
+      // Insert-only: webhook order isn't guaranteed, so a late/retried join
+      // event must not overwrite the left_at/duration a participant_left
+      // event already recorded for this row.
       const { error } = await client.from("zoom_attendance").upsert(
         {
           occurrence_id: occurrenceRow.id,
@@ -312,7 +315,7 @@ export function createSupabaseZoomStore(
           duration_seconds: 0,
           updated_at: new Date().toISOString(),
         },
-        { onConflict: "occurrence_id,participant_key,joined_at" },
+        { onConflict: "occurrence_id,participant_key,joined_at", ignoreDuplicates: true },
       );
       assertNoError(error);
     },

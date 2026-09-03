@@ -35,10 +35,13 @@ function personLabel(name: unknown, email: string) {
 
 /** Builds the report for the most recently completed La Sobremesa occurrence. */
 export async function buildWeeklyReport(client: Client, now: Date): Promise<WeeklyReport | null> {
+  // Only report on occurrences that actually became meetings; a failed or
+  // still-scheduling Monday should not produce a cheerful zero-attendance report.
   const { data: occurrence, error: occurrenceError } = await client
     .from("zoom_occurrences")
     .select("id, occurrence_date, starts_at")
     .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
+    .in("status", ["ready", "started", "ended"])
     .lte("starts_at", now.toISOString())
     .order("starts_at", { ascending: false })
     .limit(1)
@@ -113,6 +116,8 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
     const email = normalizeEmail(row.email);
     if (!email || seenAuto.has(email)) continue;
     seenAuto.add(email);
+    // People who signed up inside the window haven't had 4 weeks to attend yet.
+    if (typeof row.created_at === "string" && row.created_at >= cutoff) continue;
     if (recentAttendees.has(email)) continue;
     staleAutoRegistrants.push(personLabel(row.full_name, email));
   }

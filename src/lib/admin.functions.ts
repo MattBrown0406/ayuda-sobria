@@ -36,12 +36,22 @@ export const adminGetOverview = createServerFn({ method: "GET" })
     const { supabaseAdmin: typedAdmin } = await import("@/integrations/supabase/client.server");
     const supabaseAdmin = typedAdmin as any;
 
-    const safe = async (p: Promise<any>) => {
+    // Zoom tables may not exist yet in a fresh environment, so their failures
+    // degrade to empty lists — but they must be surfaced, not silently shown
+    // as a healthy empty dashboard.
+    const zoomErrors: string[] = [];
+    const safe = async (label: string, p: Promise<any>) => {
       try {
         const r = await p;
-        if (r.error) return { data: [], error: null };
+        if (r.error) {
+          console.error(`adminGetOverview: ${label} query failed`, r.error.message);
+          zoomErrors.push(label);
+          return { data: [], error: null };
+        }
         return r;
-      } catch {
+      } catch (error) {
+        console.error(`adminGetOverview: ${label} query threw`, error);
+        zoomErrors.push(label);
         return { data: [], error: null };
       }
     };
@@ -55,13 +65,13 @@ export const adminGetOverview = createServerFn({ method: "GET" })
         supabaseAdmin.from("memberships").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("coaching_orders").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("profiles").select("id, first_name, last_name"),
-        safe(supabaseAdmin
+        safe("occurrences", supabaseAdmin
           .from("zoom_occurrences")
           .select("*")
           .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
           .order("starts_at", { ascending: false })),
-        safe(supabaseAdmin.from("zoom_attendance").select("*").order("joined_at", { ascending: false })),
-        safe(supabaseAdmin.from("zoom_recordings").select("*").order("started_at", { ascending: false })),
+        safe("attendance", supabaseAdmin.from("zoom_attendance").select("*").order("joined_at", { ascending: false })),
+        safe("recordings", supabaseAdmin.from("zoom_recordings").select("*").order("started_at", { ascending: false })),
       ]);
 
     for (const result of [regs, memberships, coaching, profiles]) {
@@ -92,6 +102,7 @@ export const adminGetOverview = createServerFn({ method: "GET" })
       occurrences: occurrences.data ?? [],
       attendance: zoomAttendance,
       recordings: zoomRecordings,
+      zoomErrors,
       stats: {
         registrations: zoomRegistrations.length,
         activeMembers:

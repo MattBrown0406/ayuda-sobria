@@ -109,6 +109,10 @@ export function createAutomationHandler(deps: {
     } catch {
       return Response.json({ error: "Invalid request" }, { status: 400 });
     }
+    // Per-item failures are recorded in the store and retried on the next run.
+    // They must return 200: the hourly workflow runs auto-register, reminders
+    // and followups sequentially with `set -e`, so a 503 here would starve the
+    // later actions for everyone because of one permanently-failing item.
     if (body.action === "auto-register" && body.occurrenceId) {
       const results = await autoRegisterRecurring({
         occurrenceId: body.occurrenceId,
@@ -116,10 +120,7 @@ export function createAutomationHandler(deps: {
         zoom: deps.zoom,
         mailer: deps.mailer,
       });
-      return Response.json(
-        { ok: results.failed === 0, results },
-        { status: results.failed === 0 ? 200 : 503 },
-      );
+      return Response.json({ ok: results.failed === 0, results });
     }
     if (body.action === "reminders") {
       if (!deps.mailer) return Response.json({ error: "Email is not configured" }, { status: 503 });
@@ -128,10 +129,7 @@ export function createAutomationHandler(deps: {
         store: deps.store,
         mailer: deps.mailer,
       });
-      return Response.json(
-        { ok: results.failed === 0, results },
-        { status: results.failed === 0 ? 200 : 503 },
-      );
+      return Response.json({ ok: results.failed === 0, results });
     }
     if (body.action === "followups") {
       if (!deps.mailer) return Response.json({ error: "Email is not configured" }, { status: 503 });
@@ -140,10 +138,7 @@ export function createAutomationHandler(deps: {
         store: deps.store,
         mailer: deps.mailer,
       });
-      return Response.json(
-        { ok: results.failed === 0, results },
-        { status: results.failed === 0 ? 200 : 503 },
-      );
+      return Response.json({ ok: results.failed === 0, results });
     }
     return Response.json({ error: "Unsupported action" }, { status: 400 });
   };

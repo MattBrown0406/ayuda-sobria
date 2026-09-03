@@ -3,7 +3,14 @@ import type { RegistrationInput, RegistrationMailer, RegistrationStore, ZoomApi 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function cleaned(value: unknown, max: number): string {
-  return typeof value === "string" ? value.trim().slice(0, max) : "";
+  if (typeof value !== "string") return "";
+  // Strip control characters: user-provided names reach email subjects and
+  // headers, and CR/LF there would enable header injection.
+  // eslint-disable-next-line no-control-regex
+  return value
+    .replace(/[\x00-\x1f\x7f]/g, " ")
+    .trim()
+    .slice(0, max);
 }
 
 export function parseRegistrationInput(value: unknown): RegistrationInput {

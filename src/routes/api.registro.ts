@@ -75,12 +75,18 @@ export const Route = createFileRoute("/api/registro")({
         }
 
         const record = body as Record<string, unknown>;
-        // Honeypot: hidden field only bots fill in.
-        if (clean(record.website)) return Response.json({ ok: true });
+        // Honeypot: hidden field only bots fill in. Fake success so bots
+        // don't learn what tripped them.
+        if (clean(record.website)) return Response.json({ ok: true, emailSent: true });
         // Time trap: humans don't complete this form in under 3 seconds.
+        // Return a retryable error (matching /api/zoom/register) so a real
+        // person caught by browser autofill isn't shown a fake confirmation.
         const formMs = Number(record.formMs);
         if (!Number.isFinite(formMs) || formMs < MIN_FORM_MS) {
-          return Response.json({ ok: true });
+          return Response.json(
+            { error: "El envío fue demasiado rápido. Espera unos segundos e inténtalo de nuevo." },
+            { status: 400 },
+          );
         }
         // Rate limit per IP.
         if (isRateLimited(clientIp(request))) {
@@ -116,9 +122,19 @@ export const Route = createFileRoute("/api/registro")({
           ["País o estado", clean(record.pais, 120)],
           ["Relación", relacion],
           ["Primera vez", clean(record.primera, 10)],
-          ["Consentimiento SMS", record.consentSms ? "Sí" : "No"],
+          ["Registro automático semanal", record.autoRegister ? "Sí" : "No"],
+          ["Acepta contacto por correo", record.consentSms ? "Sí" : "No"],
           ["Situación", clean(record.situacion, 2000)],
+          ["Pregunta", clean(record.pregunta, 2000)],
+          ["Pide que Matt le contacte", record.requestFollowUp ? "Sí" : "No"],
         ];
+        if (record.requestFollowUp) {
+          fields.push(
+            ["Fecha preferida", clean(record.preferredContactDate, 40)],
+            ["Hora preferida", clean(record.preferredContactTime, 40)],
+            ["Zona horaria", clean(record.preferredTimezone, 60)],
+          );
+        }
         const html = fields
           .map(
             ([label, value]) =>
@@ -147,7 +163,7 @@ export const Route = createFileRoute("/api/registro")({
             { status: 502 },
           );
         }
-        return Response.json({ ok: true });
+        return Response.json({ ok: true, emailSent: true });
       },
     },
   },

@@ -4,17 +4,16 @@ export const Route = createFileRoute("/api/public/hooks/weekly-report")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const accepted = [
-          process.env.SUPABASE_ANON_KEY,
-          process.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          process.env.SUPABASE_PUBLISHABLE_KEY,
-          process.env.ZOOM_AUTOMATION_SECRET,
-        ].filter((value): value is string => Boolean(value));
+        // Only the private automation secret authorizes this hook. The Supabase
+        // anon/publishable key ships in the public browser bundle and must never
+        // gate an endpoint that emails registrant data.
+        const secret = process.env.ZOOM_AUTOMATION_SECRET;
         const providedKey =
           request.headers.get("apikey") ??
           request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
           "";
-        if (!accepted.length || !accepted.includes(providedKey)) {
+        const { safeEqualUtf8 } = await import("@/lib/zoom/security");
+        if (!secret || !safeEqualUtf8(providedKey, secret)) {
           return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
 
@@ -43,7 +42,6 @@ export const Route = createFileRoute("/api/public/hooks/weekly-report")({
           return Response.json({
             sent: true,
             occurrenceDate: report.occurrenceDate,
-            totalRegistrants: report.totalRegistrants,
           });
         } catch (error) {
           console.error(

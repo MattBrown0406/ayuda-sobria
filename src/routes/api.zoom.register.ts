@@ -46,10 +46,19 @@ export const Route = createFileRoute("/api/zoom/register")({
         }
 
         try {
+          const mailer = registrationMailerFromEnv();
+          if (!mailer) {
+            // The public response deliberately withholds the join link, so
+            // without a mailer registrants have no way to receive it. Log
+            // loudly; the registration itself still proceeds.
+            console.error(
+              "Zoom registration mailer is not configured (RESEND_API_KEY/LOVABLE_API_KEY missing); confirmations will not be sent",
+            );
+          }
           return createRegistrationHandler({
             store: createSupabaseZoomStore(supabaseAdmin),
             zoom: zoomClientFromEnv(),
-            mailer: registrationMailerFromEnv(),
+            mailer,
             now: () => new Date(),
           })(request);
         } catch (error) {

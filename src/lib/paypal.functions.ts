@@ -168,7 +168,7 @@ export const activateMembershipSubscription = createServerFn({ method: "POST" })
     const details = await getSubscriptionDetails(accessToken, data.subscriptionId);
 
     if (details.status === "ACTIVE") {
-      await supabaseAdmin
+      const { error: updateErr } = await supabaseAdmin
         .from("memberships")
         .update({
           status: "active",
@@ -176,6 +176,7 @@ export const activateMembershipSubscription = createServerFn({ method: "POST" })
           next_billing_date: details.billing_info?.next_billing_time,
         })
         .eq("paypal_subscription_id", data.subscriptionId);
+      if (updateErr) throw new Error(`DB update failed: ${updateErr.message}`);
       return { success: true, status: "active" as const };
     }
     return { success: false, status: details.status };
@@ -196,6 +197,15 @@ export const cancelMembershipSubscription = createServerFn({ method: "POST" })
     if (sub.status === "cancelled") return { success: true, alreadyCancelled: true };
 
     const accessToken = await getAccessToken();
+    let accessEndsAt: string | null = sub.next_billing_date;
+    if (!accessEndsAt) {
+      try {
+        const details = await getSubscriptionDetails(accessToken, data.subscriptionId);
+        accessEndsAt = details.billing_info?.next_billing_time ?? null;
+      } catch {
+        /* keep null; PayPal cancel below still proceeds */
+      }
+    }
     const res = await fetch(
       `${PAYPAL_API_BASE}/v1/billing/subscriptions/${data.subscriptionId}/cancel`,
       {
@@ -213,16 +223,17 @@ export const cancelMembershipSubscription = createServerFn({ method: "POST" })
     }
 
     const nowIso = new Date().toISOString();
-    await supabaseAdmin
+    const { error: updateErr } = await supabaseAdmin
       .from("memberships")
       .update({
         status: "cancelled",
         cancelled_at: nowIso,
         cancellation_reason: data.reason || null,
-        access_ends_at: sub.next_billing_date || null,
+        access_ends_at: accessEndsAt,
       })
       .eq("id", sub.id);
-    return { success: true, accessEndsAt: sub.next_billing_date || null };
+    if (updateErr) throw new Error(`DB update failed: ${updateErr.message}`);
+    return { success: true, accessEndsAt };
   });
 
 export const getMyMembership = createServerFn({ method: "GET" })
@@ -232,11 +243,17 @@ export const getMyMembership = createServerFn({ method: "GET" })
       .from("memberships")
       .select("*")
       .eq("user_id", context.userId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return data;
+    const rows = data ?? [];
+    // A newer abandoned "pending" checkout must not shadow a live membership.
+    const active = rows.find((r) => r.status === "active");
+    if (active) return active;
+    const cancelledWithAccess = rows.find(
+      (r) =>
+        r.status === "cancelled" && r.access_ends_at && new Date(r.access_ends_at) > new Date(),
+    );
+    return cancelledWithAccess ?? rows[0] ?? null;
   });
 
 // ---- Coaching one-time payments ----
@@ -253,14 +270,13 @@ type SessionType = keyof typeof COACHING_SESSIONS;
 
 async function userHasActiveMembership(userId: string): Promise<boolean> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { membershipAllowsRecordingAccess } = await import("@/lib/zoom/recording-access");
   const { data } = await supabaseAdmin
     .from("memberships")
-    .select("status")
+    .select("status, access_ends_at")
     .eq("user_id", userId)
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
-  return !!data;
+    .in("status", ["active", "cancelled"]);
+  return membershipAllowsRecordingAccess(data ?? [], new Date().toISOString());
 }
 
 export const getCoachingPricing = createServerFn({ method: "GET" }).handler(async () => {
@@ -388,15 +404,23 @@ export const captureCoachingOrder = createServerFn({ method: "POST" })
     });
     if (!res.ok && res.status !== 422)
       throw new Error(`PayPal capture failed: ${await res.text()}`);
-    const result = (await res.json()) as { status: string };
+    const result = (await res.json()) as {
+      status?: string;
+      details?: Array<{ issue?: string }>;
+    };
+    // A refresh/re-run of the success page re-captures; PayPal answers 422
+    // ORDER_ALREADY_CAPTURED, which is a completed payment, not a failure.
+    const alreadyCaptured =
+      res.status === 422 && (result.details ?? []).some((d) => d.issue === "ORDER_ALREADY_CAPTURED");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    if (result.status === "COMPLETED") {
-      await supabaseAdmin
+    if (result.status === "COMPLETED" || alreadyCaptured) {
+      const { error: updateErr } = await supabaseAdmin
         .from("coaching_orders")
         .update({ status: "completed", captured_at: new Date().toISOString() })
         .eq("paypal_order_id", data.orderId);
+      if (updateErr) throw new Error(`DB update failed: ${updateErr.message}`);
       return { success: true };
     }
-    return { success: false, status: result.status };
+    return { success: false, status: result.status ?? "UNKNOWN" };
   });

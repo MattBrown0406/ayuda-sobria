@@ -247,6 +247,12 @@ function AdminPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-10">
+        {data.zoomErrors.length > 0 && (
+          <div className="rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            Some Zoom data failed to load ({data.zoomErrors.join(", ")}). The sections below may be
+            incomplete — check the server logs and try refreshing.
+          </div>
+        )}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div>
             <h1 className="text-3xl font-semibold">Admin Portal</h1>
@@ -506,7 +512,7 @@ function AdminPage() {
                               size="sm"
                               onClick={() => void handleDelete(registration.id)}
                             >
-                              Eliminar
+                              Delete
                             </Button>
                           </td>
                         </tr>

@@ -160,7 +160,12 @@ export function createWebhookHandler(deps: {
       return Response.json({ ok: true, ignored: true });
     }
 
-    const eventId = text(body.event_id) || request.headers.get("x-zm-trackingid") || "";
+    // Zoom bodies carry no stable top-level event_id, and x-zm-trackingid is a
+    // per-request trace id that changes across provider retries — using it
+    // would let a retry bypass replay protection. Fall back to a deterministic
+    // identity derived from the payload itself: identical retries dedupe,
+    // distinct events never collide.
+    const eventId = text(body.event_id) || sha256(rawBody);
     if (!eventId || !eventType || !timestamp) {
       return Response.json({ error: "Missing event identity" }, { status: 400 });
     }

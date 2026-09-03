@@ -166,12 +166,13 @@ export function ZoomMeetingPanel({
   registrations: Registration[];
   attendance: Attendance[];
 }) {
-  const upcoming = useMemo(() => {
+  const { upcoming, upcomingIsPast } = useMemo(() => {
     const now = Date.now();
     const future = [...occurrences]
       .filter((o) => Date.parse(o.starts_at) >= now - 6 * 60 * 60 * 1000)
       .sort((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at));
-    return future[0] ?? occurrences[0] ?? null;
+    const selected = future[0] ?? occurrences[0] ?? null;
+    return { upcoming: selected, upcomingIsPast: !future[0] && Boolean(selected) };
   }, [occurrences]);
 
   const occurrenceById = useMemo(
@@ -278,7 +279,7 @@ export function ZoomMeetingPanel({
             <CardContent className="grid gap-4 p-4 sm:grid-cols-2">
               <div>
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Upcoming meeting
+                  {upcomingIsPast ? "Most recent meeting (none scheduled)" : "Upcoming meeting"}
                 </p>
                 <p className="font-medium text-foreground">
                   {formatMeetingDate(upcoming.occurrence_date)}
