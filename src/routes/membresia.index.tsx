@@ -36,6 +36,7 @@ function MembresiaPage() {
   const [membership, setMembership] = useState<Membership | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [membershipError, setMembershipError] = useState(false);
 
   const createFn = useServerFn(createMembershipSubscription);
   const cancelFn = useServerFn(cancelMembershipSubscription);
@@ -54,8 +55,11 @@ function MembresiaPage() {
         try {
           const m = await getFn();
           setMembership(m);
+          setMembershipError(false);
         } catch {
-          /* ignore */
+          // Without knowing the real status, showing the subscribe button
+          // risks double-billing an already-active member.
+          setMembershipError(true);
         }
       })
       // Never leave the page stuck on "Cargando…" — if the auth check fails,
@@ -78,7 +82,8 @@ function MembresiaPage() {
       if (!approvalUrl) throw new Error("No se obtuvo el enlace de PayPal");
       window.location.href = approvalUrl;
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Error al iniciar la suscripción");
+      console.error("createMembershipSubscription failed", e);
+      setError("No pudimos iniciar la suscripción con PayPal. Inténtalo de nuevo en unos minutos.");
       setLoading(false);
     }
   }
@@ -93,7 +98,8 @@ function MembresiaPage() {
       const m = await getFn();
       setMembership(m);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Error al cancelar");
+      console.error("cancelMembershipSubscription failed", e);
+      setError("No pudimos cancelar la membresía. Inténtalo de nuevo o escríbenos.");
     } finally {
       setLoading(false);
     }
@@ -199,7 +205,14 @@ function MembresiaPage() {
             </>
           )}
 
-          {session && !isActive && (
+          {session && membershipError && (
+            <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              No pudimos verificar el estado de tu membresía. Recarga la página e inténtalo de
+              nuevo.
+            </p>
+          )}
+
+          {session && !isActive && !membershipError && (
             <>
               {membership?.status === "cancelled" && membership.access_ends_at && (
                 <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-900">
@@ -215,8 +228,9 @@ function MembresiaPage() {
                 {loading ? "Redirigiendo a PayPal…" : "Suscribirme con PayPal"}
               </button>
               <p className="mt-3 text-xs text-muted-foreground">
-                Pago seguro con PayPal. Se cobra US$14.99 al mes automáticamente. Cancela en
-                cualquier momento.
+                Pago seguro con PayPal. Se cobra{" "}
+                {planType === "monthly" ? "US$14.99 al mes" : "US$149 al año"} automáticamente.
+                Cancela en cualquier momento.
               </p>
             </>
           )}

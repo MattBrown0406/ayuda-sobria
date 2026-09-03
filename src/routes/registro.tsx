@@ -85,10 +85,12 @@ function RegistroPage() {
         emailSent?: boolean;
       };
       if (!response.ok) throw new Error(result.error || "No se pudo completar el registro.");
+      // accepted === false is the server's silent anti-bot fake success;
+      // surface it as a normal confirmation so bots learn nothing.
       if (result.accepted === false) {
-        throw new Error(
-          "No se pudo confirmar el registro. Revisa el formulario e inténtalo de nuevo.",
-        );
+        setRegistrationResult({ emailSent: true });
+        setSubmitted(true);
+        return;
       }
       setRegistrationResult(result);
       setSubmitted(true);
@@ -142,7 +144,7 @@ function RegistroPage() {
               matt@soberhelpline.com
             </a>{" "}
             o llama al{" "}
-            <a className="text-primary hover:underline" href="tel:4582988011">
+            <a className="text-primary hover:underline" href="tel:+14582988011">
               (458) 298-8011
             </a>
             .

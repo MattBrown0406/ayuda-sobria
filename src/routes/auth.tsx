@@ -49,7 +49,7 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -58,14 +58,19 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        setInfo("Cuenta creada. Revisa tu correo para confirmar y luego ingresa.");
+        if (data.session) {
+          // Auto-confirm is enabled: the user is already signed in.
+          navigate({ to: redirectTo });
+        } else {
+          setInfo("Cuenta creada. Revisa tu correo para confirmar y luego ingresa.");
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         navigate({ to: redirectTo });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error inesperado");
+      setError(authErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -82,10 +87,15 @@ function AuthPage() {
       redirect_uri: window.location.origin,
     });
     if (result.error) {
-      setError(result.error.message || "No se pudo iniciar sesión con Google.");
+      setError("No se pudo iniciar sesión con Google. Inténtalo de nuevo.");
       return;
     }
     if (result.redirected) return;
+    try {
+      sessionStorage.removeItem("post_auth_redirect");
+    } catch {
+      /* ignore */
+    }
     navigate({ to: redirectTo });
   }
 
@@ -168,6 +178,18 @@ function AuthPage() {
       </div>
     </>
   );
+}
+
+function authErrorMessage(err: unknown): string {
+  const msg = err instanceof Error ? err.message : "";
+  if (/invalid login credentials/i.test(msg)) return "Correo o contraseña incorrectos.";
+  if (/already registered/i.test(msg))
+    return "Ya existe una cuenta con este correo. Intenta ingresar.";
+  if (/email not confirmed/i.test(msg))
+    return "Confirma tu correo antes de ingresar. Revisa tu bandeja de entrada.";
+  if (/rate limit/i.test(msg)) return "Demasiados intentos. Espera unos minutos.";
+  if (/password should be/i.test(msg)) return "La contraseña debe tener al menos 8 caracteres.";
+  return "No se pudo completar la solicitud. Inténtalo de nuevo.";
 }
 
 function sanitize(path?: string): string | null {

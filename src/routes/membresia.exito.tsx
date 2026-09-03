@@ -45,8 +45,11 @@ function SuccessPage() {
           }
         } catch (e) {
           if (i === 4) {
+            console.error("activateMembershipSubscription failed", e);
             setStatus("error");
-            setMsg(e instanceof Error ? e.message : "Error al activar");
+            setMsg(
+              "No pudimos confirmar la activación. Si ya pagaste, escríbenos y lo verificamos.",
+            );
             return;
           }
         }

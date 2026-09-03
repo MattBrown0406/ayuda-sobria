@@ -1,13 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  Phone,
-  LogIn,
   AlertTriangle,
   Calendar,
   Clock,
   Shield,
   Building2,
-  ChevronDown,
   Check,
   BookOpen,
   HeartHandshake,
@@ -16,7 +13,6 @@ import {
   Sparkles,
   ClipboardList,
 } from "lucide-react";
-import logo from "@/assets/logo.webp";
 import counselor from "@/assets/counselor.webp";
 import { AppPromo } from "@/components/site/AppPromo";
 
@@ -43,61 +39,7 @@ export const Route = createFileRoute("/")({
 });
 
 const PHONE_DISPLAY = "(458) 298-8011";
-const PHONE_HREF = "tel:4582988011";
-const EMAIL = "matt@soberhelpline.com";
-
-function Nav() {
-  const links = [
-    { label: "Consulta de crisis", href: "#crisis" },
-    { label: "La Sobremesa", href: "#circulo" },
-    { label: "Intervención", href: "#intervencion" },
-    { label: "Opciones de tratamiento", href: "#tratamiento" },
-  ];
-  return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-3">
-        <a href="#top" className="flex items-center gap-2">
-          <img src={logo} alt="AyudaSobria" width={40} height={40} className="h-10 w-10" />
-          <span className="text-lg font-semibold tracking-tight">AyudaSobria</span>
-        </a>
-        <nav className="hidden items-center gap-6 md:flex">
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              {l.label}
-            </a>
-          ))}
-          <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground">
-            Aprender <ChevronDown className="h-4 w-4" />
-          </button>
-        </nav>
-        <div className="flex items-center gap-2">
-          <a
-            href={PHONE_HREF}
-            className="hidden items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-semibold sm:inline-flex"
-          >
-            <Phone className="h-4 w-4" /> {PHONE_DISPLAY}
-          </a>
-          <a
-            href="/registro"
-            className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-          >
-            Reunión gratis del lunes
-          </a>
-          <a
-            href="/auth"
-            className="hidden items-center gap-1 rounded-md border border-input px-3 py-2 text-sm font-medium lg:inline-flex"
-          >
-            <LogIn className="h-4 w-4" /> Ingresar
-          </a>
-        </div>
-      </div>
-    </header>
-  );
-}
+const PHONE_HREF = "tel:+14582988011";
 
 function Hero() {
   return (
@@ -293,31 +235,37 @@ function FAQ() {
   const qs = [
     {
       tag: "Preparación para intervención",
+      slug: "should-we-stage-an-intervention",
       q: "¿Deberíamos organizar una intervención?",
       a: "Considera planificar una intervención cuando se rechaza el tratamiento, el riesgo aumenta, las conversaciones normales ya no funcionan y la familia necesita un plan unificado en lugar de otra confrontación emocional.",
     },
     {
       tag: "Coaching privado",
+      slug: "what-if-we-cannot-wait-until-monday",
       q: "¿Qué hacemos si no podemos esperar al lunes?",
       a: "Si la situación no puede esperar a La Sobremesa, reserva una sesión de coaching privada o llama para orientación. Usa el apoyo gratuito para estabilizarte, y la ayuda privada cuando el tiempo, la seguridad o una decisión concreta apremia.",
     },
     {
       tag: "Adicción en la pareja",
+      slug: "how-do-i-get-my-spouse-into-treatment",
       q: "¿Cómo llevo a mi pareja a tratamiento?",
       a: "Generalmente no puedes forzar el tratamiento con una sola conversación. Enfócate en la seguridad, el dinero, los hijos, los límites, las opciones de tratamiento y si necesitan coaching privado o evaluación de intervención.",
     },
     {
       tag: "Seguridad",
+      slug: "what-if-im-afraid-they-will-overdose",
       q: "¿Y si tengo miedo de una sobredosis?",
       a: "Trata el miedo a la sobredosis como una señal de seguridad. Usa servicios de emergencia ante peligro inmediato, ten naloxona disponible si hay opioides, y busca orientación profesional en vez de esperar.",
     },
     {
       tag: "Decisiones de tratamiento",
+      slug: "is-this-bad-enough-for-treatment",
       q: "¿Es lo suficientemente grave como para tratamiento?",
       a: "Si el consumo causa riesgos de seguridad, daño en las relaciones, problemas laborales, problemas legales o de salud, secretismo, recaídas o promesas rotas repetidas, es lo suficientemente serio para buscar orientación.",
     },
     {
       tag: "Recaída",
+      slug: "what-should-family-do-after-relapse",
       q: "¿Qué debe hacer la familia tras una recaída?",
       a: "Responde a la recaída con seguridad primero y claridad después. Evita el pánico, el castigo o fingir que no pasó nada. La familia necesita un plan de tratamiento, límites, responsabilidad y próximos pasos.",
     },
@@ -332,14 +280,14 @@ function FAQ() {
           Convierte tu búsqueda en el próximo paso correcto.
         </h2>
         <p className="mt-4 max-w-3xl text-muted-foreground">
-          Las familias suelen llegar con una pregunta urgente. Estas respuestas te guían hacia el La
+          Las familias suelen llegar con una pregunta urgente. Estas respuestas te guían hacia La
           Sobremesa, coaching privado o evaluación de intervención sin interrumpir el camino de
           apoyo gratuito.
         </p>
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {qs.map((it) => (
             <a
-              href="/respuestas-familia"
+              href={`/respuestas-familia/${it.slug}`}
               key={it.q}
               className="rounded-xl border border-border bg-card p-6 hover:border-primary/60"
             >

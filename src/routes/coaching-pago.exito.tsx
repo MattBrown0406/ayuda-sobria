@@ -39,8 +39,11 @@ function SuccessPage() {
         }
       })
       .catch((e) => {
+        console.error("captureCoachingOrder failed", e);
         setStatus("error");
-        setMsg(e instanceof Error ? e.message : "Error al confirmar el pago");
+        setMsg(
+          "No pudimos confirmar el pago. Si ya pagaste, no te preocupes: escríbenos y lo verificamos.",
+        );
       });
   }, [token, capture]);
 

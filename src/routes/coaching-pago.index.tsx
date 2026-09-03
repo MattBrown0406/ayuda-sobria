@@ -37,13 +37,28 @@ function CoachingReservationPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pricingError, setPricingError] = useState(false);
+
+  function loadPricing() {
+    setPricingError(false);
+    getPricing()
+      .then((p) => {
+        setPricing(p as Pricing);
+        setPricingError(false);
+      })
+      .catch((err) => {
+        console.error("getCoachingPricing failed", err);
+        setPricing(null);
+        setPricingError(true);
+      });
+  }
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setSignedIn(!!data.user));
-    getPricing()
-      .then((p) => setPricing(p as Pricing))
-      .catch(() => setPricing(null));
-  }, [getPricing]);
+    loadPricing();
+    // getPricing (useServerFn) is stable; run once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handlePay(e: React.FormEvent) {
     e.preventDefault();
@@ -62,7 +77,8 @@ function CoachingReservationPage() {
       if (!approvalUrl) throw new Error("No se obtuvo el enlace de PayPal");
       window.location.href = approvalUrl;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al procesar el pago");
+      console.error("createCoachingOrder failed", err);
+      setError("No pudimos iniciar el pago con PayPal. Inténtalo de nuevo en unos minutos.");
       setLoading(false);
     }
   }
@@ -117,7 +133,7 @@ function CoachingReservationPage() {
           </div>
           <p>
             ¿Prefieres coordinar antes de pagar? Llama al{" "}
-            <a href="tel:4582988011" className="font-medium text-primary">
+            <a href="tel:+14582988011" className="font-medium text-primary">
               (458) 298-8011
             </a>{" "}
             o escribe a{" "}
@@ -177,6 +193,18 @@ function CoachingReservationPage() {
           </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}
+          {pricingError && (
+            <p className="text-sm text-destructive">
+              No pudimos cargar los precios.{" "}
+              <button
+                type="button"
+                onClick={loadPricing}
+                className="font-medium underline hover:no-underline"
+              >
+                Reintentar
+              </button>
+            </p>
+          )}
 
           <button
             disabled={loading || !pricing}

@@ -2,7 +2,6 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { CalendarDays, Clock, ExternalLink, LockKeyhole, Video } from "lucide-react";
-import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,7 +80,7 @@ function GrabacionesPage() {
   }, []);
 
   return (
-    <SiteLayout>
+    <>
       <section className="border-b border-border bg-secondary/40">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
@@ -98,7 +97,7 @@ function GrabacionesPage() {
         </div>
       </section>
 
-      <main className="mx-auto min-h-[360px] max-w-6xl px-4 py-10 sm:py-12">
+      <div className="mx-auto min-h-[360px] max-w-6xl px-4 py-10 sm:py-12">
         {state.name === "loading" && <LoadingState />}
         {state.name === "unauthenticated" && <UnauthenticatedState />}
         {state.name === "no-membership" && <NoMembershipState />}
@@ -116,8 +115,8 @@ function GrabacionesPage() {
         {state.name === "ready" && state.recordings.length > 0 && (
           <RecordingLibrary recordings={state.recordings} />
         )}
-      </main>
-    </SiteLayout>
+      </div>
+    </>
   );
 }
 

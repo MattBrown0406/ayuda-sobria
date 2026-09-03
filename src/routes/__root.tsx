@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { Toaster } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -195,12 +197,44 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  // Google OAuth returns to the site root; finish the trip back to the page
+  // the user was on (stored by /auth before redirecting to the provider).
+  useEffect(() => {
+    let target: string | null = null;
+    try {
+      target = sessionStorage.getItem("post_auth_redirect");
+    } catch {
+      return;
+    }
+    if (!target || !target.startsWith("/") || target.startsWith("//")) return;
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      try {
+        sessionStorage.removeItem("post_auth_redirect");
+      } catch {
+        /* ignore */
+      }
+      router.navigate({ to: target! });
+    };
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) finish();
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) finish();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <SiteLayout>
         <Outlet />
       </SiteLayout>
+      <Toaster />
     </QueryClientProvider>
   );
 }
