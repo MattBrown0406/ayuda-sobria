@@ -407,13 +407,20 @@ export function createSupabaseZoomStore(
       assertNoError(error);
       const seen = new Set<string>();
       return (data ?? []).flatMap((row: any) => {
-        const email = row.email.trim().toLowerCase();
+        // A single malformed row must not throw out of the hourly automation run:
+        // that would abort auto-register and starve reminders and follow-ups for
+        // everyone. Skip the row instead.
+        const email = typeof row?.email === "string" ? row.email.trim().toLowerCase() : "";
         if (!email || seen.has(email)) return [];
         seen.add(email);
         if (!row.auto_register) return [];
+        // The automation path skips parseRegistrationInput, so a null name would
+        // only surface later as a crash inside splitName.
+        const fullName = typeof row.full_name === "string" ? row.full_name.trim() : "";
+        if (!fullName) return [];
         return [
           {
-            fullName: row.full_name,
+            fullName,
             email,
             phone: row.phone ?? undefined,
             location: row.location ?? undefined,

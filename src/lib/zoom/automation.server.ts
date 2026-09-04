@@ -113,7 +113,12 @@ export function createAutomationHandler(deps: {
     // They must return 200: the hourly workflow runs auto-register, reminders
     // and followups sequentially with `set -e`, so a 503 here would starve the
     // later actions for everyone because of one permanently-failing item.
-    if (body.action === "auto-register" && body.occurrenceId) {
+    if (body.action === "auto-register") {
+      // Without this the request fell through to "Unsupported action", which
+      // hides a scheduler that failed to resolve the occurrence id.
+      if (!body.occurrenceId) {
+        return Response.json({ error: "occurrenceId is required" }, { status: 400 });
+      }
       const results = await autoRegisterRecurring({
         occurrenceId: body.occurrenceId,
         store: deps.store,
