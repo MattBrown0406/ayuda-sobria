@@ -1,20 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  AlertTriangle,
-  Calendar,
-  Clock,
-  Shield,
   Building2,
   Check,
   BookOpen,
-  HeartHandshake,
   Users,
   MessageCircle,
   Sparkles,
   ClipboardList,
 } from "lucide-react";
-import counselor from "@/assets/counselor.webp";
 import { AppPromo } from "@/components/site/AppPromo";
+import { LighthouseHero } from "@/components/site/LighthouseHero";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -40,124 +35,6 @@ export const Route = createFileRoute("/")({
 
 const PHONE_DISPLAY = "(458) 298-8011";
 const PHONE_HREF = "tel:+14582988011";
-
-function Hero() {
-  return (
-    <section
-      id="top"
-      className="relative overflow-hidden bg-gradient-to-b from-secondary/40 to-background"
-    >
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
-        <div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-destructive/10 px-3 py-1 text-xs font-medium text-destructive">
-            <AlertTriangle className="h-3.5 w-3.5" /> Apoyo gratuito en vivo y guía de próximos
-            pasos para familias
-          </span>
-          <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            No tienes que resolver esto a ciegas.
-            <span className="mt-2 block bg-gradient-to-r from-chart-3 via-primary to-chart-5 bg-clip-text text-transparent">
-              Encuentra el nivel adecuado de ayuda familiar frente a la adicción.
-            </span>
-          </h1>
-          <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
-            AyudaSobria acompaña a las familias a pasar de la preocupación a la acción. Únete a La
-            Sobremesa los lunes, agenda una sesión privada si necesitas ayuda antes del lunes, o
-            evalúa si una intervención es el paso adecuado.
-          </p>
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <a
-              href="/registro"
-              className="flex items-start gap-3 rounded-lg border-2 border-primary/80 bg-primary p-4 text-left text-primary-foreground hover:bg-primary/90"
-            >
-              <Calendar className="mt-0.5 h-5 w-5 shrink-0" />
-              <span className="text-sm font-semibold leading-snug">
-                Únete a La Sobremesa gratuita
-              </span>
-            </a>
-            <a
-              href="/coaching-familiar"
-              className="flex items-start gap-3 rounded-lg border-2 border-chart-4/60 bg-chart-4/10 p-4 text-left text-foreground hover:bg-chart-4/20"
-            >
-              <Clock className="mt-0.5 h-5 w-5 shrink-0 text-chart-4" />
-              <span className="text-sm font-semibold leading-snug">
-                ¿No puedes esperar al lunes? Reserva una sesión ahora
-              </span>
-            </a>
-            <a
-              href="/intervencion"
-              className="flex items-start gap-3 rounded-lg border-2 border-chart-4/40 bg-accent p-4 text-left text-foreground hover:bg-accent/70"
-            >
-              <Shield className="mt-0.5 h-5 w-5 shrink-0 text-chart-4" />
-              <span className="text-sm font-semibold leading-snug">
-                Evalúa la disposición para una intervención
-              </span>
-            </a>
-          </div>
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            <span>Apoyo gratuito los lunes a las 8 PM (Pacífico)</span>
-            <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
-            <span>Sesiones privadas: US$150 (US$125 para miembros)</span>
-            <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/40 sm:inline-block" />
-            <a href={PHONE_HREF} className="font-semibold text-primary">
-              Llama {PHONE_DISPLAY}
-            </a>
-          </div>
-        </div>
-
-        <aside className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-          <span className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
-            <HeartHandshake className="h-3.5 w-3.5" /> Guía confiable, privada y centrada en la
-            familia
-          </span>
-          <h2 className="mt-4 text-2xl font-bold">
-            Trabaja con <span className="text-primary">Matt Brown</span>
-          </h2>
-          <div className="mt-4 flex gap-4">
-            <img
-              src={counselor}
-              alt="Matt Brown"
-              width={120}
-              height={120}
-              className="h-28 w-28 rounded-lg object-cover"
-              loading="lazy"
-            />
-            <p className="text-sm text-muted-foreground">
-              Matt cuenta con más de 22 años de experiencia acompañando a familias frente a la
-              adicción. Ayuda a pensar con claridad en los momentos difíciles, a evaluar opciones de
-              tratamiento con ética y a dejar de sentirse presionados por la industria.
-            </p>
-          </div>
-          <ul className="mt-5 space-y-2 text-sm">
-            {[
-              "Consultas privadas y coaching familiar",
-              "Navegación ética del tratamiento",
-              "Apoyo en español e inglés",
-            ].map((t) => (
-              <li key={t} className="flex items-start gap-2">
-                <Check className="mt-0.5 h-4 w-4 text-primary" /> {t}
-              </li>
-            ))}
-          </ul>
-          <div className="mt-5 rounded-lg border-l-4 border-chart-4 bg-chart-4/10 p-4">
-            <p className="text-sm font-semibold">
-              Empieza gratis. Avanza más rápido cuando la situación lo requiera.
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Si el apoyo del lunes es suficiente, comienza con La Sobremesa. Si tu familia necesita
-              respuestas ya, reserva una sesión privada o evalúa la intervención.
-            </p>
-            <a
-              href="/registro"
-              className="mt-3 inline-block text-sm font-semibold text-primary hover:underline"
-            >
-              Regístrate en La Sobremesa →
-            </a>
-          </div>
-        </aside>
-      </div>
-    </section>
-  );
-}
 
 function PressureLevel() {
   const items = [
@@ -566,7 +443,7 @@ function FinalCTA() {
 function Index() {
   return (
     <>
-      <Hero />
+      <LighthouseHero />
       <AppPromo />
       <PressureLevel />
       <FAQ />
