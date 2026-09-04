@@ -169,17 +169,24 @@ export const adminUpdateZoomRecording = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: current, error: readError } = await supabaseAdmin
       .from("zoom_recordings")
-      .select("id, public_url")
+      .select("id, public_url, published, published_at")
       .eq("id", data.id)
       .single();
     if (readError || !current) throw new Error(readError?.message || "Recording not found");
     const publicUrl = data.publicUrl === undefined ? current.public_url : data.publicUrl;
     if (data.published && !publicUrl) throw new Error("Add a recording URL before publishing");
+    // published_at records when members first got access, so editing a title or
+    // description must not restamp it. Only a fresh publish sets it.
+    const publishedAt = data.published
+      ? current.published && current.published_at
+        ? current.published_at
+        : new Date().toISOString()
+      : null;
     const { data: updated, error } = await supabaseAdmin
       .from("zoom_recordings")
       .update({
         published: data.published,
-        published_at: data.published ? new Date().toISOString() : null,
+        published_at: publishedAt,
         public_url: publicUrl,
         public_play_passcode: data.publicPasscode,
         title: data.title,
