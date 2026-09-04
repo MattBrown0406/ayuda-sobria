@@ -280,7 +280,8 @@ function RegistroPage() {
             />
             <span>
               Quiero quedar registrado/a automáticamente para las próximas reuniones de La
-              Sobremesa.
+              Sobremesa. Cada jueves recibirás por correo tu enlace personal para el lunes
+              siguiente.
             </span>
           </label>
 

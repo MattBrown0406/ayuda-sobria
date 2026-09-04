@@ -174,8 +174,11 @@ export function ZoomMeetingPanel({
 }) {
   const { upcoming, upcomingIsPast } = useMemo(() => {
     const now = Date.now();
+    // A meeting stays "upcoming" for two hours after its 8 PM start (it runs ~75
+    // minutes) unless Zoom already reported it ended. The next Monday's meeting is
+    // created at 10 PM, so the panel switches to it that same night.
     const future = [...occurrences]
-      .filter((o) => Date.parse(o.starts_at) >= now - 6 * 60 * 60 * 1000)
+      .filter((o) => o.status !== "ended" && Date.parse(o.starts_at) + 2 * 60 * 60 * 1000 >= now)
       .sort((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at));
     const selected = future[0] ?? occurrences[0] ?? null;
     return { upcoming: selected, upcomingIsPast: !future[0] && Boolean(selected) };

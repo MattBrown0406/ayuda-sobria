@@ -1,4 +1,10 @@
-import type { RegistrationInput, RegistrationMailer, RegistrationStore, ZoomApi } from "./types.ts";
+import type {
+  RegistrationInput,
+  RegistrationMailer,
+  RegistrationSource,
+  RegistrationStore,
+  ZoomApi,
+} from "./types.ts";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -83,6 +89,7 @@ async function deliverConfirmation(input: {
   registration: RegistrationInput;
   occurrence: NonNullable<Awaited<ReturnType<RegistrationStore["getReadyOccurrence"]>>>;
   joinUrl: string;
+  source: RegistrationSource;
   store: RegistrationStore;
   mailer?: RegistrationMailer;
 }) {
@@ -90,10 +97,10 @@ async function deliverConfirmation(input: {
   try {
     await input.mailer.sendConfirmation({
       registrationId: input.recordId,
-      fullName: input.registration.fullName,
-      email: input.registration.email,
+      registration: input.registration,
       occurrence: input.occurrence,
       joinUrl: input.joinUrl,
+      source: input.source,
     });
     await input.store.completeConfirmationEmail(input.recordId);
     return { emailSent: true, emailConfigured: true };
@@ -112,7 +119,10 @@ export async function registerForOccurrence(input: {
   zoom: ZoomApi;
   mailer?: RegistrationMailer;
   now?: Date;
+  /** Defaults to "manual" (the public form). The weekly job passes "automatic". */
+  source?: RegistrationSource;
 }) {
+  const source: RegistrationSource = input.source ?? "manual";
   const occurrence = input.registration.occurrenceId
     ? await input.store.getReadyOccurrence(input.registration.occurrenceId)
     : await input.store.getUpcomingReadyOccurrence((input.now ?? new Date()).toISOString());
@@ -131,6 +141,7 @@ export async function registerForOccurrence(input: {
           registration: registrationInput,
           occurrence,
           joinUrl: claim.value.zoomJoinUrl,
+          source,
           store: input.store,
           mailer: input.mailer,
         });
@@ -164,6 +175,7 @@ export async function registerForOccurrence(input: {
       registration: registrationInput,
       occurrence,
       joinUrl: registration.zoomJoinUrl ?? registrant.joinUrl,
+      source,
       store: input.store,
       mailer: input.mailer,
     });

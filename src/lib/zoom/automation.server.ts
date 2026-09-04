@@ -28,6 +28,9 @@ export async function autoRegisterRecurring(input: {
         store: input.store,
         zoom: input.zoom,
         mailer: input.mailer,
+        // Weekly re-registrations send the attendee their new personal link but do
+        // not notify the admin: only brand-new sign-ups from the form do that.
+        source: "automatic",
       });
       if (result.created || result.recovered) results.registered += 1;
       else results.alreadyRegistered += 1;

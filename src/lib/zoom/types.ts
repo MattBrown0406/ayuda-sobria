@@ -96,14 +96,19 @@ export interface RegistrationStore {
   failConfirmationEmail(id: string, reason: string): Promise<void>;
 }
 
+/** "manual" = the person submitted the form; "automatic" = the weekly re-registration job. */
+export type RegistrationSource = "manual" | "automatic";
+
+export interface ConfirmationDelivery {
+  registrationId: string;
+  registration: RegistrationInput;
+  occurrence: Occurrence;
+  joinUrl: string;
+  source: RegistrationSource;
+}
+
 export interface RegistrationMailer {
-  sendConfirmation(input: {
-    registrationId: string;
-    fullName: string;
-    email: string;
-    occurrence: Occurrence;
-    joinUrl: string;
-  }): Promise<void>;
+  sendConfirmation(input: ConfirmationDelivery): Promise<void>;
   sendReminder(input: ReminderDelivery): Promise<void>;
   sendFollowup(input: FollowupDelivery): Promise<void>;
 }

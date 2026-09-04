@@ -20,6 +20,7 @@ import { endpointValidationToken, zoomWebhookSignature } from "../src/lib/zoom/s
 import { isTuesdayReportHour } from "../src/lib/zoom/weekly-report.server.ts";
 import { AYUDA_ZOOM_SERIES_KEY, AYUDA_ZOOM_TOPIC } from "../src/lib/zoom/types.ts";
 import { createZoomClient } from "../src/lib/zoom/client.server.ts";
+import { createRegistrationMailer } from "../src/lib/zoom/email.server.ts";
 import type {
   AutomationStore,
   Occurrence,
@@ -561,6 +562,79 @@ test("weekly report window is 10 AM Pacific on Tuesdays across DST", () => {
   assert.equal(isTuesdayReportHour(new Date("2026-07-29T17:30:00Z")), false);
 });
 
+test("confirmations carry the personal link and the app, and only form sign-ups notify the admin", async () => {
+  const sent: Array<{ to: string[]; subject: string; html: string }> = [];
+  const mailer = createRegistrationMailer({
+    resendApiKey: "resend",
+    lovableApiKey: "lovable",
+    from: "AyudaSobria <registro@ayudasobria.com>",
+    adminTo: "matt@soberhelpline.com",
+    fetchImpl: async (_input, init) => {
+      sent.push(JSON.parse(String(init?.body)));
+      return Response.json({ id: "email" });
+    },
+  });
+  const store = new MemoryAutomationStore();
+  const zoom = zoomMock();
+
+  // A person signs up through the form: Spanish confirmation with the link and the app,
+  // plus a full admin notification.
+  const manual = await registerForOccurrence({
+    registration: {
+      ...baseRegistration,
+      phone: "+52 55 1234 5678",
+      question: "¿Cómo pongo límites?",
+      requestFollowUp: true,
+      preferredContactDate: "2026-07-30",
+      preferredContactTime: "10:00",
+      preferredTimezone: "America/Mexico_City",
+    },
+    store,
+    zoom,
+    mailer,
+  });
+  assert.equal(manual.emailSent, true);
+  assert.equal(sent.length, 2);
+  assert.deepEqual(sent[0].to, ["ana@example.com"]);
+  assert.match(sent[0].subject, /La Sobremesa/);
+  assert.match(sent[0].html, /Ya estás registrado\/a, Ana López/);
+  assert.match(sent[0].html, /zoom\.test\/registrant-1/);
+  assert.match(sent[0].html, /apps\.apple\.com\/us\/app\/sober-helpline\/id6780034996/);
+  assert.match(sent[0].html, /en inglés y en español/);
+  assert.deepEqual(sent[1].to, ["matt@soberhelpline.com"]);
+  assert.match(sent[1].subject, /Nuevo registro de La Sobremesa — Ana López/);
+  assert.match(sent[1].html, /¿Cómo pongo límites\?/);
+  assert.match(sent[1].html, /\+52 55 1234 5678/);
+  assert.match(
+    sent[1].html,
+    /Pide que Matt le contacte:<\/strong> Sí · 2026-07-30 · 10:00 · America\/Mexico_City/,
+  );
+
+  // The Thursday job re-registers an existing weekly attendee: they get their new link
+  // (still with the app), and the admin is not notified.
+  store.recurring = [{ fullName: "Luis Pérez", email: "luis@example.com", consentUpdates: true }];
+  const auto = await autoRegisterRecurring({ occurrenceId: "occ-1", store, zoom, mailer });
+  assert.equal(auto.registered, 1);
+  assert.equal(sent.length, 3);
+  assert.deepEqual(sent[2].to, ["luis@example.com"]);
+  assert.match(sent[2].html, /te registramos automáticamente/);
+  assert.match(sent[2].html, /zoom\.test\/registrant-2/);
+  assert.match(sent[2].html, /apps\.apple\.com\/us\/app\/sober-helpline/);
+  assert.ok(!sent.some((email, index) => index > 1 && email.to[0] === "matt@soberhelpline.com"));
+
+  // Monday 4 PM reminder is personal and says the person is already registered.
+  await mailer.sendReminder({
+    registrationId: "r-1",
+    fullName: "Ana López",
+    email: "ana@example.com",
+    joinUrl: "https://zoom.test/registrant-1",
+    occurrence: store.ready,
+  });
+  assert.match(sent[3].subject, /hoy a las 8 PM/);
+  assert.match(sent[3].html, /Ya estás registrado\/a para <strong>La Sobremesa<\/strong> de hoy/);
+  assert.match(sent[3].html, /Te espero esta noche\.<br>Matt Brown/);
+});
+
 test("admin role result is fail-closed and recording access only allows active/unexpired members", () => {
   assert.doesNotThrow(() => assertAdminRoleResult({ role: "admin" }, null));
   assert.throws(() => assertAdminRoleResult({ role: "user" }, null), /Forbidden/);
@@ -629,9 +703,22 @@ test("migration defaults recordings private and architecture explicitly preserve
     hardeningMigration,
     /complete_zoom_webhook_event\(_series_key text, _event_id text, _lease_id uuid\)/,
   );
-  assert.match(workflow, /cron: "23 \* \* \* \*"/);
+  // Monday 10 PM Pacific (schedule), Thursday 3 PM (auto-register), Monday 4 PM (reminders),
+  // each listed for PDT and PST because GitHub cron is UTC-only.
+  for (const cron of [
+    "5 5 * * 2",
+    "5 6 * * 2",
+    "5 22 * * 4",
+    "5 23 * * 4",
+    "5 23 * * 1",
+    "5 0 * * 2",
+  ]) {
+    assert.ok(workflow.includes(`- cron: "${cron}"`), `workflow schedules ${cron}`);
+  }
+  assert.match(workflow, /TZ=America\/Los_Angeles/);
   assert.match(workflow, /\/api\/zoom\/schedule/);
   assert.match(workflow, /auto-register/);
+  assert.match(workflow, /"action":"reminders"/);
   assert.match(report, /7:00 PM/);
   assert.match(report, /8:00 PM/);
   assert.notEqual(AYUDA_ZOOM_SERIES_KEY, "soberhelpline_family_squares_en_7pm");

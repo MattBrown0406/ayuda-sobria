@@ -1,11 +1,38 @@
 name: AyudaSobria Zoom automation
 
+# La Sobremesa runs every Monday at 8:00 PM Pacific. Three jobs keep it going:
+#
+#   Monday   10:00 PM Pacific  schedule       create next Monday's Zoom meeting (new link)
+#   Thursday  3:00 PM Pacific  auto-register  re-register weekly attendees, email their link
+#   Monday    4:00 PM Pacific  reminders      remind everyone registered for tonight
+#
+# GitHub cron only speaks UTC, so every Pacific slot is listed twice (PDT and PST).
+# The job converts the current time to America/Los_Angeles and runs only when it
+# matches a slot; the other entry of each pair exits without doing anything. Every
+# server action is idempotent, so a manual re-run is always safe.
 on:
   schedule:
-    # Hourly. The application computes the correct Monday 8 PM Pacific occurrence,
-    # including DST, and every action is idempotent/retryable.
-    - cron: "23 * * * *"
+    # Monday 10:00 PM Pacific = Tuesday 05:05 UTC (PDT) / 06:05 UTC (PST)
+    - cron: "5 5 * * 2"
+    - cron: "5 6 * * 2"
+    # Thursday 3:00 PM Pacific = Thursday 22:05 UTC (PDT) / 23:05 UTC (PST)
+    - cron: "5 22 * * 4"
+    - cron: "5 23 * * 4"
+    # Monday 4:00 PM Pacific = Monday 23:05 UTC (PDT) / Tuesday 00:05 UTC (PST)
+    - cron: "5 23 * * 1"
+    - cron: "5 0 * * 2"
   workflow_dispatch:
+    inputs:
+      action:
+        description: "Which job to run now (auto = whichever slot matches the current Pacific time)"
+        type: choice
+        default: auto
+        options:
+          - auto
+          - schedule
+          - auto-register
+          - reminders
+          - followups
 
 permissions:
   contents: read
@@ -21,50 +48,100 @@ jobs:
     env:
       AYUDA_ZOOM_BASE_URL: ${{ secrets.AYUDA_ZOOM_BASE_URL }}
       ZOOM_AUTOMATION_SECRET: ${{ secrets.ZOOM_AUTOMATION_SECRET }}
+      REQUESTED_ACTION: ${{ github.event.inputs.action || 'auto' }}
     steps:
       - name: Check configuration
         id: config
         shell: bash
         run: |
           if [[ -z "${AYUDA_ZOOM_BASE_URL:-}" || -z "${ZOOM_AUTOMATION_SECRET:-}" ]]; then
-            echo "Zoom automation secrets are not configured; skipping this run."
+            echo "::error::Zoom automation secrets are not configured (AYUDA_ZOOM_BASE_URL, ZOOM_AUTOMATION_SECRET). Nothing will be scheduled until they are set."
             echo "configured=false" >> "$GITHUB_OUTPUT"
           else
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Schedule and process La Sobremesa
+      - name: Pick the job for this Pacific-time slot
+        id: slot
         if: steps.config.outputs.configured == 'true'
         shell: bash
         run: |
-          set -euo pipefail
+          weekday="$(TZ=America/Los_Angeles date +%u)"   # 1 = Monday ... 7 = Sunday
+          hour="$(TZ=America/Los_Angeles date +%H)"
+          echo "Pacific time now: $(TZ=America/Los_Angeles date '+%A %H:%M %Z')"
+          action="$REQUESTED_ACTION"
+          if [[ "$action" == "auto" ]]; then
+            if   [[ "$weekday" == "1" && "$hour" == "22" ]]; then action="schedule"
+            elif [[ "$weekday" == "4" && "$hour" == "15" ]]; then action="auto-register"
+            elif [[ "$weekday" == "1" && "$hour" == "16" ]]; then action="reminders"
+            else action="skip"
+            fi
+          fi
+          echo "Selected job: $action"
+          echo "action=$action" >> "$GITHUB_OUTPUT"
 
+      - name: Run La Sobremesa automation
+        if: steps.config.outputs.configured == 'true' && steps.slot.outputs.action != 'skip'
+        shell: bash
+        env:
+          ACTION: ${{ steps.slot.outputs.action }}
+        run: |
+          set -euo pipefail
           base_url="${AYUDA_ZOOM_BASE_URL%/}"
           auth_header="Authorization: Bearer ${ZOOM_AUTOMATION_SECRET}"
 
-          schedule_json="$({
+          # Creates next Monday's meeting, or returns the one that already exists.
+          ensure_meeting() {
             curl --silent --show-error --fail-with-body \
               --request POST \
               --header "$auth_header" \
               --header "Content-Type: application/json" \
               --data '{}' \
               "$base_url/api/zoom/schedule"
-          })"
-
-          occurrence_id="$(printf '%s' "$schedule_json" | jq -er '.occurrence.id')"
+          }
 
           post_action() {
             local payload="$1"
+            echo "→ $payload"
             curl --silent --show-error --fail-with-body \
               --request POST \
               --header "$auth_header" \
               --header "Content-Type: application/json" \
               --data "$payload" \
-              "$base_url/api/zoom/automation" >/dev/null
+              "$base_url/api/zoom/automation"
+            echo
           }
 
-          post_action "{\"action\":\"auto-register\",\"occurrenceId\":\"$occurrence_id\"}"
-          post_action '{"action":"reminders"}'
-          post_action '{"action":"followups"}'
-
-          echo "AyudaSobria Zoom automation completed for occurrence $occurrence_id."
+          case "$ACTION" in
+            schedule)
+              # Monday night: the 8 PM meeting is over, create the next one with a new link.
+              schedule_json="$(ensure_meeting)"
+              echo "$schedule_json"
+              echo "Next meeting: $(printf '%s' "$schedule_json" | jq -r '.occurrence.occurrenceDate') (created=$(printf '%s' "$schedule_json" | jq -r '.created'))"
+              ;;
+            auto-register)
+              # Thursday: make sure the meeting exists (recovers a missed Monday run), then
+              # register everyone who opted in and email them their personal link.
+              schedule_json="$(ensure_meeting)"
+              occurrence_id="$(printf '%s' "$schedule_json" | jq -er '.occurrence.id')"
+              post_action "{\"action\":\"auto-register\",\"occurrenceId\":\"$occurrence_id\"}"
+              post_action '{"action":"followups"}'
+              ;;
+            reminders)
+              # Monday afternoon: catch anyone the Thursday run missed, then remind all
+              # registrants that tonight's meeting is at 8 PM.
+              schedule_json="$(ensure_meeting)"
+              occurrence_id="$(printf '%s' "$schedule_json" | jq -er '.occurrence.id')"
+              post_action "{\"action\":\"auto-register\",\"occurrenceId\":\"$occurrence_id\"}"
+              post_action '{"action":"reminders"}'
+              post_action '{"action":"followups"}'
+              ;;
+            followups)
+              post_action '{"action":"followups"}'
+              ;;
+            *)
+              echo "::error::Unknown action '$ACTION'"
+              exit 1
+              ;;
+          esac
+          echo "AyudaSobria Zoom automation '$ACTION' completed."

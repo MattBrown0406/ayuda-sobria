@@ -100,7 +100,13 @@ El estado remoto de estas migraciones no pudo consultarse porque Supabase CLI no
 
 `Intl.DateTimeFormat` calcula la fecha local y la conversión de `20:00` en `America/Los_Angeles`. Las pruebas cubren PDT (`03:00Z` del martes), PST (`04:00Z` del martes), recuperación durante el lunes antes del inicio y avance al lunes siguiente a partir de las 8 PM.
 
-`.github/workflows/ayuda-zoom-automation.yml` ejecuta cada hora un flujo idempotente: crea o recupera la ocurrencia administrada, pasa su `occurrence.id` a `auto-register`, y procesa recordatorios y seguimientos. GitHub reintenta en la siguiente hora si Zoom, correo o la aplicación devuelve un error. El flujo queda inactivo hasta configurar sus dos secretos de repositorio.
+`.github/workflows/ayuda-zoom-automation.yml` ejecuta tres trabajos en hora del Pacífico (cada uno con dos entradas cron, PDT y PST, porque GitHub solo entiende UTC; el trabajo convierte la hora a `America/Los_Angeles` y solo actúa cuando coincide):
+
+- **Lunes 10:00 PM** — `schedule`: terminada la reunión de las 8 PM, crea la reunión de Zoom del lunes siguiente con un enlace nuevo. El panel de administración muestra la nueva reunión esa misma noche.
+- **Jueves 3:00 PM** — `auto-register`: registra en la nueva reunión a todas las personas que marcaron "registro automático" y les envía por correo su enlace personal (sin notificar al administrador, porque no son registros nuevos). Antes de eso vuelve a llamar a `schedule`, así recupera un lunes que haya fallado.
+- **Lunes 4:00 PM** — `reminders`: recuerda a todas las personas registradas que la reunión es esa noche a las 8 PM. Antes repite `auto-register` como red de seguridad por si el jueves falló.
+
+Cada acción es idempotente, por lo que `workflow_dispatch` permite lanzar cualquiera a mano. El flujo queda inactivo (y lo marca como error en el registro) hasta configurar sus dos secretos de repositorio: `AYUDA_ZOOM_BASE_URL` y `ZOOM_AUTOMATION_SECRET` (el mismo valor que el servidor).
 
 ## Verificación final local
 
