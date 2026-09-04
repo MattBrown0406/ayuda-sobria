@@ -442,14 +442,20 @@ export type Database = {
       zoom_recordings: {
         Row: {
           created_at: string
+          description: string | null
           duration_minutes: number | null
           id: string
           occurrence_id: string
           provider_play_passcode: string | null
           provider_share_url: string | null
+          public_play_passcode: string | null
+          public_url: string | null
+          published: boolean
+          published_at: string | null
           recording_end: string | null
           recording_start: string | null
           started_at: string | null
+          title: string | null
           topic: string | null
           updated_at: string
           zoom_meeting_id: string
@@ -457,14 +463,20 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          description?: string | null
           duration_minutes?: number | null
           id?: string
           occurrence_id: string
           provider_play_passcode?: string | null
           provider_share_url?: string | null
+          public_play_passcode?: string | null
+          public_url?: string | null
+          published?: boolean
+          published_at?: string | null
           recording_end?: string | null
           recording_start?: string | null
           started_at?: string | null
+          title?: string | null
           topic?: string | null
           updated_at?: string
           zoom_meeting_id: string
@@ -472,14 +484,20 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          description?: string | null
           duration_minutes?: number | null
           id?: string
           occurrence_id?: string
           provider_play_passcode?: string | null
           provider_share_url?: string | null
+          public_play_passcode?: string | null
+          public_url?: string | null
+          published?: boolean
+          published_at?: string | null
           recording_end?: string | null
           recording_start?: string | null
           started_at?: string | null
+          title?: string | null
           topic?: string | null
           updated_at?: string
           zoom_meeting_id?: string
