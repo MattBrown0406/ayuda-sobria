@@ -5,6 +5,7 @@ import { CalendarDays, Clock, ExternalLink, LockKeyhole, Video } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { PHONE_DISPLAY, PHONE_HREF } from "@/components/site/SiteLayout";
 import { getMemberZoomRecordings } from "@/lib/zoom.functions";
 
 export const Route = createFileRoute("/grabaciones")({
@@ -283,12 +284,14 @@ function MessageCard({
   );
 }
 
-function SupportLine({ prefix = "¿Necesitas ayuda?" }: { prefix?: string }) {
+// The prefix is completed by ", llama al …", so it must read as a clause and
+// never as a question — "¿Necesitas ayuda?, llama al" is not valid Spanish.
+function SupportLine({ prefix = "Si necesitas ayuda" }: { prefix?: string }) {
   return (
     <p className="text-sm text-muted-foreground">
       {prefix}, llama al{" "}
-      <a className="font-medium text-primary hover:underline" href="tel:+14582988011">
-        458-298-8011
+      <a className="font-medium text-primary hover:underline" href={PHONE_HREF}>
+        {PHONE_DISPLAY}
       </a>
       .
     </p>
