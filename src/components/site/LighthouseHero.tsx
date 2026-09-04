@@ -123,7 +123,9 @@ export function LighthouseHero() {
         <div className="as-dusk" aria-hidden="true" />
         <div className="as-shade" aria-hidden="true" />
         <div className="as-light" aria-hidden="true">
-          <div className="as-beam" />
+          <div className="as-beam-orbit">
+            <div className="as-beam" />
+          </div>
           <div className="as-haze" />
           <div className="as-lamp">
             <span className="as-lamp-core" />
