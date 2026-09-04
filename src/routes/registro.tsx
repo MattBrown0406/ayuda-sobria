@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/registro")({

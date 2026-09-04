@@ -65,13 +65,28 @@ export const adminGetOverview = createServerFn({ method: "GET" })
         supabaseAdmin.from("memberships").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("coaching_orders").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("profiles").select("id, first_name, last_name"),
-        safe("occurrences", supabaseAdmin
-          .from("zoom_occurrences")
-          .select("*")
-          .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
-          .order("starts_at", { ascending: false })),
-        safe("attendance", supabaseAdmin.from("zoom_attendance").select("*").order("joined_at", { ascending: false })),
-        safe("recordings", supabaseAdmin.from("zoom_recordings").select("*").order("started_at", { ascending: false })),
+        safe(
+          "occurrences",
+          supabaseAdmin
+            .from("zoom_occurrences")
+            .select("*")
+            .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
+            .order("starts_at", { ascending: false }),
+        ),
+        safe(
+          "attendance",
+          supabaseAdmin
+            .from("zoom_attendance")
+            .select("*")
+            .order("joined_at", { ascending: false }),
+        ),
+        safe(
+          "recordings",
+          supabaseAdmin
+            .from("zoom_recordings")
+            .select("*")
+            .order("started_at", { ascending: false }),
+        ),
       ]);
 
     for (const result of [regs, memberships, coaching, profiles]) {

@@ -36,7 +36,7 @@ export const Route = createFileRoute("/api/public/hooks/weekly-report")({
         }
 
         try {
-          const report = await buildWeeklyReport(supabaseAdmin as any, now);
+          const report = await buildWeeklyReport(supabaseAdmin, now);
           if (!report) return Response.json({ skipped: "no completed meeting yet" });
           await sendWeeklyReportEmail(report);
           return Response.json({
