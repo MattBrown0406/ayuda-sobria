@@ -17,6 +17,7 @@ import {
 import { assertAdminRoleResult } from "../src/lib/zoom/admin-auth.ts";
 import { membershipAllowsRecordingAccess } from "../src/lib/zoom/recording-access.ts";
 import { endpointValidationToken, zoomWebhookSignature } from "../src/lib/zoom/security.ts";
+import { isTuesdayReportHour } from "../src/lib/zoom/weekly-report.server.ts";
 import { AYUDA_ZOOM_SERIES_KEY, AYUDA_ZOOM_TOPIC } from "../src/lib/zoom/types.ts";
 import { createZoomClient } from "../src/lib/zoom/client.server.ts";
 import type {
@@ -550,6 +551,14 @@ test("recurring registration, reminders, and consented follow-ups are leased and
     (await handler(new Request("https://example.test", { method: "POST", body: "{}" }))).status,
     401,
   );
+});
+
+test("weekly report window is 10 AM Pacific on Tuesdays across DST", () => {
+  // 10:00 AM Pacific is 17:00Z in PDT and 18:00Z in PST.
+  assert.equal(isTuesdayReportHour(new Date("2026-07-28T17:30:00Z")), true);
+  assert.equal(isTuesdayReportHour(new Date("2026-07-28T18:30:00Z")), false);
+  assert.equal(isTuesdayReportHour(new Date("2026-12-15T18:30:00Z")), true);
+  assert.equal(isTuesdayReportHour(new Date("2026-07-29T17:30:00Z")), false);
 });
 
 test("admin role result is fail-closed and recording access only allows active/unexpired members", () => {

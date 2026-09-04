@@ -1,15 +1,15 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { AYUDA_ZOOM_SERIES_KEY } from "./types.ts";
 
-type Client = SupabaseClient<any, any, any>;
+type Client = SupabaseClient<Database>;
 
 const PACIFIC = "America/Los_Angeles";
 
 function escapeHtml(value: string) {
   return value.replace(
     /[&<>"']/g,
-    (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[c] ?? c,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[c] ?? c,
   );
 }
 
@@ -66,13 +66,13 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
   const attendance = attendanceResult.data ?? [];
 
   const attendedEmails = new Set(
-    attendance.map((row: any) => normalizeEmail(row.participant_email)).filter(Boolean),
+    attendance.map((row) => normalizeEmail(row.participant_email)).filter(Boolean),
   );
 
   const registeredEmails = new Set<string>();
   const registeredAttended: string[] = [];
   const registeredAbsent: string[] = [];
-  for (const row of registrations as any[]) {
+  for (const row of registrations) {
     const email = normalizeEmail(row.email);
     if (email) registeredEmails.add(email);
     const label = personLabel(row.full_name, email);
@@ -82,10 +82,14 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
 
   const seenUnregistered = new Set<string>();
   const unregisteredAttendees: string[] = [];
-  for (const row of attendance as any[]) {
+  for (const row of attendance) {
     const email = normalizeEmail(row.participant_email);
     if (email && registeredEmails.has(email)) continue;
-    const key = email || String(row.participant_name ?? "").trim().toLowerCase();
+    const key =
+      email ||
+      String(row.participant_name ?? "")
+        .trim()
+        .toLowerCase();
     if (!key || seenUnregistered.has(key)) continue;
     seenUnregistered.add(key);
     unregisteredAttendees.push(personLabel(row.participant_name, email));
@@ -107,12 +111,12 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
 
   const recentAttendees = new Set(
     (recentAttendanceResult.data ?? [])
-      .map((row: any) => normalizeEmail(row.participant_email))
+      .map((row) => normalizeEmail(row.participant_email))
       .filter(Boolean),
   );
   const seenAuto = new Set<string>();
   const staleAutoRegistrants: string[] = [];
-  for (const row of (autoResult.data ?? []) as any[]) {
+  for (const row of autoResult.data ?? []) {
     const email = normalizeEmail(row.email);
     if (!email || seenAuto.has(email)) continue;
     seenAuto.add(email);

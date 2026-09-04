@@ -52,7 +52,7 @@ interface Occurrence {
 interface Attendance {
   id: string;
   occurrence_id: string;
-  participant_name: string;
+  participant_name: string | null;
   participant_email: string | null;
   joined_at: string;
   left_at: string | null;
@@ -122,12 +122,18 @@ function RegistrantCard({
           )}
         </div>
         <div className="flex flex-shrink-0 items-center gap-3 text-xs text-muted-foreground">
-          <a href={`mailto:${registration.email}`} className="flex items-center gap-1 hover:text-primary">
+          <a
+            href={`mailto:${registration.email}`}
+            className="flex items-center gap-1 hover:text-primary"
+          >
             <Mail className="h-3 w-3" />
             {registration.email}
           </a>
           {registration.phone && (
-            <a href={`tel:${registration.phone}`} className="flex items-center gap-1 hover:text-primary">
+            <a
+              href={`tel:${registration.phone}`}
+              className="flex items-center gap-1 hover:text-primary"
+            >
               <Phone className="h-3 w-3" />
               {registration.phone}
             </a>
@@ -175,10 +181,7 @@ export function ZoomMeetingPanel({
     return { upcoming: selected, upcomingIsPast: !future[0] && Boolean(selected) };
   }, [occurrences]);
 
-  const occurrenceById = useMemo(
-    () => new Map(occurrences.map((o) => [o.id, o])),
-    [occurrences],
-  );
+  const occurrenceById = useMemo(() => new Map(occurrences.map((o) => [o.id, o])), [occurrences]);
 
   const upcomingRegistrations = useMemo(
     () => (upcoming ? registrations.filter((r) => r.occurrence_id === upcoming.id) : []),
@@ -336,8 +339,8 @@ export function ZoomMeetingPanel({
           </Card>
         ) : (
           <p className="text-sm text-destructive">
-            ⚠️ No meeting has been scheduled yet. Run the weekly scheduler to create the next
-            Monday meeting.
+            ⚠️ No meeting has been scheduled yet. Run the weekly scheduler to create the next Monday
+            meeting.
           </p>
         )}
       </div>
@@ -350,7 +353,8 @@ export function ZoomMeetingPanel({
           <div>
             <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
               <MessageSquare className="h-5 w-5" />
-              Questions for {upcoming ? formatMeetingDate(upcoming.occurrence_date) : "the next meeting"}
+              Questions for{" "}
+              {upcoming ? formatMeetingDate(upcoming.occurrence_date) : "the next meeting"}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               {questionsOnly.length} question{questionsOnly.length !== 1 ? "s" : ""} submitted
@@ -508,12 +512,18 @@ export function ZoomMeetingPanel({
                       </span>
                     </span>
                     <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                      <a href={`mailto:${r.email}`} className="flex items-center gap-1 hover:text-primary">
+                      <a
+                        href={`mailto:${r.email}`}
+                        className="flex items-center gap-1 hover:text-primary"
+                      >
                         <Mail className="h-3 w-3" />
                         {r.email}
                       </a>
                       {r.phone && (
-                        <a href={`tel:${r.phone}`} className="flex items-center gap-1 hover:text-primary">
+                        <a
+                          href={`tel:${r.phone}`}
+                          className="flex items-center gap-1 hover:text-primary"
+                        >
                           <Phone className="h-3 w-3" />
                           {r.phone}
                         </a>
@@ -778,14 +788,26 @@ function AttendanceTracking({
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatTile icon={<UserCheck className="h-5 w-5 text-primary" />} value={registered.length} label="Registered" />
-        <StatTile icon={<Users className="h-5 w-5 text-primary" />} value={rows.length} label="Attendees" />
+        <StatTile
+          icon={<UserCheck className="h-5 w-5 text-primary" />}
+          value={registered.length}
+          label="Registered"
+        />
+        <StatTile
+          icon={<Users className="h-5 w-5 text-primary" />}
+          value={rows.length}
+          label="Attendees"
+        />
         <StatTile
           icon={<UserX className="h-5 w-5 text-destructive" />}
           value={noShows.length}
           label="Registered, Didn't Join"
         />
-        <StatTile icon={<Users className="h-5 w-5 text-primary" />} value={walkIns.length} label="Walk-ins" />
+        <StatTile
+          icon={<Users className="h-5 w-5 text-primary" />}
+          value={walkIns.length}
+          label="Walk-ins"
+        />
       </div>
 
       {rows.length > 0 ? (
@@ -815,7 +837,7 @@ function AttendanceTracking({
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <span className="text-sm font-medium text-foreground">
-                        {a.participant_name}
+                        {a.participant_name ?? "(sin nombre)"}
                       </span>
                       {a.participant_email && (
                         <span className="ml-2 text-xs text-muted-foreground">
@@ -874,12 +896,18 @@ function AttendanceTracking({
               >
                 <span className="text-sm font-medium text-foreground">{r.full_name}</span>
                 <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  <a href={`mailto:${r.email}`} className="flex items-center gap-1 hover:text-primary">
+                  <a
+                    href={`mailto:${r.email}`}
+                    className="flex items-center gap-1 hover:text-primary"
+                  >
                     <Mail className="h-3 w-3" />
                     {r.email}
                   </a>
                   {r.phone && (
-                    <a href={`tel:${r.phone}`} className="flex items-center gap-1 hover:text-primary">
+                    <a
+                      href={`tel:${r.phone}`}
+                      className="flex items-center gap-1 hover:text-primary"
+                    >
                       <Phone className="h-3 w-3" />
                       {r.phone}
                     </a>
@@ -894,15 +922,7 @@ function AttendanceTracking({
   );
 }
 
-function StatTile({
-  icon,
-  value,
-  label,
-}: {
-  icon: React.ReactNode;
-  value: number;
-  label: string;
-}) {
+function StatTile({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
   return (
     <div className="rounded-lg border border-border p-3 text-center">
       <div className="mb-1 flex justify-center">{icon}</div>

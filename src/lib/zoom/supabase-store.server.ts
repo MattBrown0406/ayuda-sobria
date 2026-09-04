@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Json } from "@/integrations/supabase/types";
+import type { Database, Json } from "@/integrations/supabase/types";
 import {
   AYUDA_ZOOM_SERIES_KEY,
   type AutomationStore,
@@ -14,9 +14,8 @@ import {
   type ZoomRecordingCompleted,
 } from "./types.ts";
 
-// The zoom_* tables are managed outside the generated Database type, so this
-// store uses an untyped SupabaseClient. It is imported only by server routes.
-type Client = SupabaseClient<any, any, any>;
+// Server-only persistence adapter over the generated Database type.
+type Client = SupabaseClient<Database>;
 
 function occurrence(row: Record<string, unknown>): Occurrence {
   return {
@@ -133,7 +132,9 @@ export function createSupabaseZoomStore(
     },
 
     async claimRegistration(input: RegistrationInput) {
-      const { data, error } = await client.rpc("claim_zoom_registration", {
+      // The generated Args type marks every parameter as a non-null string, but the
+      // database function accepts NULL for the optional profile fields.
+      const args = {
         _occurrence_id: input.occurrenceId,
         _full_name: input.fullName,
         _email: input.email,
@@ -149,7 +150,8 @@ export function createSupabaseZoomStore(
         _preferred_timezone: input.preferredTimezone ?? null,
         _consent_confidentiality: input.consentConfidentiality,
         _consent_updates: input.consentUpdates,
-      });
+      } as unknown as Database["public"]["Functions"]["claim_zoom_registration"]["Args"];
+      const { data, error } = await client.rpc("claim_zoom_registration", args);
       assertNoError(error);
       const result = unwrapRpc(data);
       return { claimed: result.claimed, value: registration(result.value) };
@@ -406,7 +408,7 @@ export function createSupabaseZoomStore(
         .limit(5000);
       assertNoError(error);
       const seen = new Set<string>();
-      return (data ?? []).flatMap((row: any) => {
+      return (data ?? []).flatMap((row) => {
         // A single malformed row must not throw out of the hourly automation run:
         // that would abort auto-register and starve reminders and follow-ups for
         // everyone. Skip the row instead.
@@ -440,7 +442,7 @@ export function createSupabaseZoomStore(
       assertNoError(error);
       const rows = data ?? [];
       const ids = [
-        ...new Set(rows.flatMap((row: any) => (row.occurrence_id ? [row.occurrence_id] : []))),
+        ...new Set(rows.flatMap((row) => (row.occurrence_id ? [row.occurrence_id] : []))),
       ];
       if (!ids.length) return [];
       const { data: occurrences, error: occurrenceError } = await client
@@ -450,12 +452,12 @@ export function createSupabaseZoomStore(
         .in("id", ids);
       assertNoError(occurrenceError);
       const byId = new Map(
-        (occurrences ?? []).map((row: any) => [
+        (occurrences ?? []).map((row) => [
           row.id,
           occurrence(row as unknown as Record<string, unknown>),
         ]),
       );
-      return rows.flatMap((row: any) => {
+      return rows.flatMap((row) => {
         const item = row.occurrence_id ? byId.get(row.occurrence_id) : undefined;
         return item && row.zoom_join_url
           ? [
@@ -505,15 +507,15 @@ export function createSupabaseZoomStore(
       });
       assertNoError(error);
       const rows = data ?? [];
-      const registrationIds = [...new Set(rows.map((row: any) => row.registration_id))];
+      const registrationIds = [...new Set(rows.map((row) => row.registration_id))];
       if (!registrationIds.length) return [];
       const { data: registrations, error: registrationError } = await client
         .from("meeting_registrations")
         .select("id,full_name,email")
         .in("id", registrationIds);
       assertNoError(registrationError);
-      const byId = new Map((registrations ?? []).map((row: any) => [row.id, row]));
-      return rows.flatMap((row: any) => {
+      const byId = new Map((registrations ?? []).map((row) => [row.id, row]));
+      return rows.flatMap((row) => {
         const registrant = byId.get(row.registration_id);
         return registrant
           ? [

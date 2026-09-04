@@ -221,7 +221,9 @@ function RecordingCard({ recording }: { recording: Recording }) {
         <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <CalendarDays className="h-4 w-4" />
-            {dateFormatter.format(new Date(recording.started_at))}
+            {recording.started_at
+              ? dateFormatter.format(new Date(recording.started_at))
+              : "Fecha por confirmar"}
           </span>
           {recording.duration_minutes != null && (
             <span className="inline-flex items-center gap-1.5">

@@ -29,32 +29,37 @@ export const adminCheckAccess = createServerFn({ method: "GET" })
     return { isAdmin: true };
   });
 
+type Tables = Database["public"]["Tables"];
+type Row<T extends keyof Tables> = Tables[T]["Row"];
+
 export const adminGetOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin: typedAdmin } = await import("@/integrations/supabase/client.server");
-    const supabaseAdmin = typedAdmin as any;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // Zoom tables may not exist yet in a fresh environment, so their failures
     // degrade to empty lists — but they must be surfaced, not silently shown
     // as a healthy empty dashboard.
     const zoomErrors: string[] = [];
-    const safe = async (label: string, p: Promise<any>) => {
+    async function safe<T>(
+      label: string,
+      query: PromiseLike<{ data: T[] | null; error: { message: string } | null }>,
+    ): Promise<T[]> {
       try {
-        const r = await p;
-        if (r.error) {
-          console.error(`adminGetOverview: ${label} query failed`, r.error.message);
+        const result = await query;
+        if (result.error) {
+          console.error(`adminGetOverview: ${label} query failed`, result.error.message);
           zoomErrors.push(label);
-          return { data: [], error: null };
+          return [];
         }
-        return r;
+        return result.data ?? [];
       } catch (error) {
         console.error(`adminGetOverview: ${label} query threw`, error);
         zoomErrors.push(label);
-        return { data: [], error: null };
+        return [];
       }
-    };
+    }
 
     const [regs, memberships, coaching, profiles, occurrences, attendance, recordings] =
       await Promise.all([
@@ -65,7 +70,7 @@ export const adminGetOverview = createServerFn({ method: "GET" })
         supabaseAdmin.from("memberships").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("coaching_orders").select("*").order("created_at", { ascending: false }),
         supabaseAdmin.from("profiles").select("id, first_name, last_name"),
-        safe(
+        safe<Row<"zoom_occurrences">>(
           "occurrences",
           supabaseAdmin
             .from("zoom_occurrences")
@@ -73,14 +78,14 @@ export const adminGetOverview = createServerFn({ method: "GET" })
             .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
             .order("starts_at", { ascending: false }),
         ),
-        safe(
+        safe<Row<"zoom_attendance">>(
           "attendance",
           supabaseAdmin
             .from("zoom_attendance")
             .select("*")
             .order("joined_at", { ascending: false }),
         ),
-        safe(
+        safe<Row<"zoom_recordings">>(
           "recordings",
           supabaseAdmin
             .from("zoom_recordings")
@@ -94,34 +99,32 @@ export const adminGetOverview = createServerFn({ method: "GET" })
     }
 
     const profileMap = new Map<string, { first_name: string | null; last_name: string | null }>();
-    (profiles.data ?? []).forEach((profile: any) => profileMap.set(profile.id, profile));
-    const occurrenceIds = new Set((occurrences.data ?? []).map((occurrence: any) => occurrence.id));
-    const zoomRegistrations = ((regs.data ?? []) as any[]).filter(
-      (registration: any) =>
+    (profiles.data ?? []).forEach((profile) => profileMap.set(profile.id, profile));
+    const occurrenceIds = new Set(occurrences.map((occurrence) => occurrence.id));
+    const zoomRegistrations = (regs.data ?? []).filter(
+      (registration) =>
         !registration.occurrence_id || occurrenceIds.has(registration.occurrence_id),
     );
-    const zoomAttendance = (attendance.data ?? []).filter((entry: any) =>
-      occurrenceIds.has(entry.occurrence_id),
-    );
-    const zoomRecordings = (recordings.data ?? []).filter((recording: any) =>
+    const zoomAttendance = attendance.filter((entry) => occurrenceIds.has(entry.occurrence_id));
+    const zoomRecordings = recordings.filter((recording) =>
       occurrenceIds.has(recording.occurrence_id),
     );
 
     return {
       registrations: zoomRegistrations,
-      memberships: (memberships.data ?? []).map((membership: any) => ({
+      memberships: (memberships.data ?? []).map((membership) => ({
         ...membership,
         profile: profileMap.get(membership.user_id) ?? null,
       })),
       coaching: coaching.data ?? [],
-      occurrences: occurrences.data ?? [],
+      occurrences,
       attendance: zoomAttendance,
       recordings: zoomRecordings,
       zoomErrors,
       stats: {
         registrations: zoomRegistrations.length,
         activeMembers:
-          memberships.data?.filter((membership: any) => membership.status === "active").length ?? 0,
+          memberships.data?.filter((membership) => membership.status === "active").length ?? 0,
         coachingOrders: coaching.data?.length ?? 0,
       },
     };
@@ -163,8 +166,7 @@ export const adminUpdateZoomRecording = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin: typedAdmin2 } = await import("@/integrations/supabase/client.server");
-    const supabaseAdmin = typedAdmin2 as any;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: current, error: readError } = await supabaseAdmin
       .from("zoom_recordings")
       .select("id, public_url")
@@ -199,8 +201,7 @@ export const adminDeleteRegistration = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin: typedAdmin3 } = await import("@/integrations/supabase/client.server");
-    const supabaseAdmin = typedAdmin3 as any;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: registration, error: registrationError } = await supabaseAdmin
       .from("meeting_registrations")
       .select("id,occurrence_id,zoom_registrant_id,zoom_registration_status")

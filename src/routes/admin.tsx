@@ -135,12 +135,7 @@ function AdminPage() {
   }, []);
 
   async function handleDelete(id: string) {
-    if (
-      !confirm(
-        "Revoke Zoom access and delete this registration? This cannot be undone.",
-      )
-    )
-      return;
+    if (!confirm("Revoke Zoom access and delete this registration? This cannot be undone.")) return;
     try {
       await del({ data: { id } });
       toast.success("Registration deleted");
@@ -187,9 +182,7 @@ function AdminPage() {
       <div className="min-h-screen bg-background">
         <div className="mx-auto max-w-md space-y-4 px-4 py-16 text-center">
           <h1 className="text-2xl font-semibold">Admin Portal</h1>
-          <p className="text-muted-foreground">
-            Sign in with an authorized account to continue.
-          </p>
+          <p className="text-muted-foreground">Sign in with an authorized account to continue.</p>
           <Button onClick={() => navigate({ to: "/auth", search: { redirect: "/admin" } })}>
             Sign in
           </Button>
@@ -234,15 +227,13 @@ function AdminPage() {
   }
 
   const attendanceByOccurrence = new Map<string, Set<string>>();
-  data.attendance.forEach((entry: any) => {
+  data.attendance.forEach((entry) => {
     const participants = attendanceByOccurrence.get(entry.occurrence_id) ?? new Set<string>();
     participants.add(entry.participant_key);
     attendanceByOccurrence.set(entry.occurrence_id, participants);
   });
-  const occurrenceById = new Map<string, any>(
-    data.occurrences.map((occurrence: any) => [occurrence.id, occurrence]),
-  );
-  const publishedCount = data.recordings.filter((recording: any) => recording.published).length;
+  const occurrenceById = new Map(data.occurrences.map((occurrence) => [occurrence.id, occurrence]));
+  const publishedCount = data.recordings.filter((recording) => recording.published).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -296,9 +287,9 @@ function AdminPage() {
               description="Meeting settings, submitted questions, follow-up requests, the weekly registration archive, and attendance."
             />
             <ZoomMeetingPanel
-              occurrences={data.occurrences as any}
-              registrations={data.registrations as any}
-              attendance={data.attendance as any}
+              occurrences={data.occurrences}
+              registrations={data.registrations}
+              attendance={data.attendance}
             />
           </TabsContent>
 
@@ -325,9 +316,9 @@ function AdminPage() {
                     {data.occurrences.length === 0 && (
                       <EmptyTable colSpan={7}>No meetings scheduled yet.</EmptyTable>
                     )}
-                    {data.occurrences.map((occurrence: any) => {
+                    {data.occurrences.map((occurrence) => {
                       const registrationCount = data.registrations.filter(
-                        (registration: any) => registration.occurrence_id === occurrence.id,
+                        (registration) => registration.occurrence_id === occurrence.id,
                       ).length;
                       return (
                         <tr key={occurrence.id} className="border-t align-top">
@@ -422,7 +413,7 @@ function AdminPage() {
                     {data.registrations.length === 0 && (
                       <EmptyTable colSpan={9}>No registrations yet.</EmptyTable>
                     )}
-                    {data.registrations.map((registration: any) => {
+                    {data.registrations.map((registration) => {
                       const occurrence = registration.occurrence_id
                         ? occurrenceById.get(registration.occurrence_id)
                         : null;
@@ -491,8 +482,8 @@ function AdminPage() {
                               <div className="mt-1">
                                 <div>Requested follow-up</div>
                                 <div className="text-muted-foreground">
-                                  Preference: {registration.preferred_contact_date || "no date"}{" "}
-                                  · {registration.preferred_contact_time || "no time"} ·{" "}
+                                  Preference: {registration.preferred_contact_date || "no date"} ·{" "}
+                                  {registration.preferred_contact_time || "no time"} ·{" "}
                                   {registration.preferred_timezone || "no timezone"}
                                 </div>
                               </div>
@@ -546,7 +537,7 @@ function AdminPage() {
                     {data.attendance.length === 0 && (
                       <EmptyTable colSpan={6}>Zoom has not reported attendance yet.</EmptyTable>
                     )}
-                    {data.attendance.map((entry: any) => {
+                    {data.attendance.map((entry) => {
                       const occurrence = occurrenceById.get(entry.occurrence_id);
                       return (
                         <tr key={entry.id} className="border-t">
@@ -582,7 +573,7 @@ function AdminPage() {
               </Card>
             ) : (
               <div className="grid gap-4">
-                {data.recordings.map((recording: any) => (
+                {data.recordings.map((recording) => (
                   <RecordingEditor
                     key={`${recording.id}-${recording.updated_at}`}
                     recording={recording}
@@ -612,7 +603,7 @@ function AdminPage() {
                     {data.memberships.length === 0 && (
                       <EmptyTable colSpan={7}>No memberships yet.</EmptyTable>
                     )}
-                    {data.memberships.map((membership: any) => (
+                    {data.memberships.map((membership) => (
                       <tr key={membership.id} className="border-t">
                         <td className="p-3">{formatDateTime(membership.created_at)}</td>
                         <td className="p-3">
@@ -662,7 +653,7 @@ function AdminPage() {
                     {data.coaching.length === 0 && (
                       <EmptyTable colSpan={6}>No payments yet.</EmptyTable>
                     )}
-                    {data.coaching.map((order: any) => (
+                    {data.coaching.map((order) => (
                       <tr key={order.id} className="border-t">
                         <td className="p-3">{formatDateTime(order.created_at)}</td>
                         <td className="p-3">{order.customer_name ?? "—"}</td>
@@ -807,7 +798,8 @@ function RecordingEditor({
               aria-describedby={`recording-url-help-${recording.id}`}
             />
             <p id={`recording-url-help-${recording.id}`} className="text-xs text-muted-foreground">
-              Use only a safe link ready to share with members. The Zoom-provided link stays private until you review it and copy it here.
+              Use only a safe link ready to share with members. The Zoom-provided link stays private
+              until you review it and copy it here.
             </p>
             {recording.provider_share_url && !publicUrl && (
               <Button
@@ -830,7 +822,8 @@ function RecordingEditor({
               placeholder="Optional"
             />
             <p className="text-xs text-muted-foreground">
-              If Zoom requires a passcode, publish it alongside the link so members can open the recording.
+              If Zoom requires a passcode, publish it alongside the link so members can open the
+              recording.
             </p>
             {recording.provider_play_passcode && !publicPasscode && (
               <Button

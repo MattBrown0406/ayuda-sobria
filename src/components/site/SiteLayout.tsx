@@ -13,7 +13,13 @@ export const WHATSAPP_HREF =
 
 export function WhatsAppMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor" className={className}>
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+      fill="currentColor"
+      className={className}
+    >
       <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.24 8.24 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.41a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.4-.12-.56.13-.17.25-.66.81-.81.98-.15.17-.3.19-.55.06-.25-.12-1.05-.39-2-1.23a7.5 7.5 0 0 1-1.38-1.72c-.15-.25-.02-.39.11-.51.11-.11.25-.3.37-.45.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.43 1.03 2.6c.12.17 1.75 2.79 4.25 3.81.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.5-.61 1.71-1.21.21-.6.21-1.11.15-1.21-.06-.11-.23-.17-.48-.29z" />
     </svg>
   );
@@ -266,8 +272,8 @@ function Footer() {
           >
             © {new Date().getFullYear()} AyudaSobria.
           </Link>{" "}
-          Contenido educativo. No sustituye atención médica de emergencia. Si tu familia
-          enfrenta una crisis inmediata, llama al 911 o al servicio local de emergencias.
+          Contenido educativo. No sustituye atención médica de emergencia. Si tu familia enfrenta
+          una crisis inmediata, llama al 911 o al servicio local de emergencias.
         </p>
       </div>
     </footer>
