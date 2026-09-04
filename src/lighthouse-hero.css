@@ -1,64 +1,231 @@
-/* Animated dusk lighthouse hero for the AyudaSobria homepage. */
+/* Photographic dusk lighthouse hero for the AyudaSobria homepage. */
 .as-hero {
-  --as-navy: #0b1f3a;
-  --as-deep: #061527;
+  --as-deep: #08131f;
   --as-amber: #f3b95a;
-  --as-amber-deep: #d98a2b;
-  --as-sand: #f6ecd8;
-  --as-mist: #c9d6e6;
+  --as-mist: #d2dbe6;
   --as-sea: #5fc9b8;
   position: relative;
   isolation: isolate;
   overflow: hidden;
   color: #fff;
-  background: var(--as-deep);
+  background: linear-gradient(180deg, #0b1a2b 0%, #0f2238 55%, #08131f 100%);
 }
 
-.as-scene {
+/* ---- Photographic stage ---- */
+.as-stage {
+  --as-lamp-x: 22%;
+  --as-lamp-y: 22%;
   position: absolute;
   inset: 0;
   z-index: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.as-shade {
+.as-photo,
+.as-clouds,
+.as-waves,
+.as-dusk,
+.as-shade,
+.as-light {
   position: absolute;
+}
+
+.as-photo {
   inset: 0;
-  z-index: 1;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 28% center;
+  /* Warm the cold moonlit original toward the last light of dusk. */
+  filter: sepia(0.38) saturate(1.15) hue-rotate(-12deg) contrast(1.06) brightness(0.86);
+  transform: scale(1.02);
+}
+
+.as-clouds {
+  top: -8%;
+  left: -12%;
+  width: 124%;
+  height: 72%;
+  object-fit: cover;
+  object-position: center top;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+.as-clouds-back {
+  opacity: 0.16;
+  animation: as-cloud-back 52s ease-in-out infinite alternate;
+}
+
+.as-clouds-front {
+  opacity: 0.09;
+  transform: scaleX(-1) scale(1.08);
+  animation: as-cloud-front 38s ease-in-out infinite alternate;
+}
+
+.as-waves {
+  left: -7%;
+  bottom: -5%;
+  width: 114%;
+  height: 48%;
+  object-fit: cover;
+  object-position: center bottom;
+  mix-blend-mode: screen;
+  filter: saturate(0.7) brightness(0.7) sepia(0.2);
+  will-change: transform, opacity;
+}
+
+.as-waves-back {
+  opacity: 0.11;
+  animation: as-wave-back 15s ease-in-out infinite alternate;
+}
+
+.as-waves-front {
+  opacity: 0.08;
+  transform: scaleX(-1) scale(1.04);
+  animation: as-wave-front 11s ease-in-out infinite alternate;
+}
+
+/* Warm dusk glow on the horizon and a cool, deep top of sky. */
+.as-dusk {
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 70% 42% at 62% 58%,
+      rgba(232, 150, 70, 0.34),
+      rgba(232, 150, 70, 0) 70%
+    ),
+    linear-gradient(180deg, rgba(8, 19, 34, 0.55) 0%, rgba(8, 19, 34, 0) 40%);
+  mix-blend-mode: screen;
+  animation: as-dusk-breathe 12s ease-in-out infinite;
+}
+
+/* Darkens the right side so the copy stays readable over the photo. */
+.as-shade {
+  inset: 0;
   background:
     linear-gradient(
-      90deg,
-      rgba(6, 21, 39, 0.9) 0%,
-      rgba(6, 21, 39, 0.72) 34%,
-      rgba(6, 21, 39, 0.28) 58%,
-      rgba(6, 21, 39, 0) 78%
+      270deg,
+      rgba(6, 16, 29, 0.92) 0%,
+      rgba(6, 16, 29, 0.8) 30%,
+      rgba(6, 16, 29, 0.36) 55%,
+      rgba(6, 16, 29, 0.06) 78%,
+      rgba(6, 16, 29, 0.24) 100%
     ),
     linear-gradient(
       180deg,
-      rgba(6, 21, 39, 0.35) 0%,
-      rgba(6, 21, 39, 0) 30%,
-      rgba(6, 21, 39, 0.55) 100%
+      rgba(6, 16, 29, 0.1) 0%,
+      rgba(6, 16, 29, 0.06) 45%,
+      rgba(6, 16, 29, 0.5) 75%,
+      rgba(6, 16, 29, 0.92) 100%
     );
 }
 
+/* ---- Light system, anchored to the lantern in the photo ---- */
+.as-light {
+  inset: 0;
+}
+
+/* One beam that turns a full circle, like a real lantern. */
+.as-beam {
+  position: absolute;
+  left: var(--as-lamp-x);
+  top: var(--as-lamp-y);
+  width: min(1500px, 190vw);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 236, 190, 0.5) 0deg,
+    rgba(255, 224, 150, 0.22) 7deg,
+    rgba(255, 224, 150, 0) 15deg,
+    rgba(255, 224, 150, 0) 345deg,
+    rgba(255, 224, 150, 0.22) 353deg,
+    rgba(255, 236, 190, 0.5) 360deg
+  );
+  mask-image: radial-gradient(circle, #000 0%, #000 8%, rgba(0, 0, 0, 0.55) 30%, transparent 52%);
+  filter: blur(3px);
+  will-change: transform;
+  animation:
+    as-beam-turn 10s linear infinite,
+    as-beam-fade 10s linear infinite;
+}
+
+.as-haze {
+  position: absolute;
+  left: var(--as-lamp-x);
+  top: var(--as-lamp-y);
+  width: 150px;
+  height: 150px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 239, 195, 0.36),
+    rgba(255, 199, 95, 0.12) 38%,
+    transparent 68%
+  );
+  animation: as-haze 2.6s ease-in-out infinite;
+}
+
+.as-lamp {
+  position: absolute;
+  left: var(--as-lamp-x);
+  top: var(--as-lamp-y);
+  width: 1px;
+  height: 1px;
+}
+
+.as-lamp-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: #fff7d6;
+  box-shadow:
+    0 0 10px #fff,
+    0 0 26px #ffd16f,
+    0 0 50px rgba(255, 199, 95, 0.95);
+  animation: as-lamp-pulse 1.8s ease-in-out infinite;
+}
+
+.as-lamp-flare {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 60px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: rgba(255, 248, 214, 0.55);
+  filter: blur(2px);
+  animation: as-flare 2.8s ease-in-out infinite;
+}
+
+/* ---- Copy ---- */
 .as-inner {
   position: relative;
   z-index: 2;
-  width: min(100%, 1240px);
+  width: min(100%, 1280px);
   margin: 0 auto;
   padding: clamp(48px, 7vw, 84px) 24px 36px;
-  min-height: min(72vh, 640px);
+  min-height: min(76vh, 680px);
   display: grid;
-  grid-template-columns: minmax(0, 620px) 1fr;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 620px);
   align-items: end;
+  justify-content: space-between;
   gap: 32px;
 }
 
 .as-copy {
+  grid-column: 2;
   max-width: 620px;
+  justify-self: end;
 }
 
 .as-eyebrow {
@@ -75,6 +242,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  backdrop-filter: blur(8px);
   animation: as-rise 0.7s 0.05s both;
 }
 
@@ -94,6 +262,7 @@
   line-height: 1.04;
   letter-spacing: -0.03em;
   text-wrap: balance;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
   animation: as-rise 0.8s 0.12s both;
 }
 
@@ -109,6 +278,7 @@
   color: var(--as-mist);
   font-size: 17px;
   line-height: 1.7;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
   animation: as-rise 0.8s 0.2s both;
 }
 
@@ -186,7 +356,7 @@
   margin: 22px 0 0;
   padding: 0;
   list-style: none;
-  color: #a9bbd1;
+  color: #b3c3d6;
   font-size: 12px;
   font-weight: 600;
   animation: as-rise 0.8s 0.36s both;
@@ -207,20 +377,21 @@
   box-shadow: 0 0 10px rgba(243, 185, 90, 0.85);
 }
 
-/* Live card floats near the water, right of the copy */
+/* Live card sits at the foot of the lighthouse, on the left */
 .as-live {
-  justify-self: end;
+  grid-column: 1;
+  justify-self: start;
   align-self: end;
   display: flex;
   align-items: center;
   gap: 12px;
   width: min(100%, 300px);
-  margin: 0 96px 8px 0;
+  margin-bottom: 8px;
   padding: 14px 14px 14px 16px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 16px;
-  background: rgba(8, 26, 48, 0.78);
-  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.35);
+  background: rgba(8, 22, 40, 0.74);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(14px);
   animation:
     as-rise 0.9s 0.4s both,
@@ -263,7 +434,7 @@
 
 .as-live em {
   margin-top: 3px;
-  color: #a9bbd1;
+  color: #b3c3d6;
   font-size: 11px;
   font-style: normal;
 }
@@ -290,11 +461,11 @@
   transform: translateX(3px);
 }
 
-/* Three beacons */
+/* ---- Three beacons ---- */
 .as-paths {
   position: relative;
   z-index: 2;
-  width: min(100%, 1240px);
+  width: min(100%, 1280px);
   margin: 0 auto;
   padding: 0 24px 40px;
   animation: as-rise 0.9s 0.5s both;
@@ -315,7 +486,7 @@
 }
 
 .as-paths-heading small {
-  color: #a9bbd1;
+  color: #b3c3d6;
   font-size: 12px;
 }
 
@@ -336,9 +507,9 @@
   border-radius: 20px;
   color: inherit;
   text-decoration: none;
-  background: rgba(8, 26, 48, 0.62);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(12px);
+  background: rgba(8, 22, 40, 0.66);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(14px);
   transition:
     transform 0.25s ease,
     border-color 0.25s ease,
@@ -348,7 +519,7 @@
 .as-path:hover {
   transform: translateY(-4px);
   border-color: rgba(243, 185, 90, 0.55);
-  background: rgba(12, 34, 60, 0.78);
+  background: rgba(12, 30, 52, 0.8);
 }
 
 .as-path-beacon {
@@ -402,7 +573,7 @@
 
 .as-path-copy em {
   margin-top: 6px;
-  color: #b7c6d9;
+  color: #bccbdd;
   font-size: 13px;
   font-style: normal;
   line-height: 1.5;
@@ -427,107 +598,7 @@
   gap: 10px;
 }
 
-/* ---- Scene animation ---- */
-.as-sunglow {
-  animation: as-breathe 9s ease-in-out infinite;
-}
-
-.as-stars circle {
-  animation: as-twinkle 4s ease-in-out infinite;
-}
-
-.as-stars circle:nth-child(2n) {
-  animation-delay: 1.3s;
-}
-
-.as-stars circle:nth-child(3n) {
-  animation-delay: 2.1s;
-  animation-duration: 5.5s;
-}
-
-.as-moon {
-  animation: as-moon-drift 60s ease-in-out infinite alternate;
-}
-
-.as-gull {
-  transform-box: view-box;
-}
-
-.as-gull-1 {
-  animation: as-gull-1 26s linear infinite;
-}
-
-.as-gull-2 {
-  animation: as-gull-2 34s linear infinite;
-}
-
-.as-glint {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: as-glint 3.6s ease-in-out infinite;
-}
-
-.as-wave {
-  will-change: transform;
-}
-
-.as-wave-far {
-  animation: as-wave-far 18s linear infinite;
-}
-
-.as-wave-mid {
-  animation: as-wave-mid 13s linear infinite;
-}
-
-.as-wave-near {
-  animation: as-wave-near 10s linear infinite;
-}
-
-.as-boat {
-  animation: as-boat-sail 70s linear infinite;
-}
-
-.as-boat-rock {
-  transform-box: fill-box;
-  transform-origin: 50% 90%;
-  animation: as-boat-rock 5s ease-in-out infinite;
-}
-
-.as-boat-light {
-  animation: as-twinkle 2.2s ease-in-out infinite;
-}
-
-.as-window {
-  animation: as-window 3.2s ease-in-out infinite;
-}
-
-.as-window-2 {
-  animation-delay: 1.4s;
-}
-
-.as-lamp-glow {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: as-lamp-glow 2.4s ease-in-out infinite;
-}
-
-.as-lamp-core {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: as-lamp-core 1.8s ease-in-out infinite;
-}
-
-.as-beam-group {
-  transform-box: view-box;
-  transform-origin: 835px 219px;
-  animation: as-beam-turn 9s linear infinite;
-}
-
-.as-beam {
-  filter: blur(6px);
-  animation: as-beam-fade 9s linear infinite;
-}
-
+/* ---- Keyframes ---- */
 @keyframes as-rise {
   from {
     opacity: 0;
@@ -574,151 +645,6 @@
   }
 }
 
-@keyframes as-breathe {
-  0%,
-  100% {
-    opacity: 0.75;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.06);
-  }
-}
-
-@keyframes as-twinkle {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes as-moon-drift {
-  from {
-    transform: translate(1040px, 120px);
-  }
-  to {
-    transform: translate(1010px, 104px);
-  }
-}
-
-@keyframes as-gull-1 {
-  0% {
-    transform: translate(-60px, 250px);
-  }
-  50% {
-    transform: translate(560px, 200px);
-  }
-  100% {
-    transform: translate(1260px, 240px);
-  }
-}
-
-@keyframes as-gull-2 {
-  0% {
-    transform: translate(1260px, 300px);
-  }
-  50% {
-    transform: translate(640px, 270px);
-  }
-  100% {
-    transform: translate(-60px, 320px);
-  }
-}
-
-@keyframes as-glint {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scaleX(0.7);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scaleX(1.25);
-  }
-}
-
-@keyframes as-wave-far {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-600px);
-  }
-}
-
-@keyframes as-wave-mid {
-  from {
-    transform: translateX(-720px);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes as-wave-near {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-840px);
-  }
-}
-
-@keyframes as-boat-sail {
-  0% {
-    transform: translate(-90px, 528px);
-  }
-  100% {
-    transform: translate(620px, 522px);
-  }
-}
-
-@keyframes as-boat-rock {
-  0%,
-  100% {
-    transform: rotate(-3deg) translateY(0);
-  }
-  50% {
-    transform: rotate(3deg) translateY(-4px);
-  }
-}
-
-@keyframes as-window {
-  0%,
-  100% {
-    opacity: 0.75;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes as-lamp-glow {
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-}
-
-@keyframes as-lamp-core {
-  0%,
-  100% {
-    transform: scale(0.9);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-}
-
 @keyframes as-beam-turn {
   from {
     transform: rotate(0deg);
@@ -728,65 +654,189 @@
   }
 }
 
-/* The beam is brightest when it sweeps toward the viewer (over the water) and
-   dims as it points inland/behind the tower. */
+/* The beam starts pointing up, sweeps right across the copy (dim), then
+   left and up over the open sea (bright). */
 @keyframes as-beam-fade {
+  0% {
+    opacity: 0.6;
+  }
+  25% {
+    opacity: 0.12;
+  }
+  45% {
+    opacity: 0.3;
+  }
+  62% {
+    opacity: 0.9;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes as-haze {
   0%,
   100% {
-    opacity: 0.95;
-  }
-  30% {
-    opacity: 0.35;
+    opacity: 0.58;
+    scale: 0.8;
   }
   50% {
-    opacity: 0.15;
+    opacity: 1;
+    scale: 1.2;
   }
-  70% {
-    opacity: 0.4;
+}
+
+@keyframes as-lamp-pulse {
+  0%,
+  100% {
+    scale: 0.84;
+    opacity: 0.78;
+  }
+  50% {
+    scale: 1.15;
+    opacity: 1;
+  }
+}
+
+@keyframes as-flare {
+  0%,
+  100% {
+    opacity: 0.2;
+    scale: 1 0.55;
+  }
+  50% {
+    opacity: 0.76;
+    scale: 1 1;
+  }
+}
+
+@keyframes as-dusk-breathe {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes as-cloud-back {
+  0% {
+    opacity: 0.12;
+    transform: translate3d(-2%, 0, 0) scale(1.02);
+  }
+  100% {
+    opacity: 0.19;
+    transform: translate3d(3%, 1.5%, 0) scale(1.075);
+  }
+}
+
+@keyframes as-cloud-front {
+  0% {
+    opacity: 0.06;
+    transform: translate3d(2%, 1%, 0) scaleX(-1) scale(1.07);
+  }
+  100% {
+    opacity: 0.11;
+    transform: translate3d(-3%, -1%, 0) scaleX(-1) scale(1.13);
+  }
+}
+
+@keyframes as-wave-back {
+  0% {
+    opacity: 0.07;
+    transform: translate3d(-2%, 2%, 0) scale(1.01, 0.96);
+  }
+  100% {
+    opacity: 0.13;
+    transform: translate3d(2%, -1%, 0) scale(1.05, 1.04);
+  }
+}
+
+@keyframes as-wave-front {
+  0% {
+    opacity: 0.05;
+    transform: translate3d(2%, 2%, 0) scaleX(-1) scale(1.03, 0.95);
+  }
+  100% {
+    opacity: 0.1;
+    transform: translate3d(-2%, -2%, 0) scaleX(-1) scale(1.08, 1.05);
+  }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1100px) {
+  .as-photo {
+    object-position: 22% center;
+  }
+
+  .as-inner {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 560px);
   }
 }
 
 @media (max-width: 1000px) {
-  /* Stack: copy, then the scene as its own band, then the beacons. */
+  /* Stack: copy, then the photo as its own band (with the live card over it), then beacons. */
   .as-hero {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, #081a33 0%, #0f2c51 100%);
   }
 
-  .as-scene {
+  .as-stage {
     position: relative;
     order: 2;
     inset: auto;
     width: 100%;
-    height: 340px;
-    margin-top: -8px;
-    mask-image: linear-gradient(180deg, transparent 0, #000 22%);
+    height: 460px;
+    margin-top: -40px;
+    mask-image: linear-gradient(180deg, transparent 0, #000 16%, #000 84%, transparent);
+  }
+
+  .as-photo {
+    /* Lower values pull the tower (left edge of the photo) toward the middle. */
+    object-position: 12% center;
   }
 
   .as-shade {
-    display: none;
+    background: linear-gradient(
+      180deg,
+      rgba(6, 16, 29, 0.55) 0%,
+      rgba(6, 16, 29, 0.05) 30%,
+      rgba(6, 16, 29, 0.1) 70%,
+      rgba(6, 16, 29, 0.85) 100%
+    );
+  }
+
+  .as-beam {
+    width: 900px;
   }
 
   .as-inner {
     order: 1;
+    grid-template-columns: 1fr;
+    align-items: start;
+    min-height: 0;
+    padding-top: 44px;
+    padding-bottom: 8px;
+  }
+
+  .as-copy {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .as-live {
+    grid-column: 1;
+    order: 2;
+    margin: 20px 0 0;
   }
 
   .as-paths {
     order: 3;
-    margin-top: -60px;
-  }
-
-  .as-inner {
-    grid-template-columns: 1fr;
-    align-items: start;
-    min-height: 0;
-    padding-top: 48px;
-  }
-
-  .as-live {
-    justify-self: start;
-    margin-top: 8px;
+    margin-top: -70px;
   }
 
   .as-path-grid {
@@ -802,21 +852,15 @@
     align-items: flex-start;
     gap: 4px;
   }
-
-  .as-shade {
-    background: linear-gradient(
-      180deg,
-      rgba(6, 21, 39, 0.82) 0%,
-      rgba(6, 21, 39, 0.7) 45%,
-      rgba(6, 21, 39, 0.35) 70%,
-      rgba(6, 21, 39, 0.75) 100%
-    );
-  }
 }
 
 @media (max-width: 620px) {
   .as-inner {
-    padding: 36px 18px 28px;
+    padding: 36px 18px 8px;
+  }
+
+  .as-stage {
+    height: 400px;
   }
 
   .as-hero h1 {
