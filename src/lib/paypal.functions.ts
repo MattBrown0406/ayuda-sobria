@@ -40,6 +40,28 @@ async function createProduct(accessToken: string): Promise<string> {
   return data.id;
 }
 
+// PayPal catalog products and billing plans are permanent, non-deletable records.
+// Creating one per checkout click would pile up thousands of them in the live
+// account and add two API round-trips to every subscribe. Reuse instead:
+// operator-pinned IDs win, otherwise create once and cache for the worker's life.
+// The plan cache is keyed by price so editing PLAN_CONFIG cannot resurrect a
+// stale plan that still charges the old amount.
+let productPromise: Promise<string> | null = null;
+const planPromises = new Map<string, Promise<string>>();
+
+async function resolveProductId(accessToken: string): Promise<string> {
+  const pinned = process.env.PAYPAL_PRODUCT_ID;
+  if (pinned) return pinned;
+  if (!productPromise) {
+    productPromise = createProduct(accessToken).catch((error) => {
+      // Never cache a rejection: the next checkout must be able to retry.
+      productPromise = null;
+      throw error;
+    });
+  }
+  return productPromise;
+}
+
 type PlanType = "monthly" | "annual";
 
 const PLAN_CONFIG: Record<PlanType, { interval: "MONTH" | "YEAR"; price: string; name: string }> = {
@@ -79,6 +101,24 @@ async function createPlan(
   if (!res.ok) throw new Error(`PayPal plan creation failed: ${await res.text()}`);
   const data = (await res.json()) as { id: string };
   return data.id;
+}
+
+async function resolvePlanId(accessToken: string, planType: PlanType): Promise<string> {
+  const pinned =
+    planType === "annual" ? process.env.PAYPAL_PLAN_ID_ANNUAL : process.env.PAYPAL_PLAN_ID_MONTHLY;
+  if (pinned) return pinned;
+  const cacheKey = `${planType}:${PLAN_CONFIG[planType].price}`;
+  const cached = planPromises.get(cacheKey);
+  if (cached) return cached;
+  const pending = (async () => {
+    const productId = await resolveProductId(accessToken);
+    return createPlan(accessToken, productId, planType);
+  })().catch((error) => {
+    planPromises.delete(cacheKey);
+    throw error;
+  });
+  planPromises.set(cacheKey, pending);
+  return pending;
 }
 
 async function createSubscription(
@@ -129,8 +169,7 @@ export const createMembershipSubscription = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const planType: PlanType = data.planType === "annual" ? "annual" : "monthly";
     const accessToken = await getAccessToken();
-    const productId = await createProduct(accessToken);
-    const planId = await createPlan(accessToken, productId, planType);
+    const planId = await resolvePlanId(accessToken, planType);
     const { subscriptionId, approvalUrl } = await createSubscription(
       accessToken,
       planId,
@@ -411,7 +450,8 @@ export const captureCoachingOrder = createServerFn({ method: "POST" })
     // A refresh/re-run of the success page re-captures; PayPal answers 422
     // ORDER_ALREADY_CAPTURED, which is a completed payment, not a failure.
     const alreadyCaptured =
-      res.status === 422 && (result.details ?? []).some((d) => d.issue === "ORDER_ALREADY_CAPTURED");
+      res.status === 422 &&
+      (result.details ?? []).some((d) => d.issue === "ORDER_ALREADY_CAPTURED");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (result.status === "COMPLETED" || alreadyCaptured) {
