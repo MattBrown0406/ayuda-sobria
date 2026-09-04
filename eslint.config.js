@@ -14,6 +14,7 @@ export default tseslint.config(
       "src/routeTree.gen.ts",
       "src/data/blog.ts",
       "src/integrations/supabase/types.ts",
+      "src/integrations/supabase/previewAuthStorage.ts",
     ],
   },
   {
