@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { meetingCalendar, meetingLabel, nextMondayOccurrence } from "../src/lib/zoom/time.ts";
+import {
+  meetingCalendar,
+  meetingLabel,
+  nextMondayOccurrence,
+  resolveMeetingTimezone,
+} from "../src/lib/zoom/time.ts";
 import { parseRegistrationInput } from "../src/lib/zoom/registration.server.ts";
 import { renderConfirmationEmail, renderReminderEmail } from "../src/lib/zoom/email.server.ts";
 import { createZoomClient } from "../src/lib/zoom/client.server.ts";
@@ -80,4 +85,38 @@ test("provider duplicate discovery must succeed before meeting creation", async 
     client.findMeeting({ startTime: "2026-10-06T03:00:00Z", topic: "La Sobremesa" }),
     /403/,
   );
+});
+
+test("automatic timezone prefers an explicit choice and safely handles missing or invalid detection", () => {
+  assert.deepEqual(resolveMeetingTimezone(null, "Europe/Madrid"), {
+    zone: "Europe/Madrid",
+    source: "browser",
+  });
+  assert.deepEqual(resolveMeetingTimezone("America/Bogota", "Europe/Madrid"), {
+    zone: "America/Bogota",
+    source: "saved",
+  });
+  assert.deepEqual(resolveMeetingTimezone("invalid", "Europe/Madrid"), {
+    zone: "Europe/Madrid",
+    source: "browser",
+  });
+  for (const detected of [undefined, null, "", "invalid"])
+    assert.deepEqual(resolveMeetingTimezone("invalid", detected), {
+      zone: "America/Los_Angeles",
+      source: "fallback",
+    });
+});
+
+test("detected timezone reaches registration and preserves the instant across DST", () => {
+  const selected = resolveMeetingTimezone(null, "Europe/Madrid").zone;
+  const registration = parseRegistrationInput({
+    fullName: "Ana",
+    email: "ana@example.com",
+    consentConfidentiality: true,
+    preferredTimezone: selected,
+  });
+  assert.equal(registration.preferredTimezone, selected);
+  const march = nextMondayOccurrence(new Date("2026-03-09T12:00:00Z")).startsAt;
+  assert.match(meetingLabel(march, selected), /martes, 10 de marzo.*4:00/);
+  assert.match(meetingCalendar(march), /DTSTART:20260310T030000Z/);
 });

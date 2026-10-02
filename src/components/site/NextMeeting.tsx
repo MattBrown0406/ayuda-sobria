@@ -1,5 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { meetingCalendar, meetingLabel, validTimezone } from "@/lib/zoom/time";
+import { useEffect, useId, useRef, useState } from "react";
+import {
+  meetingCalendar,
+  meetingLabel,
+  resolveMeetingTimezone,
+  validTimezone,
+} from "@/lib/zoom/time";
 import { getPublicNextMeeting } from "@/lib/zoom.functions";
 
 export const JOIN_GUIDANCE =
@@ -15,6 +20,10 @@ export function NextMeeting({
   startsAt?: string;
 }) {
   const initialTimezoneChange = useRef(onTimezone);
+  const confirmedTimezone = useRef(confirmedStart ? timezone : undefined);
+  const timezoneControlId = useId();
+  const [editingTimezone, setEditingTimezone] = useState(false);
+  const [timezoneSource, setTimezoneSource] = useState<"saved" | "browser" | "fallback">();
   const [zone, setZone] = useState("America/Los_Angeles");
   const [startsAt, setStartsAt] = useState<string>();
   const [status, setStatus] = useState("Consultando la próxima reunión…");
@@ -26,16 +35,23 @@ export function NextMeeting({
     "Europe/Madrid",
   ]);
   useEffect(() => {
-    let selected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    let detected: string | undefined;
+    let saved: string | null = null;
     try {
-      selected = localStorage.getItem("sobremesa-timezone") || selected;
+      detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      /* safe fallback */
+    }
+    try {
+      saved = localStorage.getItem("sobremesa-timezone");
     } catch {
       /* storage optional */
     }
-    if (validTimezone(selected)) {
-      setZone(selected);
-      initialTimezoneChange.current?.(selected);
-    }
+    const preference = resolveMeetingTimezone(confirmedTimezone.current ?? saved, detected);
+    const selected = preference.zone;
+    setZone(selected);
+    setTimezoneSource(preference.source);
+    initialTimezoneChange.current?.(selected);
     setZones(
       [
         ...new Set([
@@ -69,7 +85,7 @@ export function NextMeeting({
       clearInterval(interval);
     };
   }, []);
-  const chosen = timezone || zone;
+  const chosen = timezone && validTimezone(timezone) ? timezone : zone;
   const start = confirmedStart || startsAt;
   return (
     <section
@@ -77,29 +93,61 @@ export function NextMeeting({
       aria-label="Próxima reunión"
     >
       <h2 className="text-lg font-semibold">Próxima La Sobremesa</h2>
-      <label className="block">
-        Tu zona horaria (reunión, correos y contacto)
-        <select
-          className="block w-full rounded border p-2 bg-background"
-          value={chosen}
-          onChange={(e) => {
-            setZone(e.target.value);
-            onTimezone?.(e.target.value);
-            try {
-              localStorage.setItem("sobremesa-timezone", e.target.value);
-            } catch {
-              /* storage optional */
-            }
-          }}
+      <p aria-live="polite">
+        {!timezoneSource
+          ? "Detectando tu zona horaria…"
+          : start
+            ? meetingLabel(start, chosen)
+            : status}
+      </p>
+      <div className="text-sm text-muted-foreground">
+        {timezoneSource && (
+          <p>
+            {timezoneSource === "browser"
+              ? "Zona detectada automáticamente"
+              : timezoneSource === "saved"
+                ? "Tu zona seleccionada"
+                : "No pudimos detectar tu zona; mostramos la hora del Pacífico"}
+            : {chosen.replaceAll("_", " ")}
+          </p>
+        )}
+        <button
+          type="button"
+          className="text-primary underline"
+          aria-expanded={editingTimezone}
+          aria-controls={timezoneControlId}
+          onClick={() => setEditingTimezone((value) => !value)}
         >
-          {[...new Set([chosen, ...zones])].map((value) => (
-            <option key={value} value={value}>
-              {value.replaceAll("_", " ")}
-            </option>
-          ))}
-        </select>
-      </label>
-      <p aria-live="polite">{start ? meetingLabel(start, chosen) : status}</p>
+          {editingTimezone ? "Cerrar opciones de zona horaria" : "Cambiar zona horaria"}
+        </button>
+      </div>
+      <div id={timezoneControlId} hidden={!editingTimezone}>
+        <label className="block">
+          Zona horaria para la reunión, correos y contacto
+          <select
+            className="block w-full rounded border p-2 bg-background"
+            value={chosen}
+            onChange={(e) => {
+              const next = e.target.value;
+              if (!validTimezone(next)) return;
+              setZone(next);
+              setTimezoneSource("saved");
+              onTimezone?.(next);
+              try {
+                localStorage.setItem("sobremesa-timezone", next);
+              } catch {
+                /* storage optional */
+              }
+            }}
+          >
+            {[...new Set([chosen, ...zones])].map((value) => (
+              <option key={value} value={value}>
+                {value.replaceAll("_", " ")}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <p className="text-sm text-muted-foreground">
         Horario de origen: lunes, 8:00 PM en Los Ángeles, con sus cambios de horario de verano. En
         tu país puede ser martes.

@@ -91,6 +91,21 @@ export function validTimezone(value: string): boolean {
   }
 }
 
+/** Saved explicit choice wins; invalid/missing values fall back without asking for location. */
+export function resolveMeetingTimezone(
+  saved: unknown,
+  detected: unknown,
+): {
+  zone: string;
+  source: "saved" | "browser" | "fallback";
+} {
+  if (typeof saved === "string" && saved && validTimezone(saved))
+    return { zone: saved, source: "saved" };
+  if (typeof detected === "string" && detected && validTimezone(detected))
+    return { zone: detected, source: "browser" };
+  return { zone: ZOOM_TIMEZONE, source: "fallback" };
+}
+
 export function meetingLabel(startsAt: string, timeZone = ZOOM_TIMEZONE): string {
   const zone = validTimezone(timeZone) ? timeZone : ZOOM_TIMEZONE;
   return (
