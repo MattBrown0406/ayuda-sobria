@@ -145,6 +145,7 @@ export interface WebhookStore {
 }
 
 export interface RecurringRegistrant {
+  preferredTimezone?: string;
   fullName: string;
   email: string;
   phone?: string;
@@ -154,6 +155,7 @@ export interface RecurringRegistrant {
 }
 
 export interface ReminderDelivery {
+  preferredTimezone?: string;
   registrationId: string;
   fullName: string;
   email: string;

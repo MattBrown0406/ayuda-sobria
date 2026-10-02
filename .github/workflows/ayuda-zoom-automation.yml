@@ -2,19 +2,21 @@ name: AyudaSobria Zoom automation
 
 # La Sobremesa runs every Monday at 8:00 PM Pacific. Three jobs keep it going:
 #
-#   Monday   10:00 PM Pacific  schedule       create next Monday's Zoom meeting (new link)
+#   Monday   10:30 PM Pacific  schedule       create next Monday's Zoom meeting (new link)
 #   Thursday  3:00 PM Pacific  auto-register  re-register weekly attendees, email their link
 #   Monday    4:00 PM Pacific  reminders      remind everyone registered for tonight
 #
 # GitHub cron only speaks UTC, so every Pacific slot is listed twice (PDT and PST).
 # The job converts the current time to America/Los_Angeles and runs only when it
-# matches a slot; the other entry of each pair exits without doing anything. Every
+# matches an email slot; other runs recover/bootstrap the imminent meeting. Every
 # server action is idempotent, so a manual re-run is always safe.
 on:
   schedule:
-    # Monday 10:00 PM Pacific = Tuesday 05:05 UTC (PDT) / 06:05 UTC (PST)
-    - cron: "5 5 * * 2"
-    - cron: "5 6 * * 2"
+    # Hourly recovery/bootstrap; idempotent. Monday 20:00–22:29 is held below.
+    - cron: "30 * * * *"
+    # Monday 10:30 PM Pacific = Tuesday 05:30 UTC (PDT) / 06:30 UTC (PST)
+    - cron: "30 5 * * 2"
+    - cron: "30 6 * * 2"
     # Thursday 3:00 PM Pacific = Thursday 22:05 UTC (PDT) / 23:05 UTC (PST)
     - cron: "5 22 * * 4"
     - cron: "5 23 * * 4"
@@ -56,7 +58,7 @@ jobs:
         run: |
           if [[ -z "${AYUDA_ZOOM_BASE_URL:-}" || -z "${ZOOM_AUTOMATION_SECRET:-}" ]]; then
             echo "::error::Zoom automation secrets are not configured (AYUDA_ZOOM_BASE_URL, ZOOM_AUTOMATION_SECRET). Nothing will be scheduled until they are set."
-            echo "configured=false" >> "$GITHUB_OUTPUT"
+            exit 1
           else
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
@@ -68,13 +70,15 @@ jobs:
         run: |
           weekday="$(TZ=America/Los_Angeles date +%u)"   # 1 = Monday ... 7 = Sunday
           hour="$(TZ=America/Los_Angeles date +%H)"
+          minute="$(TZ=America/Los_Angeles date +%M)"
           echo "Pacific time now: $(TZ=America/Los_Angeles date '+%A %H:%M %Z')"
           action="$REQUESTED_ACTION"
           if [[ "$action" == "auto" ]]; then
-            if   [[ "$weekday" == "1" && "$hour" == "22" ]]; then action="schedule"
+            if [[ "$weekday" == "1" && ( "$hour" == "20" || "$hour" == "21" || ( "$hour" == "22" && "$minute" < "30" ) ) ]]; then action="skip"
+            elif [[ "$weekday" == "1" && "$hour" == "22" ]]; then action="schedule"
             elif [[ "$weekday" == "4" && "$hour" == "15" ]]; then action="auto-register"
             elif [[ "$weekday" == "1" && "$hour" == "16" ]]; then action="reminders"
-            else action="skip"
+            else action="schedule"
             fi
           fi
           echo "Selected job: $action"
@@ -92,7 +96,7 @@ jobs:
 
           # Creates next Monday's meeting, or returns the one that already exists.
           ensure_meeting() {
-            curl --silent --show-error --fail-with-body \
+            curl --silent --show-error --fail-with-body --retry 3 --retry-delay 30 --retry-all-errors --max-time 90 \
               --request POST \
               --header "$auth_header" \
               --header "Content-Type: application/json" \
@@ -103,15 +107,21 @@ jobs:
           post_action() {
             local payload="$1"
             echo "→ $payload"
-            curl --silent --show-error --fail-with-body \
+            result="$(curl --silent --show-error --fail-with-body --retry 3 --retry-delay 30 --retry-all-errors --max-time 90 \
               --request POST \
               --header "$auth_header" \
               --header "Content-Type: application/json" \
               --data "$payload" \
-              "$base_url/api/zoom/automation"
+              "$base_url/api/zoom/automation")"
+            echo "$result"
+            if ! jq -e '.ok == true' <<< "$result" >/dev/null; then
+              echo "::error::Automation reported item failures; inspect stored delivery errors and rerun this action."
+              failed=1
+            fi
             echo
           }
 
+          failed=0
           case "$ACTION" in
             schedule)
               # Monday night: the 8 PM meeting is over, create the next one with a new link.
@@ -144,4 +154,5 @@ jobs:
               exit 1
               ;;
           esac
+          if [[ "$failed" == "1" ]]; then exit 1; fi
           echo "AyudaSobria Zoom automation '$ACTION' completed."

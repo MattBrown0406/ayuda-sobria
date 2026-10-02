@@ -401,7 +401,7 @@ export function createSupabaseZoomStore(
       const { data, error } = await client
         .from("meeting_registrations")
         .select(
-          "full_name,email,phone,location,relationship,consent_updates,auto_register,occurrence_id,created_at",
+          "full_name,email,phone,location,relationship,preferred_timezone,consent_updates,auto_register,occurrence_id,created_at",
         )
         .neq("occurrence_id", occurrenceId)
         .order("created_at", { ascending: false })
@@ -427,6 +427,7 @@ export function createSupabaseZoomStore(
             phone: row.phone ?? undefined,
             location: row.location ?? undefined,
             relationship: row.relationship ?? undefined,
+            preferredTimezone: row.preferred_timezone ?? undefined,
             consentUpdates: row.consent_updates,
           },
         ];
@@ -457,11 +458,21 @@ export function createSupabaseZoomStore(
           occurrence(row as unknown as Record<string, unknown>),
         ]),
       );
+      const { data: preferences, error: preferenceError } = await client
+        .from("meeting_registrations")
+        .select("id,preferred_timezone")
+        .in(
+          "id",
+          rows.map((row) => row.id),
+        );
+      assertNoError(preferenceError);
+      const zones = new Map((preferences ?? []).map((row) => [row.id, row.preferred_timezone]));
       return rows.flatMap((row) => {
         const item = row.occurrence_id ? byId.get(row.occurrence_id) : undefined;
         return item && row.zoom_join_url
           ? [
               {
+                preferredTimezone: zones.get(row.id) ?? undefined,
                 registrationId: row.id,
                 fullName: row.full_name,
                 email: row.email,

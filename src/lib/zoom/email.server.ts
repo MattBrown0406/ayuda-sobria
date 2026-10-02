@@ -1,3 +1,4 @@
+import { meetingCalendar, meetingLabel } from "./time.ts";
 import type { ConfirmationDelivery, RegistrationInput, RegistrationMailer } from "./types.ts";
 
 export const APP_STORE_URL = "https://apps.apple.com/us/app/sober-helpline/id6780034996";
@@ -15,16 +16,6 @@ function escapeHtml(value: string) {
         "'": "&#039;",
       })[character] ?? character,
   );
-}
-
-function meetingDateLabel(startsAt: string) {
-  return new Intl.DateTimeFormat("es-US", {
-    timeZone: "America/Los_Angeles",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(startsAt));
 }
 
 const WRAPPER_STYLE =
@@ -46,7 +37,7 @@ function appStoreBlock() {
 }
 
 function signature() {
-  return `<p style="margin-top:24px">Te espero el lunes.<br>Matt Brown<br>AyudaSobria · ${SUPPORT_PHONE}</p>`;
+  return `<p style="margin-top:24px">Te espero en la reunión.<br>Matt Brown<br>AyudaSobria · ${SUPPORT_PHONE}</p>`;
 }
 
 /** The admin notification lists everything the person typed into the form. */
@@ -109,23 +100,26 @@ async function sendGatewayEmail(
 export function renderConfirmationEmail(input: ConfirmationDelivery) {
   const safeName = escapeHtml(input.registration.fullName);
   const safeJoinUrl = escapeHtml(input.joinUrl);
-  const meetingDate = escapeHtml(meetingDateLabel(input.occurrence.startsAt));
+  const meetingDate = escapeHtml(
+    meetingLabel(input.occurrence.startsAt, input.registration.preferredTimezone),
+  );
   const automatic = input.source === "automatic";
   const heading = automatic
     ? `Tu lugar de esta semana está reservado, ${safeName}`
     : `Ya estás registrado/a, ${safeName}`;
   const intro = automatic
-    ? `<p>Como pediste, te registramos automáticamente para <strong>La Sobremesa</strong> del ${meetingDate} a las <strong>8:00 PM, hora del Pacífico</strong>. Cada semana el enlace es nuevo; este es el tuyo para esta reunión:</p>`
-    : `<p>Tu lugar para <strong>La Sobremesa</strong> está confirmado para el ${meetingDate} a las <strong>8:00 PM, hora del Pacífico</strong>.</p>
+    ? `<p>Como pediste, te registramos automáticamente para <strong>La Sobremesa</strong> del ${meetingDate}. Cada semana el enlace es nuevo; este es el tuyo para esta reunión:</p>`
+    : `<p>Tu lugar para <strong>La Sobremesa</strong> está confirmado para el ${meetingDate}.</p>
           <p>Este enlace es personal para esta reunión:</p>`;
   return {
     subject: automatic
-      ? `Tu enlace para La Sobremesa del lunes — ${meetingDate}`
-      : "Tu enlace personal para La Sobremesa — lunes 8 PM Pacífico",
+      ? `Tu enlace para La Sobremesa — ${meetingDate}`
+      : `Tu enlace personal para La Sobremesa — ${meetingDate}`,
     html: `<div style="${WRAPPER_STYLE}">
           <h1 style="color:#166534">${heading}</h1>
           ${intro}
           ${joinButton(safeJoinUrl)}
+          <p>Con conexión lenta, apaga la cámara y usa solo audio. Cierra otras aplicaciones. Si se corta, vuelve a abrir tu enlace personal. El acceso telefónico solo está disponible si aparece en tu invitación; pueden aplicarse cargos.</p>
           <p>¿Necesitas ayuda para entrar? Llama al <strong>${SUPPORT_PHONE}</strong>.</p>
           ${appStoreBlock()}
           ${signature()}
@@ -137,18 +131,20 @@ export function renderReminderEmail(input: {
   fullName: string;
   joinUrl: string;
   startsAt: string;
+  preferredTimezone?: string;
 }) {
   const safeName = escapeHtml(input.fullName);
   const safeJoinUrl = escapeHtml(input.joinUrl);
-  const meetingDate = escapeHtml(meetingDateLabel(input.startsAt));
+  const meetingDate = escapeHtml(meetingLabel(input.startsAt, input.preferredTimezone));
   return {
-    subject: "Recordatorio: La Sobremesa es hoy a las 8 PM Pacífico",
+    subject: `Recordatorio: La Sobremesa — ${meetingDate}`,
     html: `<div style="${WRAPPER_STYLE}">
-          <h1 style="color:#166534">Nos vemos esta noche, ${safeName}</h1>
-          <p>Ya estás registrado/a para <strong>La Sobremesa</strong> de hoy, ${meetingDate}, a las <strong>8:00 PM, hora del Pacífico</strong>. Me da mucho gusto que nos acompañes a la mesa.</p>
+          <h1 style="color:#166534">Nos vemos en La Sobremesa, ${safeName}</h1>
+          <p>Ya estás registrado/a para <strong>La Sobremesa</strong> del ${meetingDate}. Me da mucho gusto que nos acompañes a la mesa.</p>
           ${joinButton(safeJoinUrl)}
+          <p>Con conexión lenta, apaga la cámara y usa solo audio. Cierra otras aplicaciones. Si se corta, vuelve a abrir tu enlace personal. El acceso telefónico solo está disponible si aparece en tu invitación; pueden aplicarse cargos.</p>
           <p style="font-size:13px;color:#6b7280">Tu enlace es personal para esta reunión. Si necesitas ayuda, llama al ${SUPPORT_PHONE}.</p>
-          <p style="margin-top:24px">Te espero esta noche.<br>Matt Brown<br>AyudaSobria</p>
+          <p style="margin-top:24px">Te espero en la reunión.<br>Matt Brown<br>AyudaSobria</p>
         </div>`,
   };
 }
@@ -159,7 +155,17 @@ export function createRegistrationMailer(options: MailerOptions): RegistrationMa
       const email = renderConfirmationEmail(input);
       await sendGatewayEmail(
         options,
-        { to: [input.registration.email], subject: email.subject, html: email.html },
+        {
+          to: [input.registration.email],
+          subject: email.subject,
+          html: email.html,
+          attachments: [
+            {
+              filename: "la-sobremesa.ics",
+              content: Buffer.from(meetingCalendar(input.occurrence.startsAt)).toString("base64"),
+            },
+          ],
+        },
         `zoom-confirmation-${input.registrationId}`,
       );
 
@@ -197,6 +203,7 @@ export function createRegistrationMailer(options: MailerOptions): RegistrationMa
         fullName: input.fullName,
         joinUrl: input.joinUrl,
         startsAt: input.occurrence.startsAt,
+        preferredTimezone: input.preferredTimezone,
       });
       await sendGatewayEmail(
         options,

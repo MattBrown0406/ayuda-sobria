@@ -6,6 +6,8 @@ import type {
   ZoomApi,
 } from "./types.ts";
 
+import { validTimezone, ZOOM_TIMEZONE } from "./time.ts";
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function cleaned(value: unknown, max: number): string {
@@ -58,6 +60,8 @@ export function parseRegistrationInput(value: unknown): RegistrationInput {
   ) {
     throw new Error("INVALID_REGISTRATION");
   }
+  const preferredTimezone = cleaned(body.preferredTimezone, 100) || ZOOM_TIMEZONE;
+  if (!validTimezone(preferredTimezone)) throw new Error("INVALID_REGISTRATION");
   return {
     occurrenceId,
     fullName,
@@ -71,9 +75,7 @@ export function parseRegistrationInput(value: unknown): RegistrationInput {
     requestFollowUp,
     preferredContactDate,
     preferredContactTime,
-    preferredTimezone: requestFollowUp
-      ? cleaned(body.preferredTimezone, 100) || undefined
-      : undefined,
+    preferredTimezone,
     consentConfidentiality: true,
     consentUpdates: body.consentUpdates === true || body.consentSms === true,
   };
@@ -93,7 +95,10 @@ async function deliverConfirmation(input: {
   store: RegistrationStore;
   mailer?: RegistrationMailer;
 }) {
-  if (!input.mailer) return { emailSent: false, emailConfigured: false };
+  if (!input.mailer) {
+    await input.store.failConfirmationEmail(input.recordId, "Email is not configured");
+    return { emailSent: false, emailConfigured: false };
+  }
   try {
     await input.mailer.sendConfirmation({
       registrationId: input.recordId,

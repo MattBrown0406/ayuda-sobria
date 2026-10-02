@@ -81,3 +81,54 @@ export function nextMondayOccurrence(now: Date): { occurrenceDate: string; start
   const occurrenceDate = date.toISOString().slice(0, 10);
   return { occurrenceDate, startsAt: zonedDateTimeToUtc(occurrenceDate).toISOString() };
 }
+
+export function validTimezone(value: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: value }).format();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function meetingLabel(startsAt: string, timeZone = ZOOM_TIMEZONE): string {
+  const zone = validTimezone(timeZone) ? timeZone : ZOOM_TIMEZONE;
+  return (
+    new Intl.DateTimeFormat("es", {
+      timeZone: zone,
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZoneName: "short",
+    }).format(new Date(startsAt)) + ` (${zone})`
+  );
+}
+
+/** One occurrence, UTC timestamps: calendar applications display their own local date. */
+export function meetingCalendar(startsAt: string): string {
+  const start = new Date(startsAt);
+  const stamp = (date: Date) =>
+    date
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .replace(/\.\d{3}Z$/, "Z");
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//AyudaSobria//La Sobremesa//ES",
+    "BEGIN:VEVENT",
+    `UID:sobremesa-${stamp(start)}@ayudasobria.com`,
+    `DTSTAMP:${stamp(start)}`,
+    `DTSTART:${stamp(start)}`,
+    `DTEND:${stamp(new Date(start.getTime() + 75 * 60000))}`,
+    "SUMMARY:La Sobremesa",
+    "DESCRIPTION:Regístrate para recibir tu enlace personal. Cámara opcional.",
+    "URL:https://ayudasobria.com/registro",
+    "END:VEVENT",
+    "END:VCALENDAR",
+    "",
+  ].join("\r\n");
+}

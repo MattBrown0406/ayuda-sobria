@@ -77,7 +77,13 @@ export const Route = createFileRoute("/api/registro")({
         const record = body as Record<string, unknown>;
         // Honeypot: hidden field only bots fill in. Fake success so bots
         // don't learn what tripped them.
-        if (clean(record.website)) return Response.json({ ok: true, emailSent: true });
+        if (clean(record.website))
+          return Response.json({
+            ok: true,
+            emailSent: false,
+            adminNotified: true,
+            status: "pending",
+          });
         // Time trap: humans don't complete this form in under 3 seconds.
         // Return a retryable error (matching /api/zoom/register) so a real
         // person caught by browser autofill isn't shown a fake confirmation.
@@ -163,7 +169,12 @@ export const Route = createFileRoute("/api/registro")({
             { status: 502 },
           );
         }
-        return Response.json({ ok: true, emailSent: true });
+        return Response.json({
+          ok: true,
+          emailSent: false,
+          adminNotified: true,
+          status: "pending",
+        });
       },
     },
   },

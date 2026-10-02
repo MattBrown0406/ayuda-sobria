@@ -27,3 +27,15 @@ export const getMemberZoomRecordings = createServerFn({ method: "GET" })
     // Provider file URLs, Zoom meeting identities, and unpublished rows never cross this boundary.
     return data ?? [];
   });
+
+// Explicit allowlist: never publish provider IDs, host URLs or personalized links.
+export const getPublicNextMeeting = createServerFn({ method: "GET" }).handler(async () => {
+  const [{ supabaseAdmin }, { createSupabaseZoomStore }] = await Promise.all([
+    import("@/integrations/supabase/client.server"),
+    import("@/lib/zoom/supabase-store.server"),
+  ]);
+  const occurrence = await createSupabaseZoomStore(supabaseAdmin).getUpcomingReadyOccurrence(
+    new Date().toISOString(),
+  );
+  return occurrence ? { startsAt: occurrence.startsAt } : null;
+});

@@ -630,9 +630,9 @@ test("confirmations carry the personal link and the app, and only form sign-ups 
     joinUrl: "https://zoom.test/registrant-1",
     occurrence: store.ready,
   });
-  assert.match(sent[3].subject, /hoy a las 8 PM/);
-  assert.match(sent[3].html, /Ya estás registrado\/a para <strong>La Sobremesa<\/strong> de hoy/);
-  assert.match(sent[3].html, /Te espero esta noche\.<br>Matt Brown/);
+  assert.match(sent[3].subject, /Recordatorio: La Sobremesa/);
+  assert.match(sent[3].html, /Ya estás registrado\/a para <strong>La Sobremesa<\/strong> del/);
+  assert.match(sent[3].html, /Te espero en la reunión\.<br>Matt Brown/);
 });
 
 test("admin role result is fail-closed and recording access only allows active/unexpired members", () => {
@@ -706,8 +706,8 @@ test("migration defaults recordings private and architecture explicitly preserve
   // Monday 10 PM Pacific (schedule), Thursday 3 PM (auto-register), Monday 4 PM (reminders),
   // each listed for PDT and PST because GitHub cron is UTC-only.
   for (const cron of [
-    "5 5 * * 2",
-    "5 6 * * 2",
+    "30 5 * * 2",
+    "30 6 * * 2",
     "5 22 * * 4",
     "5 23 * * 4",
     "5 23 * * 1",
@@ -722,4 +722,64 @@ test("migration defaults recordings private and architecture explicitly preserve
   assert.match(report, /7:00 PM/);
   assert.match(report, /8:00 PM/);
   assert.notEqual(AYUDA_ZOOM_SERIES_KEY, "soberhelpline_family_squares_en_7pm");
+});
+
+test("failed attendee confirmation retries without a second Zoom registration", async () => {
+  const store = new MemoryAutomationStore();
+  const zoom = zoomMock();
+  let sends = 0;
+  const mailer: RegistrationMailer = {
+    async sendConfirmation() {
+      sends++;
+      if (sends === 1) throw new Error("provider unavailable");
+    },
+    async sendReminder() {},
+    async sendFollowup() {},
+  };
+  const first = await registerForOccurrence({
+    registration: baseRegistration,
+    store,
+    zoom,
+    mailer,
+  });
+  assert.equal(first.emailSent, false);
+  assert.equal(first.registration.status, "registered");
+  const second = await registerForOccurrence({
+    registration: baseRegistration,
+    store,
+    zoom,
+    mailer,
+  });
+  assert.equal(second.emailSent, true);
+  assert.equal(zoom.registrations.length, 1);
+});
+
+test("provider success followed by database failure recovers the same meeting", async () => {
+  const store = new MemoryScheduleStore();
+  const zoom = zoomMock();
+  const completed = store.completeOccurrence.bind(store);
+  let attempts = 0;
+  store.completeOccurrence = async (id, meeting) => {
+    if (++attempts === 1) throw new Error("database unavailable");
+    return completed(id, meeting);
+  };
+  store.failOccurrence = async (id) => {
+    const row = [...store.rows.values()].find((row) => row.id === id)!;
+    row.status = "failed";
+  };
+  const claim = store.claimOccurrence.bind(store);
+  store.claimOccurrence = async (series, date, startsAt) => {
+    const row = store.rows.get(date);
+    if (row?.status === "failed") {
+      row.status = "scheduling";
+      return { claimed: true, value: row };
+    }
+    return claim(series, date, startsAt);
+  };
+  const now = new Date("2026-10-06T05:30:00Z");
+  await assert.rejects(scheduleNextMonday({ now, store, zoom }), /database unavailable/);
+  zoom.findMeeting = async () => ({ id: "meeting-1", joinUrl: "https://zoom.test/join-1" });
+  const result = await scheduleNextMonday({ now, store, zoom });
+  assert.equal(result.recovered, true);
+  assert.equal(zoom.meetings.length, 1);
 });

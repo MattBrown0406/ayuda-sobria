@@ -17,6 +17,7 @@ export async function autoRegisterRecurring(input: {
           occurrenceId: input.occurrenceId,
           fullName: person.fullName,
           email: person.email,
+          preferredTimezone: person.preferredTimezone,
           phone: person.phone,
           location: person.location,
           relationship: person.relationship,
@@ -32,6 +33,10 @@ export async function autoRegisterRecurring(input: {
         // not notify the admin: only brand-new sign-ups from the form do that.
         source: "automatic",
       });
+      if (!result.emailSent) {
+        results.failed += 1;
+        continue;
+      }
       if (result.created || result.recovered) results.registered += 1;
       else results.alreadyRegistered += 1;
     } catch {

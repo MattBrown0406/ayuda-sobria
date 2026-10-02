@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { NextMeeting } from "@/components/site/NextMeeting";
+import { meetingLabel } from "@/lib/zoom/time";
 import { useState } from "react";
 import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
 
@@ -28,7 +30,8 @@ export const Route = createFileRoute("/registro")({
 function RegistroPage() {
   const [submitted, setSubmitted] = useState(false);
   const [registrationResult, setRegistrationResult] = useState<{
-    joinUrl?: string;
+    startsAt?: string;
+    registrationId?: string;
     emailSent?: boolean;
   } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -88,7 +91,7 @@ function RegistroPage() {
       // accepted === false is the server's silent anti-bot fake success;
       // surface it as a normal confirmation so bots learn nothing.
       if (result.accepted === false) {
-        setRegistrationResult({ emailSent: true });
+        setRegistrationResult({ emailSent: false });
         setSubmitted(true);
         return;
       }
@@ -109,12 +112,16 @@ function RegistroPage() {
     return (
       <>
         <PageHero
-          eyebrow="Registro confirmado"
-          title="Tu lugar está reservado"
+          eyebrow={registrationResult?.registrationId ? "Registro guardado" : "Solicitud recibida"}
+          title={
+            registrationResult?.registrationId
+              ? "Tu registro en Zoom está listo"
+              : "Tu lugar aún no está confirmado"
+          }
           description={
             registrationResult?.emailSent
-              ? "Enviamos tu enlace personal por correo."
-              : "Tu registro quedó guardado, pero el correo con tu enlace no pudo enviarse."
+              ? "El proveedor de correo aceptó tu enlace personal. Revisa tu bandeja de entrada y spam."
+              : "No pudimos confirmar el envío de un enlace personal. Contacta al equipo o vuelve a intentar el registro."
           }
         />
         <div className="mx-auto max-w-2xl px-4 py-12 space-y-4 text-muted-foreground">
@@ -122,7 +129,9 @@ function RegistroPage() {
             Gracias, <strong className="text-foreground">{form.nombre || "familia"}</strong>.
             Recibimos tu solicitud para{" "}
             <strong className="text-foreground">
-              La Sobremesa del lunes a las 8:00 PM (hora del Pacífico)
+              {registrationResult?.startsAt
+                ? meetingLabel(registrationResult.startsAt, form.preferredTimezone)
+                : "La Sobremesa (fecha pendiente de confirmación)"}
             </strong>
             .
           </p>
@@ -133,8 +142,9 @@ function RegistroPage() {
               </>
             ) : (
               <>
-                El correo automático no llegó. Escríbenos o llama para que podamos ayudarte a
-                recuperar el acceso; el enlace personal no se muestra públicamente por seguridad.
+                No pudimos confirmar el envío del correo. Escríbenos o llama para que podamos
+                ayudarte a recuperar el acceso; el enlace personal no se muestra públicamente por
+                seguridad.
               </>
             )}
           </p>
@@ -150,6 +160,21 @@ function RegistroPage() {
             .
           </p>
         </div>
+        {registrationResult?.startsAt && (
+          <NextMeeting
+            timezone={form.preferredTimezone}
+            onTimezone={(zone) => update("preferredTimezone", zone)}
+            startsAt={registrationResult.startsAt}
+          />
+        )}
+        {!registrationResult?.emailSent && (
+          <button
+            className="mx-auto block p-4 text-primary underline"
+            onClick={() => setSubmitted(false)}
+          >
+            Volver a intentar el registro
+          </button>
+        )}
         <CTAStrip />
       </>
     );
@@ -161,6 +186,10 @@ function RegistroPage() {
         eyebrow="Reunión semanal · Gratis · En español"
         title="Regístrate a La Sobremesa"
         description="Cada lunes a las 8:00 PM hora del Pacífico (EE. UU.), por Zoom. Para familias que aman a alguien con adicción."
+      />
+      <NextMeeting
+        timezone={form.preferredTimezone}
+        onTimezone={(zone) => update("preferredTimezone", zone)}
       />
       <div className="mx-auto max-w-3xl px-4 py-12 grid gap-8 lg:grid-cols-[1fr_320px]">
         <form
@@ -313,18 +342,7 @@ function RegistroPage() {
                   className={inputCls}
                 />
               </Field>
-              <Field label="Zona horaria">
-                <select
-                  value={form.preferredTimezone}
-                  onChange={(e) => update("preferredTimezone", e.target.value)}
-                  className={inputCls}
-                >
-                  <option value="America/Los_Angeles">Pacífico</option>
-                  <option value="America/Denver">Montaña</option>
-                  <option value="America/Chicago">Central</option>
-                  <option value="America/New_York">Este</option>
-                </select>
-              </Field>
+              <p>Zona horaria del contacto: {form.preferredTimezone}. Puedes cambiarla arriba.</p>
             </div>
           )}
 

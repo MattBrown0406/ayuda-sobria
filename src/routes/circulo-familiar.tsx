@@ -1,3 +1,4 @@
+import { NextMeeting } from "@/components/site/NextMeeting";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, CTAStrip, Prose } from "@/components/site/SiteLayout";
 
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/circulo-familiar")({
         title="La Sobremesa"
         description="Cada lunes a las 8:00 PM (hora del Pacífico) por Zoom. En español. Para familias que aman a alguien con adicción."
       />
+      <NextMeeting />
       <Prose>
         <h2>Qué es La Sobremesa</h2>
         <p>
