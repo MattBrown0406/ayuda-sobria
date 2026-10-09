@@ -111,6 +111,8 @@ export interface WeeklyAutomationPlan {
   reminders: boolean;
   /** Tuesday-morning attendance report for the previous night. */
   weeklyReport: boolean;
+  /** Nightly mirror of Sober Helpline app memberships (3 AM, first tick of the hour). */
+  appMembers: boolean;
 }
 
 /**
@@ -122,6 +124,7 @@ export interface WeeklyAutomationPlan {
  *   (it is idempotent per person; hourly retries catch failures without hammering Zoom).
  * - Monday 4:00–7:59 PM: reminders (each registration is reminded once).
  * - Tuesday 10 AM hour: the weekly report (the email provider dedupes per meeting).
+ * - Daily at 3 AM: mirror Sober Helpline app memberships (member benefits on this site).
  */
 export function weeklyAutomationPlan(now: Date): WeeklyAutomationPlan {
   const { isoWeekday, hour, minute } = pacificClock(now);
@@ -138,6 +141,7 @@ export function weeklyAutomationPlan(now: Date): WeeklyAutomationPlan {
     autoRegister: registrationWindow && minute < 15,
     reminders: monday && hour >= 16 && hour < ZOOM_HOUR,
     weeklyReport: isoWeekday === 2 && hour === 10,
+    appMembers: hour === 3 && minute < 15,
   };
 }
 

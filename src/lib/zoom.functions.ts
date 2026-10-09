@@ -1,16 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { membershipAllowsRecordingAccess } from "@/lib/zoom/recording-access";
 
 export const getMemberZoomRecordings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { reconcileUserMemberships } = await import("@/lib/membership-sync.server");
-    const now = new Date().toISOString();
-    // Confirms with PayPal when a row is pending or past its billing date.
-    const memberships = await reconcileUserMemberships(context.userId);
-    const hasAccess = membershipAllowsRecordingAccess(memberships, now);
+    const { userHasMemberAccess } = await import("@/lib/membership-sync.server");
+    // Website membership (confirmed with PayPal when pending or past its billing date)
+    // or a current Sober Helpline app membership.
+    const hasAccess = await userHasMemberAccess(context.userId);
     if (!hasAccess) throw new Error("Membership required");
 
     const { data, error } = await supabaseAdmin

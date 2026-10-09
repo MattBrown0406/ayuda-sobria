@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { completeAppHandoff } from "@/lib/app-handoff";
 
 function NotFoundComponent() {
   return (
@@ -198,6 +199,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+
+  // Arrivals from the Sober Helpline app: sign the member in with the app's token.
+  useEffect(() => {
+    void completeAppHandoff().then((signedIn) => {
+      if (signedIn) void router.invalidate();
+    });
+  }, [router]);
 
   // Google OAuth returns to the site root; finish the trip back to the page
   // the user was on (stored by /auth before redirecting to the provider).

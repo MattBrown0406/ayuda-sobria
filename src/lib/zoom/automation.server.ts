@@ -168,6 +168,7 @@ export interface WeeklyTickSummary {
   reminders?: Awaited<ReturnType<typeof sendDueReminders>>;
   followups?: Awaited<ReturnType<typeof sendDueFollowups>>;
   weeklyReport?: unknown;
+  appMembers?: unknown;
   errors: string[];
 }
 
@@ -187,6 +188,7 @@ export async function runWeeklyTick(input: {
   zoom: ZoomApi;
   mailer?: RegistrationMailer;
   weeklyReport?: (now: Date) => Promise<unknown>;
+  appMemberSync?: (now: Date) => Promise<unknown>;
 }): Promise<WeeklyTickSummary> {
   const plan = weeklyAutomationPlan(input.now);
   const summary: WeeklyTickSummary = {
@@ -264,6 +266,13 @@ export async function runWeeklyTick(input: {
       summary.weeklyReport = await input.weeklyReport(input.now);
     } catch (error) {
       summary.errors.push(errorText("weekly-report", error));
+    }
+  }
+  if (plan.appMembers && input.appMemberSync) {
+    try {
+      summary.appMembers = await input.appMemberSync(input.now);
+    } catch (error) {
+      summary.errors.push(errorText("app-members", error));
     }
   }
   summary.ok = summary.errors.length === 0;

@@ -28,14 +28,13 @@ copy any secret anywhere.
 
 ## Steps
 
-### 1. Paste this prompt into Lovable
+### 1. Apply the database migrations
 
-> Apply the two new migration files exactly as written, in order, without changing them:
-> `supabase/migrations/20261009220000_la_sobremesa_weekly_cron.sql` and
-> `supabase/migrations/20261009221000_registration_resubmission_and_followup_timing.sql`.
-> Then confirm with a read-only query that the cron job `la-sobremesa-weekly-tick` exists
-> (`select jobname, schedule from cron.job`) and that `public.zoom_automation_state` has
-> one row. Do not print the `cron_secret` value.
+The SQL and the Lovable prompt are in `docs/supabase-migrations-2026-10-09.txt`. Apply all
+three migrations, in order:
+1. `20261009220000_la_sobremesa_weekly_cron.sql`
+2. `20261009221000_registration_resubmission_and_followup_timing.sql`
+3. `20261010000000_sober_helpline_app_bridge.sql`
 
 ### 2. Check the secrets in Lovable
 
@@ -51,6 +50,12 @@ Go to Project settings → Secrets.
 - **Already set.** `ZOOM_AUTOMATION_SECRET` is set on the live site. It now also signs the
   "cancelar registro automático" links in emails.
 - **Must be set for emails to go out.** `RESEND_API_KEY` and `LOVABLE_API_KEY`.
+- **For the app bridge.** Set `AYUDA_SYNC_SECRET` to the value in the file
+  `~/Secrets/ayuda_sync_secret.txt` on Matt's Mac. The Sober Helpline app project already
+  has the same value. Without it the site works as before, with no app link-up.
+- **PayPal plan IDs.** If `PAYPAL_PLAN_ID_MONTHLY` or `PAYPAL_PLAN_ID_ANNUAL` is set,
+  either clear it or replace it with a US$9.99 / US$100 plan. The site now refuses a
+  pinned plan whose price doesn't match and creates a correct one instead.
 
 ### 3. Allow the password-reset link
 
@@ -116,10 +121,32 @@ On https://ayudasobria.com/registro, "Próxima La Sobremesa" should now show the
 - **Colombia page.** It now lists the national mental-health line, 192 (option 4); 106 is
   Bogotá only.
 
+## Membership price and the Sober Helpline app
+
+- **Price.** The membership is now US$9.99/month or US$100/year, matching soberhelpline.com.
+  The annual price had to drop from US$149, which was more than 12 months at US$9.99.
+  Existing US$14.99 subscribers stay on their current PayPal plan; nobody is repriced.
+- **AyudaSobria members get the app.** People with an AyudaSobria membership get the
+  app's Essential tier, the same way soberhelpline.com members do. The app asks
+  `https://ayudasobria.com/api/membership/check`.
+- **App members get AyudaSobria benefits.** Sober Helpline app members get the member
+  benefits here: the US$125 coaching price and the recordings.
+  - Their memberships are copied nightly from the app's `membership-export` at 3 AM
+    Pacific.
+  - When the app opens an AyudaSobria page, the member arrives signed in. This uses
+    the same single-use token soberhelpline.com uses.
+- **Opened from the app.** When a page is opened from the app, the membership page doesn't
+  offer a PayPal subscription, to follow Apple's rules.
+- **App side: done.** It is pushed to the app repo, and CI deploys the backend. The app
+  backend accepts AyudaSobria's secret on its two read-only functions, and
+  `sync-web-membership` checks both websites. In Spanish, the app opens AyudaSobria's
+  education and recordings pages; that ships with the next app build. Coaching booking
+  stays on soberhelpline.com, which has Matt's real time slots.
+
 ## Please confirm
 
-Zoom host: decided. Matt hosts both Monday meetings (one Zoom host), and ends the 7:00 PM meeting in time for the 8:00 PM one.
-
-
-- **Membership price.** It is still US$14.99/month and US$149/year here, while
-  soberhelpline.com charges US$9.99.
+- **Zoom host: decided.** Matt hosts both Monday meetings himself, using one Zoom host.
+- **Turn on "Confirm email" in Lovable Cloud → Authentication.** It is currently off
+  (auto-confirm). With it off, anyone can open an account with another person's email.
+  With app sign-in, such an account would also receive that person's app membership
+  benefits. soberhelpline.com was given the same advice.

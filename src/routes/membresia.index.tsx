@@ -5,8 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   createMembershipSubscription,
   cancelMembershipSubscription,
+  getMyAppAccess,
   getMyMembership,
 } from "@/lib/paypal.functions";
+import { openedFromApp } from "@/lib/app-handoff";
 import { PageHero, CTAStrip, Prose } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/membresia/")({
@@ -16,7 +18,7 @@ export const Route = createFileRoute("/membresia/")({
       {
         name: "description",
         content:
-          "Membresía familiar desde US$14.99 al mes con precio preferencial de US$125 por sesión privada de coaching.",
+          "Membresía familiar desde US$9.99 al mes con precio preferencial de US$125 por sesión privada de coaching.",
       },
       { property: "og:title", content: "Membresía — AyudaSobria" },
       { property: "og:description", content: "Acompañamiento continuo para la familia." },
@@ -37,6 +39,9 @@ function MembresiaPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [membershipError, setMembershipError] = useState(false);
+  const [appAccess, setAppAccess] = useState<{ tier: string } | null>(null);
+  const [fromApp, setFromApp] = useState(false);
+  const appAccessFn = useServerFn(getMyAppAccess);
 
   const createFn = useServerFn(createMembershipSubscription);
   const cancelFn = useServerFn(cancelMembershipSubscription);
@@ -44,33 +49,48 @@ function MembresiaPage() {
   const [planType, setPlanType] = useState<"monthly" | "annual">("monthly");
 
   useEffect(() => {
+    let loadedFor: string | null = null;
+    // Loads this member's state; reruns when someone signs in on this page (for example
+    // arriving from the Sober Helpline app, whose sign-in finishes after the first load).
+    async function load(userId: string) {
+      if (loadedFor === userId) return;
+      loadedFor = userId;
+      setSession({ userId });
+      appAccessFn()
+        .then(setAppAccess)
+        .catch(() => setAppAccess(null));
+      try {
+        const m = await getFn();
+        setMembership(m);
+        setMembershipError(false);
+      } catch {
+        // Without knowing the real status, showing the subscribe button
+        // risks double-billing an already-active member.
+        setMembershipError(true);
+      }
+    }
     supabase.auth
       .getUser()
-      .then(async ({ data }) => {
-        if (!data.user) {
-          setSession(null);
-          return;
-        }
-        setSession({ userId: data.user.id });
-        try {
-          const m = await getFn();
-          setMembership(m);
-          setMembershipError(false);
-        } catch {
-          // Without knowing the real status, showing the subscribe button
-          // risks double-billing an already-active member.
-          setMembershipError(true);
-        }
+      .then(({ data }) => {
+        if (data.user) return load(data.user.id);
+        if (!loadedFor) setSession(null);
       })
       // Never leave the page stuck on "Cargando…" — if the auth check fails,
       // degrade to the signed-out state so the visitor still sees the signup path.
       .catch(() => setSession(null));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      setSession(s ? { userId: s.user.id } : null);
+      if (s) {
+        void load(s.user.id);
+      } else {
+        loadedFor = null;
+        setSession(null);
+        setMembership(null);
+        setAppAccess(null);
+      }
       router.invalidate();
     });
     return () => sub.subscription.unsubscribe();
-  }, [getFn, router]);
+  }, [getFn, appAccessFn, router]);
 
   async function handleSubscribe() {
     setError(null);
@@ -114,11 +134,14 @@ function MembresiaPage() {
   }
 
   const isActive = membership?.status === "active";
+  // Members of the Sober Helpline app already have member benefits here.
+  const appMember = !isActive && Boolean(appAccess);
+  useEffect(() => setFromApp(openedFromApp()), []);
 
   return (
     <>
       <PageHero
-        eyebrow="Desde US$14.99 al mes"
+        eyebrow="Desde US$9.99 al mes"
         title="Membresía familiar"
         description="Ahorra en sesiones privadas de coaching familiar y administra tu plan en línea."
       />
@@ -139,7 +162,7 @@ function MembresiaPage() {
             </p>
             <h2>Precio</h2>
             <p>
-              <strong>Mensual:</strong> US$14.99 al mes. <strong>Anual:</strong> US$149 al año
+              <strong>Mensual:</strong> US$9.99 al mes. <strong>Anual:</strong> US$100 al año
               (ahorra ~17%). Todos los precios están en dólares estadounidenses (USD). Tu banco o
               PayPal se encargará de la conversión si pagas desde otro país.
             </p>
@@ -158,7 +181,7 @@ function MembresiaPage() {
               className={`rounded-md border p-3 text-left text-sm ${planType === "monthly" ? "border-primary bg-primary/5" : "border-input"}`}
             >
               <div className="font-semibold">Mensual</div>
-              <div className="text-xs text-muted-foreground">US$14.99/mes</div>
+              <div className="text-xs text-muted-foreground">US$9.99/mes</div>
             </button>
             <button
               type="button"
@@ -166,11 +189,11 @@ function MembresiaPage() {
               className={`rounded-md border p-3 text-left text-sm ${planType === "annual" ? "border-primary bg-primary/5" : "border-input"}`}
             >
               <div className="font-semibold">Anual</div>
-              <div className="text-xs text-muted-foreground">US$149/año</div>
+              <div className="text-xs text-muted-foreground">US$100/año</div>
             </button>
           </div>
           <p className="mt-3 text-2xl font-bold">
-            {planType === "monthly" ? "US$14.99" : "US$149"}
+            {planType === "monthly" ? "US$9.99" : "US$100"}
             <span className="text-sm font-normal text-muted-foreground">
               {planType === "monthly" ? "/mes" : "/año"}
             </span>
@@ -221,7 +244,21 @@ function MembresiaPage() {
             </p>
           )}
 
-          {session && !isActive && !membershipError && (
+          {session && appMember && (
+            <p className="mt-4 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+              ✓ Tu membresía de la app Sober Helpline te da los beneficios de miembro aquí: el
+              precio de US$125 en coaching y las grabaciones. No necesitas otra membresía.
+            </p>
+          )}
+
+          {session && !isActive && !appMember && !membershipError && fromApp && (
+            <p className="mt-4 rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+              Abriste esta página desde la app Sober Helpline. Las membresías de la app se
+              administran dentro de la app.
+            </p>
+          )}
+
+          {session && !isActive && !appMember && !membershipError && !fromApp && (
             <>
               {membership?.status === "cancelled" && membership.access_ends_at && (
                 <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-900">
@@ -238,7 +275,7 @@ function MembresiaPage() {
               </button>
               <p className="mt-3 text-xs text-muted-foreground">
                 Pago seguro con PayPal. Se cobra{" "}
-                {planType === "monthly" ? "US$14.99 al mes" : "US$149 al año"} automáticamente.
+                {planType === "monthly" ? "US$9.99 al mes" : "US$100 al año"} automáticamente.
                 Cancela en cualquier momento.
               </p>
             </>

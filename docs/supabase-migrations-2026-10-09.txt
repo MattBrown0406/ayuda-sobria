@@ -1,0 +1,286 @@
+AYUDASOBRIA.COM — SUPABASE MIGRATIONS FROM THIS SESSION (2026-10-09)
+=====================================================================
+
+There are 3 migrations. Apply them IN ORDER, each exactly as written.
+They are also in the repo under supabase/migrations/ with the same names.
+
+  1. 20261009220000_la_sobremesa_weekly_cron.sql
+       Creates the La Sobremesa scheduler: a database cron job that calls
+       https://ayudasobria.com/api/zoom/tick every 15 minutes. The site creates
+       next Monday's Zoom meeting every Monday at 10:00 PM Pacific, sends the
+       Thursday auto-registration links, Monday reminders and Tuesday report.
+
+  2. 20261009221000_registration_resubmission_and_followup_timing.sql
+       Saves new answers when an already-registered family sends the form
+       again, sends the follow-up email the day AFTER the meeting, and stops
+       browsers from inserting registrations directly.
+
+  3. 20261010000000_sober_helpline_app_bridge.sql
+       Lets the Sober Helpline app and AyudaSobria share memberships (same as
+       soberhelpline.com): an email lookup function and a table of app members.
+
+HOW TO APPLY (Lovable)
+----------------------
+Paste this into Lovable chat:
+
+  Apply these three migration files exactly as written, in this order, without
+  changing them:
+    supabase/migrations/20261009220000_la_sobremesa_weekly_cron.sql
+    supabase/migrations/20261009221000_registration_resubmission_and_followup_timing.sql
+    supabase/migrations/20261010000000_sober_helpline_app_bridge.sql
+  Then run read-only checks: select jobname, schedule from cron.job; and confirm
+  public.zoom_automation_state has one row and public.app_member_access exists.
+  Do not print the cron_secret value.
+
+If Lovable asks for the SQL itself, the full text of each file is below.
+
+#####################################################################
+# FILE: 20261009220000_la_sobremesa_weekly_cron.sql
+#####################################################################
+
+-- =====================================================================
+-- La Sobremesa: run the weekly Zoom lifecycle from this database.
+--
+-- Until now the only scheduler was a GitHub Actions workflow that never had
+-- its secrets configured, so no Monday meeting was ever created. This job
+-- calls the site's /api/zoom/tick every 15 minutes. The server decides what is
+-- due in Pacific time (src/lib/zoom/time.ts weeklyAutomationPlan):
+--   Monday 10:00 PM      create next Monday's 8 PM meeting (new link) in Zoom
+--   every other tick     confirm it exists (recovers a missed/failed run)
+--   Thursday 3 PM on     weekly auto-registration + personal-link emails
+--   Monday 4-8 PM        same-day reminders
+--   Tuesday 10 AM        weekly attendance report
+--
+-- The job authenticates with a random secret generated here and kept in a
+-- service-role-only table; the server reads the same row to verify it, so no
+-- secret has to be copied anywhere by hand. Idempotent; safe to re-run.
+-- =====================================================================
+
+CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA pg_catalog;
+CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
+
+CREATE TABLE IF NOT EXISTS public.zoom_automation_state (
+  id smallint PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  cron_secret text NOT NULL,
+  last_tick_at timestamptz,
+  last_tick_ok boolean,
+  last_tick_summary jsonb,
+  last_error text,
+  last_success_at timestamptz,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+ALTER TABLE public.zoom_automation_state ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON TABLE public.zoom_automation_state FROM PUBLIC, anon, authenticated;
+GRANT ALL ON TABLE public.zoom_automation_state TO service_role;
+
+-- 64 hex characters from two random UUIDs (gen_random_uuid is built in).
+INSERT INTO public.zoom_automation_state (id, cron_secret)
+VALUES (1, replace(gen_random_uuid()::text || gen_random_uuid()::text, '-', ''))
+ON CONFLICT (id) DO NOTHING;
+
+-- Replace this job if it exists, and retire any older job that called the
+-- weekly-report hook directly (the tick sends that report now).
+DO $$
+DECLARE
+  j record;
+BEGIN
+  FOR j IN
+    SELECT jobid FROM cron.job
+    WHERE jobname = 'la-sobremesa-weekly-tick'
+       OR command ILIKE '%/api/public/hooks/weekly-report%'
+  LOOP
+    PERFORM cron.unschedule(j.jobid);
+  END LOOP;
+END $$;
+
+SELECT cron.schedule(
+  'la-sobremesa-weekly-tick',
+  '*/15 * * * *',
+  $cmd$
+  SELECT net.http_post(
+    url := 'https://ayudasobria.com/api/zoom/tick',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (SELECT cron_secret FROM public.zoom_automation_state WHERE id = 1)
+    ),
+    body := jsonb_build_object('source', 'pg_cron'),
+    timeout_milliseconds := 120000
+  ) AS request_id;
+  $cmd$
+);
+
+
+#####################################################################
+# FILE: 20261009221000_registration_resubmission_and_followup_timing.sql
+#####################################################################
+
+-- =====================================================================
+-- La Sobremesa registrations: repeat submissions, follow-up timing, and
+-- no direct inserts from the browser. Same function signature as the live
+-- claim_zoom_registration (20260903120000), so PostgREST sees one overload.
+--
+-- 1. Someone already registered for a Monday (most returning families are,
+--    via weekly auto-registration) who fills in the form again to ask a
+--    question or ask Matt to call was answered "ok" while nothing was saved.
+--    Their new answers are now stored on the existing row, and a follow-up
+--    request queues the follow-up as for a new sign-up. Ticking weekly
+--    registration turns it on; only the signed opt-out link turns it off.
+-- 2. The "Después de La Sobremesa" follow-up was queued for the preferred
+--    contact date (or immediately), so it arrived before the meeting. It is
+--    now sent the day after the meeting.
+-- 3. The server writes registrations with the service role only; anonymous
+--    INSERTs through the public key skipped all validation and rate limits.
+-- =====================================================================
+
+CREATE OR REPLACE FUNCTION public.claim_zoom_registration(
+  _occurrence_id uuid, _full_name text, _email text, _phone text, _location text,
+  _relationship text, _situation text, _submitted_question text,
+  _auto_register boolean, _request_follow_up boolean,
+  _preferred_contact_date date, _preferred_contact_time text, _preferred_timezone text,
+  _consent_confidentiality boolean, _consent_updates boolean
+) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  row_data public.meeting_registrations;
+  was_claimed boolean := false;
+  follow_up_added boolean := false;
+  reclaim boolean := false;
+  meeting_starts timestamptz;
+BEGIN
+  IF NOT _consent_confidentiality THEN
+    RAISE EXCEPTION 'confidentiality consent required';
+  END IF;
+
+  INSERT INTO public.meeting_registrations (
+    occurrence_id, full_name, email, phone, location, relationship, situation,
+    submitted_question, auto_register, request_follow_up, preferred_contact_date,
+    preferred_contact_time, preferred_timezone, consent_confidentiality, consent_updates,
+    zoom_registration_status
+  ) VALUES (
+    _occurrence_id, _full_name, lower(trim(_email)), _phone, _location, _relationship, _situation,
+    _submitted_question, _auto_register, _request_follow_up, _preferred_contact_date,
+    _preferred_contact_time, _preferred_timezone, _consent_confidentiality, _consent_updates,
+    'registering'
+  )
+  ON CONFLICT DO NOTHING
+  RETURNING * INTO row_data;
+
+  IF row_data.id IS NOT NULL THEN
+    was_claimed := true;
+    follow_up_added := _request_follow_up;
+  ELSE
+    SELECT * INTO row_data FROM public.meeting_registrations
+    WHERE occurrence_id = _occurrence_id AND lower(email) = lower(trim(_email))
+    ORDER BY created_at DESC LIMIT 1
+    FOR UPDATE;
+
+    follow_up_added := _request_follow_up AND NOT COALESCE(row_data.request_follow_up, false);
+    -- Decide before the profile update below touches updated_at.
+    reclaim := row_data.zoom_registration_status = 'failed'
+       OR (row_data.zoom_registration_status = 'registering'
+           AND row_data.updated_at < now() - interval '15 minutes');
+
+    -- Keep what they told us before unless they typed something new.
+    UPDATE public.meeting_registrations SET
+      phone = COALESCE(NULLIF(btrim(_phone), ''), phone),
+      location = COALESCE(NULLIF(btrim(_location), ''), location),
+      relationship = COALESCE(NULLIF(btrim(_relationship), ''), relationship),
+      situation = COALESCE(NULLIF(btrim(_situation), ''), situation),
+      submitted_question = COALESCE(NULLIF(btrim(_submitted_question), ''), submitted_question),
+      request_follow_up = request_follow_up OR _request_follow_up,
+      preferred_contact_date = CASE WHEN _request_follow_up
+        THEN COALESCE(_preferred_contact_date, preferred_contact_date) ELSE preferred_contact_date END,
+      preferred_contact_time = CASE WHEN _request_follow_up
+        THEN COALESCE(NULLIF(btrim(_preferred_contact_time), ''), preferred_contact_time) ELSE preferred_contact_time END,
+      preferred_timezone = COALESCE(NULLIF(btrim(_preferred_timezone), ''), preferred_timezone),
+      -- The form can only turn weekly registration on; turning it off needs the signed
+      -- opt-out link (/baja), so nobody can unsubscribe someone else by typing their email.
+      auto_register = auto_register OR _auto_register,
+      consent_updates = _consent_updates,
+      updated_at = now()
+    WHERE id = row_data.id
+    RETURNING * INTO row_data;
+
+    IF reclaim THEN
+      UPDATE public.meeting_registrations
+        SET zoom_registration_status = 'registering', zoom_failure_reason = NULL, updated_at = now()
+        WHERE id = row_data.id RETURNING * INTO row_data;
+      was_claimed := true;
+    END IF;
+  END IF;
+
+  IF follow_up_added THEN
+    SELECT starts_at INTO meeting_starts FROM public.zoom_occurrences WHERE id = _occurrence_id;
+    INSERT INTO public.zoom_followup_queue (registration_id, sequence_step, send_after)
+    VALUES (
+      row_data.id, 1,
+      GREATEST(COALESCE(meeting_starts, now()) + interval '1 day', now())
+    )
+    ON CONFLICT (registration_id, sequence_step) DO NOTHING;
+  END IF;
+
+  RETURN jsonb_build_object('claimed', was_claimed, 'value', to_jsonb(row_data));
+END; $$;
+REVOKE ALL ON FUNCTION public.claim_zoom_registration(uuid, text, text, text, text, text, text, text, boolean, boolean, date, text, text, boolean, boolean) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.claim_zoom_registration(uuid, text, text, text, text, text, text, text, boolean, boolean, date, text, text, boolean, boolean) TO service_role;
+
+-- Follow-ups already queued for before their meeting move to the day after it.
+UPDATE public.zoom_followup_queue q
+SET send_after = o.starts_at + interval '1 day'
+FROM public.meeting_registrations r
+JOIN public.zoom_occurrences o ON o.id = r.occurrence_id
+WHERE q.registration_id = r.id
+  AND q.sent_at IS NULL
+  AND q.send_after < o.starts_at + interval '1 day';
+
+DROP POLICY IF EXISTS anyone_can_register ON public.meeting_registrations;
+REVOKE INSERT ON TABLE public.meeting_registrations FROM anon, authenticated;
+
+
+#####################################################################
+# FILE: 20261010000000_sober_helpline_app_bridge.sql
+#####################################################################
+
+-- =====================================================================
+-- Sober Helpline app <-> AyudaSobria membership bridge (same model as
+-- soberhelpline.com):
+--
+-- * AyudaSobria members get the app's Essential tier: the app backend asks
+--   /api/membership/check, which finds the website account by LOGIN email
+--   (auth_user_id_by_email below) and checks its PayPal membership.
+-- * App members get AyudaSobria member benefits (recordings, member coaching
+--   price): app_member_access mirrors the app's membership-export nightly and
+--   is refreshed when a member arrives from the app with a sign-in token.
+--
+-- Both are server-only (service role). Idempotent.
+-- =====================================================================
+
+CREATE OR REPLACE FUNCTION public.auth_user_id_by_email(p_email text)
+RETURNS uuid
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT u.id FROM auth.users u
+  WHERE lower(u.email) = lower(btrim(p_email))
+  ORDER BY u.created_at
+  LIMIT 1;
+$$;
+REVOKE ALL ON FUNCTION public.auth_user_id_by_email(text) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.auth_user_id_by_email(text) TO service_role;
+
+CREATE TABLE IF NOT EXISTS public.app_member_access (
+  email text PRIMARY KEY CHECK (email = lower(btrim(email)) AND length(email) BETWEEN 3 AND 320),
+  tier text NOT NULL CHECK (tier IN ('essential', 'premier', 'org')),
+  -- The app's own expiry for the access, when it has one.
+  expires_at timestamptz,
+  -- 'export' = nightly mirror; 'sso' = confirmed when the member opened the site from the app.
+  source text NOT NULL CHECK (source IN ('export', 'sso')),
+  -- Access only counts while this is recent (see src/lib/app-bridge.server.ts).
+  synced_at timestamptz NOT NULL DEFAULT now()
+);
+ALTER TABLE public.app_member_access ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON TABLE public.app_member_access FROM PUBLIC, anon, authenticated;
+GRANT ALL ON TABLE public.app_member_access TO service_role;
+

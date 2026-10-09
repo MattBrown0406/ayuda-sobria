@@ -38,6 +38,7 @@ import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as TerminosSmsRouteImport } from './routes/terminos-sms'
 import { Route as TestimoniosRouteImport } from './routes/testimonios'
+import { Route as ApiAppSsoRouteImport } from './routes/api.app-sso'
 import { Route as ApiRegistroRouteImport } from './routes/api.registro'
 import { Route as ApoyoFamiliarIndexRouteImport } from './routes/apoyo-familiar.index'
 import { Route as ApoyoFamiliarStateRouteImport } from './routes/apoyo-familiar.$state'
@@ -58,6 +59,7 @@ import { Route as RecursosIndexRouteImport } from './routes/recursos.index'
 import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
 import { Route as RespuestasFamiliaIndexRouteImport } from './routes/respuestas-familia.index'
 import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
+import { Route as ApiMembershipCheckRouteImport } from './routes/api.membership.check'
 import { Route as ApiZoomAutomationRouteImport } from './routes/api.zoom.automation'
 import { Route as ApiZoomBajaRouteImport } from './routes/api.zoom.baja'
 import { Route as ApiZoomRegisterRouteImport } from './routes/api.zoom.register'
@@ -213,6 +215,11 @@ const TestimoniosRoute = TestimoniosRouteImport.update({
   path: '/testimonios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAppSsoRoute = ApiAppSsoRouteImport.update({
+  id: '/api/app-sso',
+  path: '/api/app-sso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRegistroRoute = ApiRegistroRouteImport.update({
   id: '/api/registro',
   path: '/api/registro',
@@ -313,6 +320,11 @@ const RespuestasFamiliaSlugRoute = RespuestasFamiliaSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => RespuestasFamiliaRoute,
 } as any)
+const ApiMembershipCheckRoute = ApiMembershipCheckRouteImport.update({
+  id: '/api/membership/check',
+  path: '/api/membership/check',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiZoomAutomationRoute = ApiZoomAutomationRouteImport.update({
   id: '/api/zoom/automation',
   path: '/api/zoom/automation',
@@ -390,6 +402,7 @@ export interface FileRoutesByFullPath {
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
+  '/api/app-sso': typeof ApiAppSsoRoute
   '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -410,6 +423,7 @@ export interface FileRoutesByFullPath {
   '/paises/': typeof PaisesIndexRoute
   '/recursos/': typeof RecursosIndexRoute
   '/respuestas-familia/': typeof RespuestasFamiliaIndexRoute
+  '/api/membership/check': typeof ApiMembershipCheckRoute
   '/api/zoom/automation': typeof ApiZoomAutomationRoute
   '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
@@ -441,6 +455,7 @@ export interface FileRoutesByTo {
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
+  '/api/app-sso': typeof ApiAppSsoRoute
   '/api/registro': typeof ApiRegistroRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/coaching-pago/exito': typeof CoachingPagoExitoRoute
@@ -460,6 +475,7 @@ export interface FileRoutesByTo {
   '/paises': typeof PaisesIndexRoute
   '/recursos': typeof RecursosIndexRoute
   '/respuestas-familia': typeof RespuestasFamiliaIndexRoute
+  '/api/membership/check': typeof ApiMembershipCheckRoute
   '/api/zoom/automation': typeof ApiZoomAutomationRoute
   '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
@@ -501,6 +517,7 @@ export interface FileRoutesById {
   '/terminos': typeof TerminosRoute
   '/terminos-sms': typeof TerminosSmsRoute
   '/testimonios': typeof TestimoniosRoute
+  '/api/app-sso': typeof ApiAppSsoRoute
   '/api/registro': typeof ApiRegistroRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -521,6 +538,7 @@ export interface FileRoutesById {
   '/paises/': typeof PaisesIndexRoute
   '/recursos/': typeof RecursosIndexRoute
   '/respuestas-familia/': typeof RespuestasFamiliaIndexRoute
+  '/api/membership/check': typeof ApiMembershipCheckRoute
   '/api/zoom/automation': typeof ApiZoomAutomationRoute
   '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
@@ -563,6 +581,7 @@ export interface FileRouteTypes {
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
+    | '/api/app-sso'
     | '/api/registro'
     | '/apoyo-familiar/$state'
     | '/blog/$slug'
@@ -583,6 +602,7 @@ export interface FileRouteTypes {
     | '/paises/'
     | '/recursos/'
     | '/respuestas-familia/'
+    | '/api/membership/check'
     | '/api/zoom/automation'
     | '/api/zoom/baja'
     | '/api/zoom/register'
@@ -614,6 +634,7 @@ export interface FileRouteTypes {
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
+    | '/api/app-sso'
     | '/api/registro'
     | '/blog/$slug'
     | '/coaching-pago/exito'
@@ -633,6 +654,7 @@ export interface FileRouteTypes {
     | '/paises'
     | '/recursos'
     | '/respuestas-familia'
+    | '/api/membership/check'
     | '/api/zoom/automation'
     | '/api/zoom/baja'
     | '/api/zoom/register'
@@ -673,6 +695,7 @@ export interface FileRouteTypes {
     | '/terminos'
     | '/terminos-sms'
     | '/testimonios'
+    | '/api/app-sso'
     | '/api/registro'
     | '/apoyo-familiar/$state'
     | '/blog/$slug'
@@ -693,6 +716,7 @@ export interface FileRouteTypes {
     | '/paises/'
     | '/recursos/'
     | '/respuestas-familia/'
+    | '/api/membership/check'
     | '/api/zoom/automation'
     | '/api/zoom/baja'
     | '/api/zoom/register'
@@ -734,7 +758,9 @@ export interface RootRouteChildren {
   TerminosRoute: typeof TerminosRoute
   TerminosSmsRoute: typeof TerminosSmsRoute
   TestimoniosRoute: typeof TestimoniosRoute
+  ApiAppSsoRoute: typeof ApiAppSsoRoute
   ApiRegistroRoute: typeof ApiRegistroRoute
+  ApiMembershipCheckRoute: typeof ApiMembershipCheckRoute
   ApiZoomAutomationRoute: typeof ApiZoomAutomationRoute
   ApiZoomBajaRoute: typeof ApiZoomBajaRoute
   ApiZoomRegisterRoute: typeof ApiZoomRegisterRoute
@@ -949,6 +975,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestimoniosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/app-sso': {
+      id: '/api/app-sso'
+      path: '/api/app-sso'
+      fullPath: '/api/app-sso'
+      preLoaderRoute: typeof ApiAppSsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/registro': {
       id: '/api/registro'
       path: '/api/registro'
@@ -1088,6 +1121,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/respuestas-familia/$slug'
       preLoaderRoute: typeof RespuestasFamiliaSlugRouteImport
       parentRoute: typeof RespuestasFamiliaRoute
+    }
+    '/api/membership/check': {
+      id: '/api/membership/check'
+      path: '/api/membership/check'
+      fullPath: '/api/membership/check'
+      preLoaderRoute: typeof ApiMembershipCheckRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/zoom/automation': {
       id: '/api/zoom/automation'
@@ -1320,7 +1360,9 @@ const rootRouteChildren: RootRouteChildren = {
   TerminosRoute: TerminosRoute,
   TerminosSmsRoute: TerminosSmsRoute,
   TestimoniosRoute: TestimoniosRoute,
+  ApiAppSsoRoute: ApiAppSsoRoute,
   ApiRegistroRoute: ApiRegistroRoute,
+  ApiMembershipCheckRoute: ApiMembershipCheckRoute,
   ApiZoomAutomationRoute: ApiZoomAutomationRoute,
   ApiZoomBajaRoute: ApiZoomBajaRoute,
   ApiZoomRegisterRoute: ApiZoomRegisterRoute,

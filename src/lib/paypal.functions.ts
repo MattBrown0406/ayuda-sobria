@@ -67,8 +67,8 @@ function trustedReturnUrl(requested: unknown, path: string): string {
 }
 
 const PLAN_CONFIG: Record<PlanType, { interval: "MONTH" | "YEAR"; price: string; name: string }> = {
-  monthly: { interval: "MONTH", price: "14.99", name: "Family Membership - Monthly" },
-  annual: { interval: "YEAR", price: "149.00", name: "Family Membership - Annual" },
+  monthly: { interval: "MONTH", price: "9.99", name: "Family Membership - Monthly" },
+  annual: { interval: "YEAR", price: "100.00", name: "Family Membership - Annual" },
 };
 
 async function createPlan(
@@ -105,10 +105,51 @@ async function createPlan(
   return data.id;
 }
 
+const pinnedPlanChecks = new Map<string, Promise<boolean>>();
+
+/** True when the pinned PayPal plan still charges PLAN_CONFIG's price. */
+async function pinnedPlanMatchesPrice(
+  accessToken: string,
+  planId: string,
+  planType: PlanType,
+): Promise<boolean> {
+  const key = `${planId}:${PLAN_CONFIG[planType].price}`;
+  let check = pinnedPlanChecks.get(key);
+  if (!check) {
+    check = (async () => {
+      const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/plans/${encodeURIComponent(planId)}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) throw new Error(`PayPal plan lookup failed (${res.status})`);
+      const plan = (await res.json()) as {
+        status?: string;
+        billing_cycles?: Array<{
+          tenure_type?: string;
+          pricing_scheme?: { fixed_price?: { value?: string } };
+        }>;
+      };
+      const regular = plan.billing_cycles?.find((cycle) => cycle.tenure_type === "REGULAR");
+      const value = Number(regular?.pricing_scheme?.fixed_price?.value);
+      return plan.status === "ACTIVE" && value === Number(PLAN_CONFIG[planType].price);
+    })().catch((error) => {
+      pinnedPlanChecks.delete(key);
+      throw error;
+    });
+    pinnedPlanChecks.set(key, check);
+  }
+  return check;
+}
+
 async function resolvePlanId(accessToken: string, planType: PlanType): Promise<string> {
   const pinned =
     planType === "annual" ? process.env.PAYPAL_PLAN_ID_ANNUAL : process.env.PAYPAL_PLAN_ID_MONTHLY;
-  if (pinned) return pinned;
+  // A plan pinned before a price change would keep charging the old price.
+  if (pinned) {
+    if (await pinnedPlanMatchesPrice(accessToken, pinned, planType)) return pinned;
+    console.error(
+      `Pinned PayPal ${planType} plan does not charge US$${PLAN_CONFIG[planType].price}; using a plan at the current price instead. Update or remove the pinned plan id.`,
+    );
+  }
   const cacheKey = `${planType}:${PLAN_CONFIG[planType].price}`;
   const cached = planPromises.get(cacheKey);
   if (cached) return cached;
@@ -287,6 +328,22 @@ export const getMyMembership = createServerFn({ method: "GET" })
     return cancelledWithAccess ?? rows[0] ?? null;
   });
 
+// Sober Helpline app members get member benefits here too (same as soberhelpline.com).
+export const getMyAppAccess = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const [{ supabaseAdmin }, { appAccessForUser }] = await Promise.all([
+      import("@/integrations/supabase/client.server"),
+      import("./app-bridge.server"),
+    ]);
+    try {
+      return await appAccessForUser(supabaseAdmin, context.userId);
+    } catch (error) {
+      console.error("App access lookup failed", error);
+      return null;
+    }
+  });
+
 // ---- Coaching one-time payments ----
 
 const COACHING_SESSIONS = {
@@ -300,10 +357,8 @@ const COACHING_SESSIONS = {
 type SessionType = keyof typeof COACHING_SESSIONS;
 
 async function userHasActiveMembership(userId: string): Promise<boolean> {
-  const { membershipAllowsRecordingAccess } = await import("@/lib/zoom/recording-access");
-  const { reconcileUserMemberships } = await import("./membership-sync.server");
-  const rows = await reconcileUserMemberships(userId);
-  return membershipAllowsRecordingAccess(rows, new Date().toISOString());
+  const { userHasMemberAccess } = await import("./membership-sync.server");
+  return userHasMemberAccess(userId);
 }
 
 export const getCoachingPricing = createServerFn({ method: "GET" }).handler(async () => {

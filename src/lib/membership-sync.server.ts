@@ -91,3 +91,21 @@ export async function reconcileUserMemberships(userId: string): Promise<Membersh
   }
   return rows;
 }
+
+/** Member benefits: a current AyudaSobria membership, or a current Sober Helpline app one. */
+export async function userHasMemberAccess(userId: string): Promise<boolean> {
+  const [{ membershipAllowsRecordingAccess }, { supabaseAdmin }, { appAccessForUser }] =
+    await Promise.all([
+      import("@/lib/zoom/recording-access"),
+      import("@/integrations/supabase/client.server"),
+      import("./app-bridge.server"),
+    ]);
+  const rows = await reconcileUserMemberships(userId);
+  if (membershipAllowsRecordingAccess(rows, new Date().toISOString())) return true;
+  try {
+    return Boolean(await appAccessForUser(supabaseAdmin, userId));
+  } catch (error) {
+    console.error("App access lookup failed", error);
+    return false;
+  }
+}

@@ -16,6 +16,7 @@ export const Route = createFileRoute("/api/zoom/tick")({
           { readCronSecret, recordTick },
           { buildWeeklyReport, sendWeeklyReportEmail },
           { supabaseAdmin },
+          { syncAppMembers, appSyncSecret },
         ] = await Promise.all([
           import("@/lib/zoom/security"),
           import("@/lib/zoom/automation.server"),
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/api/zoom/tick")({
           import("@/lib/zoom/tick-state.server"),
           import("@/lib/zoom/weekly-report.server"),
           import("@/integrations/supabase/client.server"),
+          import("@/lib/app-bridge.server"),
         ]);
 
         const header = request.headers.get("authorization") ?? "";
@@ -63,6 +65,7 @@ export const Route = createFileRoute("/api/zoom/tick")({
             await sendWeeklyReportEmail(report);
             return { sent: true, occurrenceDate: report.occurrenceDate };
           },
+          appMemberSync: (now) => syncAppMembers(supabaseAdmin, appSyncSecret(), now),
         });
         if (!summary.ok) console.error("La Sobremesa tick had errors", summary.errors.join(" | "));
         try {
