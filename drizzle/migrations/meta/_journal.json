@@ -22,6 +22,20 @@
       "when": 1791586597333,
       "tag": "0002_sober_helpline_app_bridge",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791586620291,
+      "tag": "0003_la_sobremesa_weekly_cron",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791586636055,
+      "tag": "0004_registration_resubmission_and_followup_timing",
+      "breakpoints": true
     }
   ]
 }

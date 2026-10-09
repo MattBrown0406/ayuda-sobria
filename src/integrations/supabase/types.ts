@@ -324,6 +324,39 @@ export type Database = {
           },
         ]
       }
+      zoom_automation_state: {
+        Row: {
+          cron_secret: string
+          id: number
+          last_error: string | null
+          last_success_at: string | null
+          last_tick_at: string | null
+          last_tick_ok: boolean | null
+          last_tick_summary: Json | null
+          updated_at: string
+        }
+        Insert: {
+          cron_secret: string
+          id?: number
+          last_error?: string | null
+          last_success_at?: string | null
+          last_tick_at?: string | null
+          last_tick_ok?: boolean | null
+          last_tick_summary?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          cron_secret?: string
+          id?: number
+          last_error?: string | null
+          last_success_at?: string | null
+          last_tick_at?: string | null
+          last_tick_ok?: boolean | null
+          last_tick_summary?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       zoom_followup_queue: {
         Row: {
           claimed_at: string | null
