@@ -277,10 +277,10 @@ function Programs() {
     {
       icon: Sparkles,
       tag: "Planificación de alto impacto",
-      title: "Intensivo de Preparación Familiar para decisiones mayores",
-      body: "Sesión estratégica de 90 minutos más 7 días de seguimiento para familias que necesitan claridad rápido.",
-      cta: "Explorar el intensivo",
-      href: "/coaching-familiar",
+      title: "Intervención familiar cuando conversar ya no alcanza",
+      body: "Un proceso guiado para preparar a la familia, unir el mensaje y tener el tratamiento listo antes de hablar.",
+      cta: "Conocer la intervención",
+      href: "/intervencion",
     },
   ];
   return (

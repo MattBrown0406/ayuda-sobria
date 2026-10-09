@@ -6,14 +6,11 @@ export const getMemberZoomRecordings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { reconcileUserMemberships } = await import("@/lib/membership-sync.server");
     const now = new Date().toISOString();
-    const { data: memberships, error: membershipError } = await supabaseAdmin
-      .from("memberships")
-      .select("id, status, access_ends_at")
-      .eq("user_id", context.userId)
-      .in("status", ["active", "cancelled"]);
-    if (membershipError) throw new Error(membershipError.message);
-    const hasAccess = membershipAllowsRecordingAccess(memberships ?? [], now);
+    // Confirms with PayPal when a row is pending or past its billing date.
+    const memberships = await reconcileUserMemberships(context.userId);
+    const hasAccess = membershipAllowsRecordingAccess(memberships, now);
     if (!hasAccess) throw new Error("Membership required");
 
     const { data, error } = await supabaseAdmin

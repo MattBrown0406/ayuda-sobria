@@ -33,6 +33,8 @@ function RegistroPage() {
     startsAt?: string;
     registrationId?: string;
     emailSent?: boolean;
+    /** The email fallback reached Matt; he sends the link personally. */
+    adminNotified?: boolean;
   } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -73,9 +75,10 @@ function RegistroPage() {
         headers: { "Content-Type": "application/json" },
         body: payload,
       });
-      // Zoom automation is optional: when it isn't configured yet, fall back to
-      // the email registration endpoint so no one's request is lost.
-      if (response.status === 503) {
+      // When Zoom can't take the registration (not configured, next Monday's meeting
+      // not created yet, or Zoom failing), send it to Matt by email instead so no
+      // family's request is lost.
+      if ([404, 502, 503].includes(response.status)) {
         response = await fetch("/api/registro", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -86,6 +89,7 @@ function RegistroPage() {
         error?: string;
         accepted?: boolean;
         emailSent?: boolean;
+        adminNotified?: boolean;
       };
       if (!response.ok) throw new Error(result.error || "No se pudo completar el registro.");
       // accepted === false is the server's silent anti-bot fake success;
@@ -109,6 +113,7 @@ function RegistroPage() {
   }
 
   if (submitted) {
+    const handedToMatt = !registrationResult?.registrationId && registrationResult?.adminNotified;
     return (
       <>
         <PageHero
@@ -116,12 +121,16 @@ function RegistroPage() {
           title={
             registrationResult?.registrationId
               ? "Tu registro en Zoom está listo"
-              : "Tu lugar aún no está confirmado"
+              : handedToMatt
+                ? "Recibimos tu registro"
+                : "Tu lugar aún no está confirmado"
           }
           description={
             registrationResult?.emailSent
               ? "El proveedor de correo aceptó tu enlace personal. Revisa tu bandeja de entrada y spam."
-              : "No pudimos confirmar el envío de un enlace personal. Contacta al equipo o vuelve a intentar el registro."
+              : handedToMatt
+                ? "Matt te enviará tu enlace personal por correo antes del lunes. No hace falta registrarte de nuevo."
+                : "No pudimos confirmar el envío de un enlace personal. Contacta al equipo o vuelve a intentar el registro."
           }
         />
         <div className="mx-auto max-w-2xl px-4 py-12 space-y-4 text-muted-foreground">
@@ -139,6 +148,11 @@ function RegistroPage() {
             {registrationResult?.emailSent ? (
               <>
                 Enviamos la información a <strong className="text-foreground">{form.email}</strong>.
+              </>
+            ) : handedToMatt ? (
+              <>
+                Te escribiremos a <strong className="text-foreground">{form.email}</strong> con tu
+                enlace personal. Revisa también la carpeta de spam.
               </>
             ) : (
               <>
@@ -167,7 +181,7 @@ function RegistroPage() {
             startsAt={registrationResult.startsAt}
           />
         )}
-        {!registrationResult?.emailSent && (
+        {!registrationResult?.emailSent && !handedToMatt && (
           <button
             className="mx-auto block p-4 text-primary underline"
             onClick={() => setSubmitted(false)}

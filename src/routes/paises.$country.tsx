@@ -9,7 +9,10 @@ const HOTLINES: Record<string, { name: string; number: string }[]> = {
   ],
   argentina: [{ name: "SEDRONAR", number: "141" }],
   chile: [{ name: "SENDA Fonodrogas", number: "1412" }],
-  colombia: [{ name: "Línea 106", number: "106" }],
+  colombia: [
+    { name: "Línea nacional de salud mental (opción 4)", number: "192" },
+    { name: "Línea 106 (Bogotá)", number: "106" },
+  ],
   peru: [{ name: "Línea 113 (opción 5)", number: "113" }],
   "costa-rica": [{ name: "IAFA", number: "800-423-2323" }],
   "republica-dominicana": [{ name: "Línea Vida", number: "*462" }],

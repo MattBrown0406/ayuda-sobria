@@ -1,5 +1,7 @@
 # La Sobremesa: local time and activation
 
+> **Superseded scheduling (2026-10-09):** the weekly lifecycle is now run by the database cron job `la-sobremesa-weekly-tick` calling `/api/zoom/tick` every 15 minutes; next Monday's meeting is created Monday 10:00 PM Pacific. The GitHub workflow is manual-only. See `docs/lovable-apply-2026-10-09.md`.
+
 Implemented in an isolated checkout based on main c636759. No production changes, invitations, or meeting creation were performed.
 
 ## Operational finding (October 2, 2026)

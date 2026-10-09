@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ApoyoFamiliarRouteImport } from './routes/apoyo-familiar'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BajaRouteImport } from './routes/baja'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CirculoFamiliarRouteImport } from './routes/circulo-familiar'
 import { Route as CoachingFamiliarRouteImport } from './routes/coaching-familiar'
@@ -58,8 +59,10 @@ import { Route as RecursosSlugRouteImport } from './routes/recursos.$slug'
 import { Route as RespuestasFamiliaIndexRouteImport } from './routes/respuestas-familia.index'
 import { Route as RespuestasFamiliaSlugRouteImport } from './routes/respuestas-familia.$slug'
 import { Route as ApiZoomAutomationRouteImport } from './routes/api.zoom.automation'
+import { Route as ApiZoomBajaRouteImport } from './routes/api.zoom.baja'
 import { Route as ApiZoomRegisterRouteImport } from './routes/api.zoom.register'
 import { Route as ApiZoomScheduleRouteImport } from './routes/api.zoom.schedule'
+import { Route as ApiZoomTickRouteImport } from './routes/api.zoom.tick'
 import { Route as ApiZoomWebhookRouteImport } from './routes/api.zoom.webhook'
 import { Route as ApoyoFamiliarStateIndexRouteImport } from './routes/apoyo-familiar.$state.index'
 import { Route as ApoyoFamiliarStateCityRouteImport } from './routes/apoyo-familiar.$state.$city'
@@ -83,6 +86,11 @@ const ApoyoFamiliarRoute = ApoyoFamiliarRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BajaRoute = BajaRouteImport.update({
+  id: '/baja',
+  path: '/baja',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -310,6 +318,11 @@ const ApiZoomAutomationRoute = ApiZoomAutomationRouteImport.update({
   path: '/api/zoom/automation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiZoomBajaRoute = ApiZoomBajaRouteImport.update({
+  id: '/api/zoom/baja',
+  path: '/api/zoom/baja',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiZoomRegisterRoute = ApiZoomRegisterRouteImport.update({
   id: '/api/zoom/register',
   path: '/api/zoom/register',
@@ -318,6 +331,11 @@ const ApiZoomRegisterRoute = ApiZoomRegisterRouteImport.update({
 const ApiZoomScheduleRoute = ApiZoomScheduleRouteImport.update({
   id: '/api/zoom/schedule',
   path: '/api/zoom/schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiZoomTickRoute = ApiZoomTickRouteImport.update({
+  id: '/api/zoom/tick',
+  path: '/api/zoom/tick',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiZoomWebhookRoute = ApiZoomWebhookRouteImport.update({
@@ -347,6 +365,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/auth': typeof AuthRoute
+  '/baja': typeof BajaRoute
   '/blog': typeof BlogRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
@@ -392,8 +411,10 @@ export interface FileRoutesByFullPath {
   '/recursos/': typeof RecursosIndexRoute
   '/respuestas-familia/': typeof RespuestasFamiliaIndexRoute
   '/api/zoom/automation': typeof ApiZoomAutomationRoute
+  '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
   '/api/zoom/schedule': typeof ApiZoomScheduleRoute
+  '/api/zoom/tick': typeof ApiZoomTickRoute
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
   '/apoyo-familiar/$state/': typeof ApoyoFamiliarStateIndexRoute
@@ -403,6 +424,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/baja': typeof BajaRoute
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
   '/evaluaciones': typeof EvaluacionesRoute
@@ -439,8 +461,10 @@ export interface FileRoutesByTo {
   '/recursos': typeof RecursosIndexRoute
   '/respuestas-familia': typeof RespuestasFamiliaIndexRoute
   '/api/zoom/automation': typeof ApiZoomAutomationRoute
+  '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
   '/api/zoom/schedule': typeof ApiZoomScheduleRoute
+  '/api/zoom/tick': typeof ApiZoomTickRoute
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
   '/apoyo-familiar/$state': typeof ApoyoFamiliarStateIndexRoute
@@ -452,6 +476,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/apoyo-familiar': typeof ApoyoFamiliarRouteWithChildren
   '/auth': typeof AuthRoute
+  '/baja': typeof BajaRoute
   '/blog': typeof BlogRouteWithChildren
   '/circulo-familiar': typeof CirculoFamiliarRoute
   '/coaching-familiar': typeof CoachingFamiliarRoute
@@ -497,8 +522,10 @@ export interface FileRoutesById {
   '/recursos/': typeof RecursosIndexRoute
   '/respuestas-familia/': typeof RespuestasFamiliaIndexRoute
   '/api/zoom/automation': typeof ApiZoomAutomationRoute
+  '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
   '/api/zoom/schedule': typeof ApiZoomScheduleRoute
+  '/api/zoom/tick': typeof ApiZoomTickRoute
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
   '/apoyo-familiar/$state/': typeof ApoyoFamiliarStateIndexRoute
@@ -511,6 +538,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apoyo-familiar'
     | '/auth'
+    | '/baja'
     | '/blog'
     | '/circulo-familiar'
     | '/coaching-familiar'
@@ -556,8 +584,10 @@ export interface FileRouteTypes {
     | '/recursos/'
     | '/respuestas-familia/'
     | '/api/zoom/automation'
+    | '/api/zoom/baja'
     | '/api/zoom/register'
     | '/api/zoom/schedule'
+    | '/api/zoom/tick'
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
     | '/apoyo-familiar/$state/'
@@ -567,6 +597,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/baja'
     | '/circulo-familiar'
     | '/coaching-familiar'
     | '/evaluaciones'
@@ -603,8 +634,10 @@ export interface FileRouteTypes {
     | '/recursos'
     | '/respuestas-familia'
     | '/api/zoom/automation'
+    | '/api/zoom/baja'
     | '/api/zoom/register'
     | '/api/zoom/schedule'
+    | '/api/zoom/tick'
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
     | '/apoyo-familiar/$state'
@@ -615,6 +648,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apoyo-familiar'
     | '/auth'
+    | '/baja'
     | '/blog'
     | '/circulo-familiar'
     | '/coaching-familiar'
@@ -660,8 +694,10 @@ export interface FileRouteTypes {
     | '/recursos/'
     | '/respuestas-familia/'
     | '/api/zoom/automation'
+    | '/api/zoom/baja'
     | '/api/zoom/register'
     | '/api/zoom/schedule'
+    | '/api/zoom/tick'
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
     | '/apoyo-familiar/$state/'
@@ -673,6 +709,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ApoyoFamiliarRoute: typeof ApoyoFamiliarRouteWithChildren
   AuthRoute: typeof AuthRoute
+  BajaRoute: typeof BajaRoute
   BlogRoute: typeof BlogRouteWithChildren
   CirculoFamiliarRoute: typeof CirculoFamiliarRoute
   CoachingFamiliarRoute: typeof CoachingFamiliarRoute
@@ -699,8 +736,10 @@ export interface RootRouteChildren {
   TestimoniosRoute: typeof TestimoniosRoute
   ApiRegistroRoute: typeof ApiRegistroRoute
   ApiZoomAutomationRoute: typeof ApiZoomAutomationRoute
+  ApiZoomBajaRoute: typeof ApiZoomBajaRoute
   ApiZoomRegisterRoute: typeof ApiZoomRegisterRoute
   ApiZoomScheduleRoute: typeof ApiZoomScheduleRoute
+  ApiZoomTickRoute: typeof ApiZoomTickRoute
   ApiZoomWebhookRoute: typeof ApiZoomWebhookRoute
   ApiPublicHooksWeeklyReportRoute: typeof ApiPublicHooksWeeklyReportRoute
 }
@@ -733,6 +772,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/baja': {
+      id: '/baja'
+      path: '/baja'
+      fullPath: '/baja'
+      preLoaderRoute: typeof BajaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -1050,6 +1096,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiZoomAutomationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/zoom/baja': {
+      id: '/api/zoom/baja'
+      path: '/api/zoom/baja'
+      fullPath: '/api/zoom/baja'
+      preLoaderRoute: typeof ApiZoomBajaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/zoom/register': {
       id: '/api/zoom/register'
       path: '/api/zoom/register'
@@ -1062,6 +1115,13 @@ declare module '@tanstack/react-router' {
       path: '/api/zoom/schedule'
       fullPath: '/api/zoom/schedule'
       preLoaderRoute: typeof ApiZoomScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/zoom/tick': {
+      id: '/api/zoom/tick'
+      path: '/api/zoom/tick'
+      fullPath: '/api/zoom/tick'
+      preLoaderRoute: typeof ApiZoomTickRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/zoom/webhook': {
@@ -1235,6 +1295,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ApoyoFamiliarRoute: ApoyoFamiliarRouteWithChildren,
   AuthRoute: AuthRoute,
+  BajaRoute: BajaRoute,
   BlogRoute: BlogRouteWithChildren,
   CirculoFamiliarRoute: CirculoFamiliarRoute,
   CoachingFamiliarRoute: CoachingFamiliarRoute,
@@ -1261,8 +1322,10 @@ const rootRouteChildren: RootRouteChildren = {
   TestimoniosRoute: TestimoniosRoute,
   ApiRegistroRoute: ApiRegistroRoute,
   ApiZoomAutomationRoute: ApiZoomAutomationRoute,
+  ApiZoomBajaRoute: ApiZoomBajaRoute,
   ApiZoomRegisterRoute: ApiZoomRegisterRoute,
   ApiZoomScheduleRoute: ApiZoomScheduleRoute,
+  ApiZoomTickRoute: ApiZoomTickRoute,
   ApiZoomWebhookRoute: ApiZoomWebhookRoute,
   ApiPublicHooksWeeklyReportRoute: ApiPublicHooksWeeklyReportRoute,
 }

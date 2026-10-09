@@ -109,6 +109,8 @@ export interface ConfirmationDelivery {
 
 export interface RegistrationMailer {
   sendConfirmation(input: ConfirmationDelivery): Promise<void>;
+  /** Tells the admin about new answers from someone who was already registered. */
+  sendAdminUpdate?(input: ConfirmationDelivery): Promise<void>;
   sendReminder(input: ReminderDelivery): Promise<void>;
   sendFollowup(input: FollowupDelivery): Promise<void>;
 }

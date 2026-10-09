@@ -39,3 +39,15 @@ export function endpointValidationToken(secret: string, plainToken: string): str
 export function sha256(value: string): string {
   return createHash("sha256").update(value).digest("hex");
 }
+
+/** Signs the one-click "stop weekly registration" link for an email address. */
+export function optOutToken(secret: string, email: string): string {
+  return createHmac("sha256", secret)
+    .update(`la-sobremesa-optout:v1:${email.trim().toLowerCase()}`)
+    .digest("hex");
+}
+
+export function verifyOptOutToken(secret: string, email: string, token: string): boolean {
+  if (!secret || !email || !/^[0-9a-f]{64}$/.test(token)) return false;
+  return safeEqualUtf8(token, optOutToken(secret, email));
+}

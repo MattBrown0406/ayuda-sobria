@@ -25,8 +25,9 @@ export const adminCheckAccess = createServerFn({ method: "GET" })
       .eq("user_id", context.userId)
       .eq("role", "admin")
       .maybeSingle();
-    assertAdminRoleResult(data, error);
-    return { isAdmin: true };
+    if (error) throw new Error(error.message);
+    // A signed-in non-admin gets the "No access" screen, not a load error.
+    return { isAdmin: data?.role === "admin" };
   });
 
 type Tables = Database["public"]["Tables"];
@@ -61,38 +62,53 @@ export const adminGetOverview = createServerFn({ method: "GET" })
       }
     }
 
-    const [regs, memberships, coaching, profiles, occurrences, attendance, recordings] =
-      await Promise.all([
+    const [
+      regs,
+      memberships,
+      coaching,
+      profiles,
+      occurrences,
+      attendance,
+      recordings,
+      automationState,
+    ] = await Promise.all([
+      supabaseAdmin
+        .from("meeting_registrations")
+        .select("*")
+        .order("created_at", { ascending: false }),
+      supabaseAdmin.from("memberships").select("*").order("created_at", { ascending: false }),
+      supabaseAdmin.from("coaching_orders").select("*").order("created_at", { ascending: false }),
+      supabaseAdmin.from("profiles").select("id, first_name, last_name"),
+      safe<Row<"zoom_occurrences">>(
+        "occurrences",
         supabaseAdmin
-          .from("meeting_registrations")
+          .from("zoom_occurrences")
           .select("*")
-          .order("created_at", { ascending: false }),
-        supabaseAdmin.from("memberships").select("*").order("created_at", { ascending: false }),
-        supabaseAdmin.from("coaching_orders").select("*").order("created_at", { ascending: false }),
-        supabaseAdmin.from("profiles").select("id, first_name, last_name"),
-        safe<Row<"zoom_occurrences">>(
-          "occurrences",
-          supabaseAdmin
-            .from("zoom_occurrences")
-            .select("*")
-            .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
-            .order("starts_at", { ascending: false }),
-        ),
-        safe<Row<"zoom_attendance">>(
-          "attendance",
-          supabaseAdmin
-            .from("zoom_attendance")
-            .select("*")
-            .order("joined_at", { ascending: false }),
-        ),
-        safe<Row<"zoom_recordings">>(
-          "recordings",
-          supabaseAdmin
-            .from("zoom_recordings")
-            .select("*")
-            .order("started_at", { ascending: false }),
-        ),
-      ]);
+          .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
+          .order("starts_at", { ascending: false }),
+      ),
+      safe<Row<"zoom_attendance">>(
+        "attendance",
+        supabaseAdmin.from("zoom_attendance").select("*").order("joined_at", { ascending: false }),
+      ),
+      safe<Row<"zoom_recordings">>(
+        "recordings",
+        supabaseAdmin.from("zoom_recordings").select("*").order("started_at", { ascending: false }),
+      ),
+      // Never select cron_secret: only the tick's outcome reaches the browser.
+      safe<
+        Pick<
+          Row<"zoom_automation_state">,
+          "last_tick_at" | "last_tick_ok" | "last_error" | "last_success_at"
+        >
+      >(
+        "automation",
+        supabaseAdmin
+          .from("zoom_automation_state")
+          .select("last_tick_at, last_tick_ok, last_error, last_success_at")
+          .eq("id", 1),
+      ),
+    ]);
 
     for (const result of [regs, memberships, coaching, profiles]) {
       if (result.error) throw new Error(result.error.message);
@@ -121,6 +137,7 @@ export const adminGetOverview = createServerFn({ method: "GET" })
       attendance: zoomAttendance,
       recordings: zoomRecordings,
       zoomErrors,
+      automation: automationState[0] ?? null,
       stats: {
         registrations: zoomRegistrations.length,
         activeMembers:
@@ -239,4 +256,45 @@ export const adminDeleteRegistration = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("meeting_registrations").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+// Creates (or confirms) the next Monday's meeting right now, so Matt can bootstrap the
+// series or recover a failed week without waiting for the next database-cron tick.
+export const adminScheduleNextMeeting = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const [
+      { supabaseAdmin },
+      { scheduleNextMonday },
+      { zoomClientFromEnv },
+      { createSupabaseZoomStore },
+    ] = await Promise.all([
+      import("@/integrations/supabase/client.server"),
+      import("@/lib/zoom/schedule.server"),
+      import("@/lib/zoom/client.server"),
+      import("@/lib/zoom/supabase-store.server"),
+    ]);
+    try {
+      const result = await scheduleNextMonday({
+        now: new Date(),
+        store: createSupabaseZoomStore(supabaseAdmin),
+        zoom: zoomClientFromEnv(),
+      });
+      return {
+        ok: true as const,
+        created: result.created,
+        occurrenceDate: result.occurrence.occurrenceDate,
+        status: result.occurrence.status,
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Zoom scheduling failed";
+      return {
+        ok: false as const,
+        error:
+          message === "OCCURRENCE_BUSY"
+            ? "Another scheduling run is in progress. Try again in a minute."
+            : message.slice(0, 500),
+      };
+    }
   });

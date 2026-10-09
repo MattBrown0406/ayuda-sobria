@@ -83,7 +83,15 @@ function MembresiaPage() {
       window.location.href = approvalUrl;
     } catch (e) {
       console.error("createMembershipSubscription failed", e);
-      setError("No pudimos iniciar la suscripción con PayPal. Inténtalo de nuevo en unos minutos.");
+      if (e instanceof Error && e.message.includes("membresía activa")) {
+        // PayPal confirmed an earlier checkout; show it instead of billing twice.
+        setError("Ya tienes una membresía activa.");
+        setMembership(await getFn().catch(() => membership));
+      } else {
+        setError(
+          "No pudimos iniciar la suscripción con PayPal. Inténtalo de nuevo en unos minutos.",
+        );
+      }
       setLoading(false);
     }
   }
@@ -120,13 +128,14 @@ function MembresiaPage() {
             <h2>Qué incluye actualmente</h2>
             <ul>
               <li>Precio preferencial de US$125 por sesión privada de coaching.</li>
+              <li>Acceso a las grabaciones publicadas de La Sobremesa en Grabaciones.</li>
               <li>Administración del plan y cancelación en línea.</li>
               <li>Cancelación en cualquier momento.</li>
             </ul>
             <p>
               La Sobremesa y los recursos públicos del sitio siguen siendo gratuitos y no requieren
-              membresía. El foro, la biblioteca privada, los webinarios y las herramientas premium
-              todavía no forman parte de este plan.
+              membresía. El foro, los webinarios y las herramientas premium todavía no forman parte
+              de este plan.
             </p>
             <h2>Precio</h2>
             <p>
@@ -236,6 +245,18 @@ function MembresiaPage() {
           )}
 
           {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+          {session && (
+            <button
+              type="button"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.assign("/");
+              }}
+              className="mt-6 w-full text-center text-xs text-muted-foreground underline hover:text-foreground"
+            >
+              Cerrar sesión
+            </button>
+          )}
         </aside>
       </div>
       <CTAStrip />

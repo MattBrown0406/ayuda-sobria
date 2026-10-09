@@ -35,7 +35,11 @@ function SuccessPage() {
           setStatus("ok");
         } else {
           setStatus("error");
-          setMsg("El pago aún no se ha completado.");
+          setMsg(
+            "declined" in r && r.declined
+              ? "PayPal rechazó el método de pago. No se hizo ningún cobro."
+              : "El pago aún no se ha completado. No se hizo ningún cobro.",
+          );
         }
       })
       .catch((e) => {
@@ -70,7 +74,18 @@ function SuccessPage() {
             </Link>
           </>
         )}
-        {status === "error" && <p className="text-destructive">{msg}</p>}
+        {status === "error" && (
+          <>
+            <p className="text-destructive">{msg}</p>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Puedes{" "}
+              <Link to="/coaching-pago" className="text-primary underline">
+                intentarlo de nuevo
+              </Link>{" "}
+              o escribirnos a matt@soberhelpline.com / llamar al (458) 298-8011.
+            </p>
+          </>
+        )}
       </div>
     </>
   );

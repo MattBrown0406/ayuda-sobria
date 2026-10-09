@@ -1,5 +1,11 @@
 import { ANSWER_DETAILS, type AnswerDetail } from "@/data/answerDetails";
 
+// Null-prototype lookup: "constructor" or "toString" in a URL must 404, not match
+// Object.prototype.
+function slugMap<T>(entries: Iterable<readonly [string, T]>): Record<string, T> {
+  return Object.assign(Object.create(null) as Record<string, T>, Object.fromEntries(entries));
+}
+
 export interface Answer {
   slug: string;
   question: string;
@@ -97,7 +103,7 @@ export const ANSWERS: Answer[] = [
 ];
 export type CompleteAnswer = Answer & AnswerDetail;
 
-export const ANSWER_MAP: Record<string, CompleteAnswer> = Object.fromEntries(
+export const ANSWER_MAP: Record<string, CompleteAnswer> = slugMap(
   ANSWERS.map((answer) => {
     const detail = ANSWER_DETAILS[answer.slug];
     if (!detail) throw new Error(`Falta contenido para la respuesta: ${answer.slug}`);

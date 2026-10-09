@@ -331,6 +331,33 @@ export function createSupabaseZoomStore(
         .single();
       assertNoError(occurrenceError);
       if (!occurrenceRow) throw new Error("Managed occurrence not found");
+      // Close this participant's open session (left events don't repeat join_time).
+      const { data: open, error: openError } = await client
+        .from("zoom_attendance")
+        .select("id, joined_at")
+        .eq("occurrence_id", occurrenceRow.id)
+        .eq("participant_key", event.participantKey)
+        .is("left_at", null)
+        .lte("joined_at", event.leftAt ?? event.joinedAt)
+        .order("joined_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      assertNoError(openError);
+      if (open && event.leftAt) {
+        const seconds = Math.round((Date.parse(event.leftAt) - Date.parse(open.joined_at)) / 1000);
+        const { error: closeError } = await client
+          .from("zoom_attendance")
+          .update({
+            left_at: event.leftAt,
+            duration_seconds: event.durationSeconds || Math.max(0, seconds || 0),
+            participant_email: event.participantEmail ?? undefined,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", open.id);
+        assertNoError(closeError);
+        return;
+      }
+      // No join on record (missed or out-of-order event): keep the leave on its own row.
       const { error } = await client.from("zoom_attendance").upsert(
         {
           occurrence_id: occurrenceRow.id,
@@ -403,7 +430,12 @@ export function createSupabaseZoomStore(
         .select(
           "full_name,email,phone,location,relationship,preferred_timezone,consent_updates,auto_register,occurrence_id,created_at",
         )
-        .neq("occurrence_id", occurrenceId)
+        // The newest row per email decides, including this occurrence's: someone who
+        // unticked weekly registration (or used the opt-out link) is not re-added.
+        // registerForOccurrence is a no-op for people already registered this week.
+        // Rows without a meeting come from the old email-only form, which never asked
+        // for weekly registration (the column's default of true is not consent).
+        .not("occurrence_id", "is", null)
         .order("created_at", { ascending: false })
         .limit(5000);
       assertNoError(error);

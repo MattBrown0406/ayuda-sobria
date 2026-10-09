@@ -1,36 +1,29 @@
-name: AyudaSobria Zoom automation
+name: AyudaSobria Zoom automation (manual backup)
 
-# La Sobremesa runs every Monday at 8:00 PM Pacific. Three jobs keep it going:
+# La Sobremesa runs every Monday at 8:00 PM Pacific. Its weekly lifecycle is run by the
+# database cron job `la-sobremesa-weekly-tick` (supabase/migrations/
+# 20261009220000_la_sobremesa_weekly_cron.sql), which calls /api/zoom/tick every 15
+# minutes; the server decides what is due in Pacific time:
 #
-#   Monday   10:30 PM Pacific  schedule       create next Monday's Zoom meeting (new link)
-#   Thursday  3:00 PM Pacific  auto-register  re-register weekly attendees, email their link
-#   Monday    4:00 PM Pacific  reminders      remind everyone registered for tonight
+#   Monday   10:00 PM Pacific  create next Monday's Zoom meeting (new link)
+#   Thursday  3:00 PM Pacific  auto-register weekly attendees, email their link
+#   Monday    4:00 PM Pacific  remind everyone registered for tonight
+#   Tuesday  10:00 AM Pacific  weekly attendance report
 #
-# GitHub cron only speaks UTC, so every Pacific slot is listed twice (PDT and PST).
-# The job converts the current time to America/Los_Angeles and runs only when it
-# matches an email slot; other runs recover/bootstrap the imminent meeting. Every
-# server action is idempotent, so a manual re-run is always safe.
+# GitHub's own cron was unreliable (hourly runs often arrived hours late) and its
+# secrets were never configured, so this workflow is now manual-only. It needs the
+# repository secrets AYUDA_ZOOM_BASE_URL (https://ayudasobria.com) and
+# ZOOM_AUTOMATION_SECRET (same value as the site's server secret). Every server action
+# is idempotent, so a manual run is always safe.
 on:
-  schedule:
-    # Hourly recovery/bootstrap; idempotent. Monday 20:00–22:29 is held below.
-    - cron: "30 * * * *"
-    # Monday 10:30 PM Pacific = Tuesday 05:30 UTC (PDT) / 06:30 UTC (PST)
-    - cron: "30 5 * * 2"
-    - cron: "30 6 * * 2"
-    # Thursday 3:00 PM Pacific = Thursday 22:05 UTC (PDT) / 23:05 UTC (PST)
-    - cron: "5 22 * * 4"
-    - cron: "5 23 * * 4"
-    # Monday 4:00 PM Pacific = Monday 23:05 UTC (PDT) / Tuesday 00:05 UTC (PST)
-    - cron: "5 23 * * 1"
-    - cron: "5 0 * * 2"
   workflow_dispatch:
     inputs:
       action:
-        description: "Which job to run now (auto = whichever slot matches the current Pacific time)"
+        description: "Which job to run now (tick = whatever is due at the current Pacific time)"
         type: choice
-        default: auto
+        default: tick
         options:
-          - auto
+          - tick
           - schedule
           - auto-register
           - reminders
@@ -50,7 +43,7 @@ jobs:
     env:
       AYUDA_ZOOM_BASE_URL: ${{ secrets.AYUDA_ZOOM_BASE_URL }}
       ZOOM_AUTOMATION_SECRET: ${{ secrets.ZOOM_AUTOMATION_SECRET }}
-      REQUESTED_ACTION: ${{ github.event.inputs.action || 'auto' }}
+      REQUESTED_ACTION: ${{ github.event.inputs.action || 'tick' }}
     steps:
       - name: Check configuration
         id: config
@@ -63,26 +56,14 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Pick the job for this Pacific-time slot
+      - name: Pick the job
         id: slot
         if: steps.config.outputs.configured == 'true'
         shell: bash
         run: |
-          weekday="$(TZ=America/Los_Angeles date +%u)"   # 1 = Monday ... 7 = Sunday
-          hour="$(TZ=America/Los_Angeles date +%H)"
-          minute="$(TZ=America/Los_Angeles date +%M)"
           echo "Pacific time now: $(TZ=America/Los_Angeles date '+%A %H:%M %Z')"
-          action="$REQUESTED_ACTION"
-          if [[ "$action" == "auto" ]]; then
-            if [[ "$weekday" == "1" && ( "$hour" == "20" || "$hour" == "21" || ( "$hour" == "22" && "$minute" < "30" ) ) ]]; then action="skip"
-            elif [[ "$weekday" == "1" && "$hour" == "22" ]]; then action="schedule"
-            elif [[ "$weekday" == "4" && "$hour" == "15" ]]; then action="auto-register"
-            elif [[ "$weekday" == "1" && "$hour" == "16" ]]; then action="reminders"
-            else action="schedule"
-            fi
-          fi
-          echo "Selected job: $action"
-          echo "action=$action" >> "$GITHUB_OUTPUT"
+          echo "Selected job: $REQUESTED_ACTION"
+          echo "action=$REQUESTED_ACTION" >> "$GITHUB_OUTPUT"
 
       - name: Run La Sobremesa automation
         if: steps.config.outputs.configured == 'true' && steps.slot.outputs.action != 'skip'
@@ -123,8 +104,21 @@ jobs:
 
           failed=0
           case "$ACTION" in
+            tick)
+              result="$(curl --silent --show-error --fail-with-body --retry 3 --retry-delay 30 --retry-all-errors --max-time 120 \
+                --request POST \
+                --header "$auth_header" \
+                --header "Content-Type: application/json" \
+                --data '{"source":"github"}' \
+                "$base_url/api/zoom/tick")"
+              echo "$result"
+              if ! jq -e '.ok == true' <<< "$result" >/dev/null; then
+                echo "::error::The tick reported errors; see .errors above."
+                failed=1
+              fi
+              ;;
             schedule)
-              # Monday night: the 8 PM meeting is over, create the next one with a new link.
+              # Create (or confirm) the meeting for the coming Monday.
               schedule_json="$(ensure_meeting)"
               echo "$schedule_json"
               echo "Next meeting: $(printf '%s' "$schedule_json" | jq -r '.occurrence.occurrenceDate') (created=$(printf '%s' "$schedule_json" | jq -r '.created'))"

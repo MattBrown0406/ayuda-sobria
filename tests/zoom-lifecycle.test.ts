@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { nextMondayOccurrence } from "../src/lib/zoom/time.ts";
+import { nextMondayOccurrence, weeklyAutomationPlan } from "../src/lib/zoom/time.ts";
 import { createScheduleHandler, scheduleNextMonday } from "../src/lib/zoom/schedule.server.ts";
 import {
   createRegistrationHandler,
@@ -11,12 +11,19 @@ import { createWebhookHandler } from "../src/lib/zoom/webhook.server.ts";
 import {
   autoRegisterRecurring,
   createAutomationHandler,
+  runWeeklyTick,
   sendDueFollowups,
   sendDueReminders,
 } from "../src/lib/zoom/automation.server.ts";
 import { assertAdminRoleResult } from "../src/lib/zoom/admin-auth.ts";
 import { membershipAllowsRecordingAccess } from "../src/lib/zoom/recording-access.ts";
-import { endpointValidationToken, zoomWebhookSignature } from "../src/lib/zoom/security.ts";
+import {
+  endpointValidationToken,
+  optOutToken,
+  verifyOptOutToken,
+  zoomWebhookSignature,
+} from "../src/lib/zoom/security.ts";
+import { parseParticipantEvent } from "../src/lib/zoom/webhook.server.ts";
 import { isTuesdayReportHour } from "../src/lib/zoom/weekly-report.server.ts";
 import { AYUDA_ZOOM_SERIES_KEY, AYUDA_ZOOM_TOPIC } from "../src/lib/zoom/types.ts";
 import { createZoomClient } from "../src/lib/zoom/client.server.ts";
@@ -682,8 +689,8 @@ test("migration defaults recordings private and architecture explicitly preserve
     ),
     "utf8",
   );
-  const workflow = fs.readFileSync(
-    new URL("../.github/workflows/ayuda-zoom-automation.yml", import.meta.url),
+  const cronMigration = fs.readFileSync(
+    new URL("../supabase/migrations/20261009220000_la_sobremesa_weekly_cron.sql", import.meta.url),
     "utf8",
   );
   const report = fs.readFileSync(
@@ -703,22 +710,14 @@ test("migration defaults recordings private and architecture explicitly preserve
     hardeningMigration,
     /complete_zoom_webhook_event\(_series_key text, _event_id text, _lease_id uuid\)/,
   );
-  // Monday 10 PM Pacific (schedule), Thursday 3 PM (auto-register), Monday 4 PM (reminders),
-  // each listed for PDT and PST because GitHub cron is UTC-only.
-  for (const cron of [
-    "30 5 * * 2",
-    "30 6 * * 2",
-    "5 22 * * 4",
-    "5 23 * * 4",
-    "5 23 * * 1",
-    "5 0 * * 2",
-  ]) {
-    assert.ok(workflow.includes(`- cron: "${cron}"`), `workflow schedules ${cron}`);
-  }
-  assert.match(workflow, /TZ=America\/Los_Angeles/);
-  assert.match(workflow, /\/api\/zoom\/schedule/);
-  assert.match(workflow, /auto-register/);
-  assert.match(workflow, /"action":"reminders"/);
+  // The database cron ticks every 15 minutes; the server decides what is due in Pacific time.
+  assert.match(cronMigration, /'la-sobremesa-weekly-tick',\s*'\*\/15 \* \* \* \*'/);
+  assert.match(cronMigration, /https:\/\/ayudasobria\.com\/api\/zoom\/tick/);
+  assert.match(cronMigration, /timeout_milliseconds/);
+  assert.match(
+    cronMigration,
+    /REVOKE ALL ON TABLE public\.zoom_automation_state FROM PUBLIC, anon, authenticated/,
+  );
   assert.match(report, /7:00 PM/);
   assert.match(report, /8:00 PM/);
   assert.notEqual(AYUDA_ZOOM_SERIES_KEY, "soberhelpline_family_squares_en_7pm");
@@ -782,4 +781,145 @@ test("provider success followed by database failure recovers the same meeting", 
   const result = await scheduleNextMonday({ now, store, zoom });
   assert.equal(result.recovered, true);
   assert.equal(zoom.meetings.length, 1);
+});
+
+test("weekly plan: Monday 10 PM Pacific creates next week's link, 8–10 PM holds, DST-aware", () => {
+  // 2026-10-12 is a Monday in PDT (UTC-7); 2026-11-09 is a Monday in PST (UTC-8).
+  const at = (iso: string) => weeklyAutomationPlan(new Date(iso));
+  assert.equal(at("2026-10-13T03:30:00Z").schedule, false); // Mon 8:30 PM PDT
+  assert.equal(at("2026-10-13T04:45:00Z").schedule, false); // Mon 9:45 PM PDT
+  assert.equal(at("2026-10-13T05:00:00Z").schedule, true); // Mon 10:00 PM PDT
+  assert.equal(at("2026-11-10T05:00:00Z").schedule, false); // Mon 9:00 PM PST
+  assert.equal(at("2026-11-10T06:00:00Z").schedule, true); // Mon 10:00 PM PST
+  // Thursday 3 PM onward, once an hour, until Monday's start.
+  assert.equal(at("2026-10-15T21:00:00Z").autoRegister, false); // Thu 2 PM PDT
+  assert.equal(at("2026-10-15T22:00:00Z").autoRegister, true); // Thu 3 PM PDT
+  assert.equal(at("2026-10-15T22:15:00Z").autoRegister, false); // Thu 3:15 PM PDT
+  assert.equal(at("2026-10-12T23:00:00Z").autoRegister, true); // Mon 4 PM PDT
+  assert.equal(at("2026-10-13T03:00:00Z").autoRegister, false); // Mon 8 PM PDT
+  assert.equal(at("2026-10-14T00:30:00Z").autoRegister, false); // Tue 5:30 PM PDT
+  // Reminders Monday 4–8 PM; report Tuesday 10 AM.
+  assert.equal(at("2026-10-12T22:45:00Z").reminders, false); // Mon 3:45 PM PDT
+  assert.equal(at("2026-10-12T23:00:00Z").reminders, true); // Mon 4 PM PDT
+  assert.equal(at("2026-10-13T02:45:00Z").reminders, true); // Mon 7:45 PM PDT
+  assert.equal(at("2026-10-13T03:00:00Z").reminders, false); // Mon 8 PM PDT
+  assert.equal(at("2026-10-13T17:15:00Z").weeklyReport, true); // Tue 10:15 AM PDT
+  assert.equal(at("2026-11-10T18:00:00Z").weeklyReport, true); // Tue 10 AM PST
+});
+
+class TickStore extends MemoryAutomationStore implements ScheduleStore {
+  schedule = new MemoryScheduleStore();
+  claimOccurrence(seriesKey: string, date: string, startsAt: string) {
+    return this.schedule.claimOccurrence(seriesKey, date, startsAt);
+  }
+  completeOccurrence(id: string, meeting: { id: string; joinUrl: string }) {
+    return this.schedule.completeOccurrence(id, meeting);
+  }
+  failOccurrence(id: string) {
+    return this.schedule.failOccurrence(id);
+  }
+  async getReadyOccurrence(id: string) {
+    return [...this.schedule.rows.values()].find((row) => row.id === id) ?? null;
+  }
+}
+
+test("tick at Monday 10 PM creates next Monday's meeting once; Thursday registers subscribers", async () => {
+  const store = new TickStore();
+  const zoom = zoomMock();
+  const sent: string[] = [];
+  const mailer: RegistrationMailer = {
+    async sendConfirmation(input) {
+      sent.push(`confirm:${input.registration.email}`);
+    },
+    async sendReminder(input) {
+      sent.push(`remind:${input.email}`);
+    },
+    async sendFollowup(input) {
+      sent.push(`followup:${input.email}`);
+    },
+  };
+  // Monday 2026-10-12 9:00 PM PDT: tonight's meeting is running, nothing is created.
+  const held = await runWeeklyTick({ now: new Date("2026-10-13T04:00:00Z"), store, zoom, mailer });
+  assert.equal(held.meeting, undefined);
+  assert.equal(zoom.meetings.length, 0);
+  // 10:00 PM PDT: next Monday (Oct 19, 8 PM PDT = Oct 20 03:00Z) gets a new meeting.
+  const created = await runWeeklyTick({
+    now: new Date("2026-10-13T05:00:00Z"),
+    store,
+    zoom,
+    mailer,
+  });
+  assert.equal(created.ok, true);
+  assert.deepEqual(created.meeting, {
+    occurrenceDate: "2026-10-19",
+    startsAt: "2026-10-20T03:00:00.000Z",
+    created: true,
+    recovered: false,
+  });
+  // Later ticks confirm it without creating another.
+  const again = await runWeeklyTick({ now: new Date("2026-10-14T18:00:00Z"), store, zoom, mailer });
+  assert.equal(again.meeting?.created, false);
+  assert.equal(zoom.meetings.length, 1);
+  assert.equal(again.autoRegister, undefined);
+  // Thursday 3 PM PDT: weekly auto-registration emails the subscriber their link.
+  const thursday = await runWeeklyTick({
+    now: new Date("2026-10-15T22:00:00Z"),
+    store,
+    zoom,
+    mailer,
+  });
+  assert.equal(thursday.autoRegister?.registered, 1);
+  assert.deepEqual(zoom.registrations, ["meeting-1:ana@example.com"]);
+  assert.ok(sent.includes("confirm:ana@example.com"));
+});
+
+test("tick reports a Zoom failure and still runs the email steps", async () => {
+  const store = new TickStore();
+  const zoom = zoomMock();
+  zoom.createMeeting = async () => {
+    throw new Error("Zoom is not configured");
+  };
+  const followups: string[] = [];
+  const summary = await runWeeklyTick({
+    now: new Date("2026-10-13T05:00:00Z"),
+    store,
+    zoom,
+    mailer: {
+      async sendConfirmation() {},
+      async sendReminder() {},
+      async sendFollowup(input) {
+        followups.push(input.queueId);
+      },
+    },
+  });
+  assert.equal(summary.ok, false);
+  assert.match(summary.errors[0], /schedule: Zoom is not configured/);
+  assert.deepEqual(followups, ["q-1"]);
+});
+
+test("opt-out links are bound to the address", () => {
+  const token = optOutToken("secret", "Ana@Example.com ");
+  assert.equal(verifyOptOutToken("secret", "ana@example.com", token), true);
+  assert.equal(verifyOptOutToken("secret", "eva@example.com", token), false);
+  assert.equal(verifyOptOutToken("other", "ana@example.com", token), false);
+  assert.equal(verifyOptOutToken("", "ana@example.com", token), false);
+});
+
+test("participant_left without join_time parses (Zoom omits it on leave events)", () => {
+  const event = parseParticipantEvent(
+    {
+      object: {
+        id: "123",
+        participant: {
+          user_id: "u1",
+          user_name: "Ana",
+          email: "ana@example.com",
+          leave_time: "2026-10-20T04:10:00Z",
+        },
+      },
+    },
+    true,
+  );
+  assert.equal(event.leftAt, "2026-10-20T04:10:00Z");
+  assert.equal(event.participantKey, "u1");
 });

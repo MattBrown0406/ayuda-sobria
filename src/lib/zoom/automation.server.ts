@@ -1,6 +1,8 @@
 import { verifyAutomationAuthorization } from "./security.ts";
-import type { AutomationStore, RegistrationMailer, ZoomApi } from "./types.ts";
+import type { AutomationStore, RegistrationMailer, ScheduleStore, ZoomApi } from "./types.ts";
 import { registerForOccurrence } from "./registration.server.ts";
+import { scheduleNextMonday } from "./schedule.server.ts";
+import { weeklyAutomationPlan, type WeeklyAutomationPlan } from "./time.ts";
 
 export async function autoRegisterRecurring(input: {
   occurrenceId: string;
@@ -155,4 +157,115 @@ export function createAutomationHandler(deps: {
     }
     return Response.json({ error: "Unsupported action" }, { status: 400 });
   };
+}
+
+export interface WeeklyTickSummary {
+  ranAt: string;
+  ok: boolean;
+  plan: WeeklyAutomationPlan;
+  meeting?: { occurrenceDate: string; startsAt: string; created: boolean; recovered: boolean };
+  autoRegister?: Awaited<ReturnType<typeof autoRegisterRecurring>>;
+  reminders?: Awaited<ReturnType<typeof sendDueReminders>>;
+  followups?: Awaited<ReturnType<typeof sendDueFollowups>>;
+  weeklyReport?: unknown;
+  errors: string[];
+}
+
+function errorText(step: string, error: unknown) {
+  return `${step}: ${error instanceof Error ? error.message.slice(0, 300) : String(error)}`;
+}
+
+/**
+ * One pass of the weekly La Sobremesa lifecycle. The database cron calls this every
+ * 15 minutes; weeklyAutomationPlan decides what is due at this Pacific time. Each
+ * step is idempotent and isolated, so one failing step never starves the others and
+ * the next tick retries whatever failed.
+ */
+export async function runWeeklyTick(input: {
+  now: Date;
+  store: ScheduleStore & AutomationStore;
+  zoom: ZoomApi;
+  mailer?: RegistrationMailer;
+  weeklyReport?: (now: Date) => Promise<unknown>;
+}): Promise<WeeklyTickSummary> {
+  const plan = weeklyAutomationPlan(input.now);
+  const summary: WeeklyTickSummary = {
+    ranAt: input.now.toISOString(),
+    ok: true,
+    plan,
+    errors: [],
+  };
+  let occurrenceId: string | null = null;
+  if (plan.schedule) {
+    try {
+      const result = await scheduleNextMonday({
+        now: input.now,
+        store: input.store,
+        zoom: input.zoom,
+      });
+      occurrenceId = result.occurrence.id;
+      summary.meeting = {
+        occurrenceDate: result.occurrence.occurrenceDate,
+        startsAt: result.occurrence.startsAt,
+        created: result.created,
+        recovered: result.recovered,
+      };
+    } catch (error) {
+      summary.errors.push(errorText("schedule", error));
+    }
+  }
+  if (plan.autoRegister && occurrenceId) {
+    try {
+      summary.autoRegister = await autoRegisterRecurring({
+        occurrenceId,
+        store: input.store,
+        zoom: input.zoom,
+        mailer: input.mailer,
+      });
+      if (summary.autoRegister.failed) {
+        summary.errors.push(`auto-register: ${summary.autoRegister.failed} failed`);
+      }
+    } catch (error) {
+      summary.errors.push(errorText("auto-register", error));
+    }
+  }
+  if (input.mailer) {
+    if (plan.reminders) {
+      try {
+        summary.reminders = await sendDueReminders({
+          now: input.now,
+          store: input.store,
+          mailer: input.mailer,
+        });
+        if (summary.reminders.failed) {
+          summary.errors.push(`reminders: ${summary.reminders.failed} failed`);
+        }
+      } catch (error) {
+        summary.errors.push(errorText("reminders", error));
+      }
+    }
+    try {
+      summary.followups = await sendDueFollowups({
+        now: input.now,
+        store: input.store,
+        mailer: input.mailer,
+      });
+      if (summary.followups.failed) {
+        summary.errors.push(`followups: ${summary.followups.failed} failed`);
+      }
+    } catch (error) {
+      summary.errors.push(errorText("followups", error));
+    }
+  } else if (plan.reminders || plan.autoRegister) {
+    summary.errors.push("email: RESEND_API_KEY / LOVABLE_API_KEY are not configured");
+  }
+  if (plan.weeklyReport && input.weeklyReport) {
+    try {
+      summary.weeklyReport = await input.weeklyReport(input.now);
+    } catch (error) {
+      summary.errors.push(errorText("weekly-report", error));
+    }
+  }
+  summary.ok = summary.errors.length === 0;
+  return summary;
 }

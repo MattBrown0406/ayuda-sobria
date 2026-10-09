@@ -84,7 +84,13 @@ function SuccessPage() {
           </>
         )}
         {status === "pending" && (
-          <p>Tu suscripción se está procesando. Recibirás un correo de confirmación en breve.</p>
+          <p>
+            PayPal todavía está procesando tu suscripción. En unos minutos aparecerá como activa en{" "}
+            <Link to="/membresia" className="text-primary underline">
+              tu membresía
+            </Link>
+            ; no hace falta suscribirte de nuevo.
+          </p>
         )}
         {status === "error" && <p className="text-destructive">{msg}</p>}
       </div>

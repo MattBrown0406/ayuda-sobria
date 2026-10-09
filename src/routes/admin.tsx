@@ -17,6 +17,7 @@ import {
   adminCheckAccess,
   adminDeleteRegistration,
   adminGetOverview,
+  adminScheduleNextMeeting,
   adminUpdateZoomRecording,
 } from "@/lib/admin.functions";
 
@@ -92,6 +93,7 @@ function AdminPage() {
   const load = useServerFn(adminGetOverview);
   const del = useServerFn(adminDeleteRegistration);
   const updateRecording = useServerFn(adminUpdateZoomRecording);
+  const scheduleNext = useServerFn(adminScheduleNextMeeting);
 
   const [status, setStatus] = useState<PageStatus>("loading");
   const [data, setData] = useState<Overview | null>(null);
@@ -290,6 +292,15 @@ function AdminPage() {
               occurrences={data.occurrences}
               registrations={data.registrations}
               attendance={data.attendance}
+              automation={data.automation}
+              onScheduleNow={async () => {
+                const result = await scheduleNext();
+                if (!result.ok) return `Not created: ${result.error}`;
+                await refresh({ preserveStatus: true });
+                return result.created
+                  ? `Created the meeting for ${result.occurrenceDate}.`
+                  : `The meeting for ${result.occurrenceDate} already exists (${result.status}).`;
+              }}
             />
           </TabsContent>
 

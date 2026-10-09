@@ -163,14 +163,89 @@ function RegistrantCard({
   );
 }
 
+interface AutomationStatus {
+  last_tick_at: string | null;
+  last_tick_ok: boolean | null;
+  last_error: string | null;
+  last_success_at: string | null;
+}
+
+function AutomationHealth({
+  automation,
+  onScheduleNow,
+}: {
+  automation: AutomationStatus | null;
+  onScheduleNow?: () => Promise<string>;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  // The database cron ticks every 15 minutes; anything older means it isn't running.
+  const stale =
+    !automation?.last_tick_at || Date.now() - Date.parse(automation.last_tick_at) > 45 * 60 * 1000;
+  return (
+    <div className="space-y-2 rounded-md border border-border p-3 text-sm">
+      {stale ? (
+        <p className="text-destructive">
+          ⚠️ The automatic scheduler has not run
+          {automation?.last_tick_at
+            ? ` since ${formatDateTime(automation.last_tick_at)} Pacific`
+            : " yet"}
+          . It runs every 15 minutes once the database migration
+          20261009220000_la_sobremesa_weekly_cron is applied and the site is published.
+        </p>
+      ) : automation?.last_tick_ok ? (
+        <p className="text-muted-foreground">
+          ✅ Scheduler healthy — last run {formatDateTime(automation.last_tick_at)} Pacific.
+        </p>
+      ) : (
+        <p className="text-destructive">
+          ⚠️ Last scheduler run ({formatDateTime(automation?.last_tick_at ?? null)} Pacific) had
+          errors:
+          <span className="mt-1 block whitespace-pre-wrap font-mono text-xs">
+            {automation?.last_error}
+          </span>
+        </p>
+      )}
+      {onScheduleNow && (
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true);
+              setMessage(null);
+              try {
+                setMessage(await onScheduleNow());
+              } catch (error) {
+                setMessage(error instanceof Error ? error.message : "Scheduling failed");
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            {busy ? "Creating…" : "Create next Monday's meeting now"}
+          </Button>
+          {message && <span className="text-xs text-muted-foreground">{message}</span>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function ZoomMeetingPanel({
   occurrences,
   registrations,
   attendance,
+  automation = null,
+  onScheduleNow,
 }: {
   occurrences: Occurrence[];
   registrations: Registration[];
   attendance: Attendance[];
+  automation?: AutomationStatus | null;
+  /** Creates (or confirms) next Monday's meeting; resolves to a status message. */
+  onScheduleNow?: () => Promise<string>;
 }) {
   const { upcoming, upcomingIsPast } = useMemo(() => {
     const now = Date.now();
@@ -275,10 +350,12 @@ export function ZoomMeetingPanel({
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-foreground">Meeting Settings</h3>
         <p className="text-sm text-muted-foreground">
-          The weekly La Sobremesa meeting is created automatically in Zoom every Monday at 8:00 PM
-          Pacific. Registrants receive their own personal join link by email, so there is no shared
-          link or passcode to maintain by hand.
+          Every Monday at 10:00 PM Pacific, after that night&apos;s 8:00 PM meeting, next
+          Monday&apos;s La Sobremesa meeting is created automatically in the soberhelpline.com Zoom
+          account with a new link. Registrants receive their own personal join link by email, so
+          there is no shared link or passcode to maintain by hand.
         </p>
+        <AutomationHealth automation={automation} onScheduleNow={onScheduleNow} />
 
         {upcoming ? (
           <Card>
@@ -342,8 +419,8 @@ export function ZoomMeetingPanel({
           </Card>
         ) : (
           <p className="text-sm text-destructive">
-            ⚠️ No meeting has been scheduled yet. Run the weekly scheduler to create the next Monday
-            meeting.
+            ⚠️ No meeting has been scheduled yet. Use &ldquo;Create next Monday&apos;s meeting
+            now&rdquo; above, or wait for the next scheduler run.
           </p>
         )}
       </div>

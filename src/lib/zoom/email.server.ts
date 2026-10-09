@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+import { optOutToken } from "./security.ts";
 import { meetingCalendar, meetingLabel } from "./time.ts";
 import type { ConfirmationDelivery, RegistrationInput, RegistrationMailer } from "./types.ts";
 
@@ -34,6 +36,19 @@ function appStoreBlock() {
           <p style="margin:0 0 6px"><strong>La app Sober Helpline — en inglés y en español</strong></p>
           <p style="margin:0 0 12px">Practica conversaciones difíciles, entra a las reuniones y mira las grabaciones desde tu teléfono. La app funciona en inglés y en español.</p>
           <p style="margin:0 0 4px"><a href="${APP_STORE_URL}" style="color:#166534;font-weight:bold">Descargar Sober Helpline en el App Store</a></p>`;
+}
+
+/** Link that stops weekly auto-registration (and the emails that come with it). */
+export function optOutUrl(secret: string | undefined, email: string): string | undefined {
+  if (!secret) return undefined;
+  const params = new URLSearchParams({ correo: email.trim().toLowerCase() });
+  params.set("t", optOutToken(secret, email));
+  return `https://ayudasobria.com/baja?${params}`;
+}
+
+function optOutBlock(url: string | undefined) {
+  if (!url) return "";
+  return `<p style="font-size:12px;color:#6b7280;margin-top:24px">¿Ya no quieres recibir tu enlace cada semana? <a href="${escapeHtml(url)}" style="color:#6b7280">Cancela el registro automático</a>.</p>`;
 }
 
 function signature() {
@@ -73,6 +88,8 @@ interface MailerOptions {
   lovableApiKey: string;
   from: string;
   adminTo: string;
+  /** Signs opt-out links; without it emails carry no opt-out link. */
+  optOutSecret?: string;
   fetchImpl?: typeof fetch;
 }
 
@@ -97,7 +114,7 @@ async function sendGatewayEmail(
   if (!response.ok) throw new Error(`Email provider failed (${response.status})`);
 }
 
-export function renderConfirmationEmail(input: ConfirmationDelivery) {
+export function renderConfirmationEmail(input: ConfirmationDelivery, unsubscribeUrl?: string) {
   const safeName = escapeHtml(input.registration.fullName);
   const safeJoinUrl = escapeHtml(input.joinUrl);
   const meetingDate = escapeHtml(
@@ -123,6 +140,7 @@ export function renderConfirmationEmail(input: ConfirmationDelivery) {
           <p>¿Necesitas ayuda para entrar? Llama al <strong>${SUPPORT_PHONE}</strong>.</p>
           ${appStoreBlock()}
           ${signature()}
+          ${input.registration.autoRegister ? optOutBlock(unsubscribeUrl) : ""}
         </div>`,
   };
 }
@@ -132,6 +150,7 @@ export function renderReminderEmail(input: {
   joinUrl: string;
   startsAt: string;
   preferredTimezone?: string;
+  unsubscribeUrl?: string;
 }) {
   const safeName = escapeHtml(input.fullName);
   const safeJoinUrl = escapeHtml(input.joinUrl);
@@ -145,6 +164,7 @@ export function renderReminderEmail(input: {
           <p>Con conexión lenta, apaga la cámara y usa solo audio. Cierra otras aplicaciones. Si se corta, vuelve a abrir tu enlace personal. El acceso telefónico solo está disponible si aparece en tu invitación; pueden aplicarse cargos.</p>
           <p style="font-size:13px;color:#6b7280">Tu enlace es personal para esta reunión. Si necesitas ayuda, llama al ${SUPPORT_PHONE}.</p>
           <p style="margin-top:24px">Te espero en la reunión.<br>Matt Brown<br>AyudaSobria</p>
+          ${optOutBlock(input.unsubscribeUrl)}
         </div>`,
   };
 }
@@ -152,7 +172,10 @@ export function renderReminderEmail(input: {
 export function createRegistrationMailer(options: MailerOptions): RegistrationMailer {
   return {
     async sendConfirmation(input) {
-      const email = renderConfirmationEmail(input);
+      const email = renderConfirmationEmail(
+        input,
+        optOutUrl(options.optOutSecret, input.registration.email),
+      );
       await sendGatewayEmail(
         options,
         {
@@ -198,12 +221,44 @@ export function createRegistrationMailer(options: MailerOptions): RegistrationMa
       }
     },
 
+    async sendAdminUpdate(input) {
+      // Same answers resent (a double click) share one idempotency key.
+      const fingerprint = createHash("sha256")
+        .update(
+          JSON.stringify([
+            input.registration.question,
+            input.registration.situation,
+            input.registration.requestFollowUp,
+            input.registration.preferredContactDate,
+            input.registration.preferredContactTime,
+            input.registration.autoRegister,
+          ]),
+        )
+        .digest("hex")
+        .slice(0, 16);
+      await sendGatewayEmail(
+        options,
+        {
+          to: [options.adminTo],
+          reply_to: input.registration.email,
+          subject: `La Sobremesa — nuevos datos de ${input.registration.fullName} (ya registrado/a)`,
+          html: `<div style="${WRAPPER_STYLE}"><p>Esta persona ya estaba registrada para esta reunión y volvió a enviar el formulario:</p>${adminDetailRows(
+            input.registration,
+            input.occurrence.occurrenceDate,
+            input.registrationId,
+          )}</div>`,
+        },
+        `zoom-admin-update-${input.registrationId}-${fingerprint}`,
+      );
+    },
+
     async sendReminder(input) {
       const email = renderReminderEmail({
         fullName: input.fullName,
         joinUrl: input.joinUrl,
         startsAt: input.occurrence.startsAt,
         preferredTimezone: input.preferredTimezone,
+        unsubscribeUrl: optOutUrl(options.optOutSecret, input.email),
       });
       await sendGatewayEmail(
         options,
@@ -240,7 +295,7 @@ export function createRegistrationMailer(options: MailerOptions): RegistrationMa
         {
           to: [input.email],
           subject: content.subject,
-          html: `<div style="${WRAPPER_STYLE}"><p>Hola ${safeName},</p><p>${content.copy}</p><p style="text-align:center;margin:28px 0"><a href="${content.url}" style="display:inline-block;padding:13px 22px;background:#166534;color:white;text-decoration:none;border-radius:8px;font-weight:bold">${content.label}</a></p><p>Con respeto,<br>Matt Brown<br>AyudaSobria</p><p style="font-size:12px;color:#6b7280">Ayuda: ${SUPPORT_PHONE}</p></div>`,
+          html: `<div style="${WRAPPER_STYLE}"><p>Hola ${safeName},</p><p>${content.copy}</p><p style="text-align:center;margin:28px 0"><a href="${content.url}" style="display:inline-block;padding:13px 22px;background:#166534;color:white;text-decoration:none;border-radius:8px;font-weight:bold">${content.label}</a></p><p>Con respeto,<br>Matt Brown<br>AyudaSobria</p><p style="font-size:12px;color:#6b7280">Ayuda: ${SUPPORT_PHONE}</p>${optOutBlock(optOutUrl(options.optOutSecret, input.email))}</div>`,
         },
         `zoom-followup-${input.queueId}`,
       );
@@ -259,6 +314,7 @@ export function registrationMailerFromEnv(
     lovableApiKey,
     from: process.env.REGISTRATION_FROM_EMAIL ?? "AyudaSobria <registro@ayudasobria.com>",
     adminTo: process.env.REGISTRATION_TO_EMAIL ?? "matt@soberhelpline.com",
+    optOutSecret: process.env.ZOOM_AUTOMATION_SECRET,
     fetchImpl,
   });
 }

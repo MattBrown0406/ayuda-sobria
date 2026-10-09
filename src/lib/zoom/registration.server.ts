@@ -150,6 +150,29 @@ export async function registerForOccurrence(input: {
           store: input.store,
           mailer: input.mailer,
         });
+      } else if (
+        source === "manual" &&
+        input.mailer?.sendAdminUpdate &&
+        (registrationInput.question ||
+          registrationInput.situation ||
+          registrationInput.requestFollowUp)
+      ) {
+        // Already registered (usually by weekly auto-registration) but wrote to us again:
+        // the database kept the new answers; make sure Matt sees them.
+        try {
+          await input.mailer.sendAdminUpdate({
+            registrationId: claim.value.id,
+            registration: registrationInput,
+            occurrence,
+            joinUrl: claim.value.zoomJoinUrl,
+            source,
+          });
+        } catch (error) {
+          console.error(
+            "Zoom admin update failed",
+            error instanceof Error ? error.message : "unknown error",
+          );
+        }
       }
       return {
         registration: claim.value,

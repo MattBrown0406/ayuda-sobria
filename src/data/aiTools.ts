@@ -1,3 +1,9 @@
+// Null-prototype lookup: "constructor" or "toString" in a URL must 404, not match
+// Object.prototype.
+function slugMap<T>(entries: Iterable<readonly [string, T]>): Record<string, T> {
+  return Object.assign(Object.create(null) as Record<string, T>, Object.fromEntries(entries));
+}
+
 export interface AiTool {
   slug: string;
   title: string;
@@ -36,6 +42,4 @@ export const AI_TOOLS: AiTool[] = [
     blurb: "Traduce niveles de atención, modalidades y señales de alerta a decisiones concretas.",
   },
 ];
-export const AI_TOOL_MAP: Record<string, AiTool> = Object.fromEntries(
-  AI_TOOLS.map((a) => [a.slug, a]),
-);
+export const AI_TOOL_MAP: Record<string, AiTool> = slugMap(AI_TOOLS.map((a) => [a.slug, a]));

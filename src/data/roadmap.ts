@@ -1,3 +1,9 @@
+// Null-prototype lookup: "constructor" or "toString" in a URL must 404, not match
+// Object.prototype.
+function slugMap<T>(entries: Iterable<readonly [string, T]>): Record<string, T> {
+  return Object.assign(Object.create(null) as Record<string, T>, Object.fromEntries(entries));
+}
+
 export interface Step {
   slug: string;
   title: string;
@@ -53,4 +59,4 @@ export const STEPS: Step[] = [
       "En la etapa de tratamiento, la familia necesita orientación distinta. Aquí encontrarás qué hacer, qué decir y qué evitar.",
   },
 ];
-export const STEP_MAP: Record<string, Step> = Object.fromEntries(STEPS.map((s) => [s.slug, s]));
+export const STEP_MAP: Record<string, Step> = slugMap(STEPS.map((s) => [s.slug, s]));

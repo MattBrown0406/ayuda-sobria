@@ -43,6 +43,8 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
     .eq("series_key", AYUDA_ZOOM_SERIES_KEY)
     .in("status", ["ready", "started", "ended"])
     .lte("starts_at", now.toISOString())
+    // Only last night's meeting: if a week was missed, don't re-report an older one.
+    .gte("starts_at", new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString())
     .order("starts_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -53,7 +55,9 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
     client
       .from("meeting_registrations")
       .select("full_name, email, auto_register")
-      .eq("occurrence_id", occurrence.id),
+      .eq("occurrence_id", occurrence.id)
+      // Failed or unfinished Zoom registrations never had a link, so they aren't no-shows.
+      .eq("zoom_registration_status", "registered"),
     client
       .from("zoom_attendance")
       .select("participant_name, participant_email")
@@ -95,13 +99,15 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
     unregisteredAttendees.push(personLabel(row.participant_name, email));
   }
 
-  // Auto-registrants with no attendance in the last 4 weeks (28 days).
+  // Auto-registrants with no attendance in the last 4 weeks (28 days). The weekly job
+  // adds a fresh row every Monday, so judge each person by their oldest row (when they
+  // first signed up) and only count people whose newest row still opts in.
   const cutoff = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000).toISOString();
   const [autoResult, recentAttendanceResult] = await Promise.all([
     client
       .from("meeting_registrations")
-      .select("full_name, email, created_at")
-      .eq("auto_register", true)
+      .select("full_name, email, created_at, auto_register")
+      .not("occurrence_id", "is", null)
       .order("created_at", { ascending: false })
       .limit(5000),
     client.from("zoom_attendance").select("participant_email, joined_at").gte("joined_at", cutoff),
@@ -114,16 +120,28 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
       .map((row) => normalizeEmail(row.participant_email))
       .filter(Boolean),
   );
-  const seenAuto = new Set<string>();
-  const staleAutoRegistrants: string[] = [];
+  const people = new Map<string, { name: unknown; optedIn: boolean; firstSeen: string }>();
   for (const row of autoResult.data ?? []) {
     const email = normalizeEmail(row.email);
-    if (!email || seenAuto.has(email)) continue;
-    seenAuto.add(email);
+    if (!email) continue;
+    const person = people.get(email);
+    // Rows arrive newest first: the first one decides the current opt-in.
+    if (!person) {
+      people.set(email, {
+        name: row.full_name,
+        optedIn: row.auto_register === true,
+        firstSeen: row.created_at,
+      });
+    } else if (Date.parse(row.created_at) < Date.parse(person.firstSeen)) {
+      person.firstSeen = row.created_at;
+    }
+  }
+  const staleAutoRegistrants: string[] = [];
+  for (const [email, person] of people) {
+    if (!person.optedIn || recentAttendees.has(email)) continue;
     // People who signed up inside the window haven't had 4 weeks to attend yet.
-    if (typeof row.created_at === "string" && row.created_at >= cutoff) continue;
-    if (recentAttendees.has(email)) continue;
-    staleAutoRegistrants.push(personLabel(row.full_name, email));
+    if (Date.parse(person.firstSeen) >= Date.parse(cutoff)) continue;
+    staleAutoRegistrants.push(personLabel(person.name, email));
   }
 
   const meetingLabel = new Intl.DateTimeFormat("es-US", {

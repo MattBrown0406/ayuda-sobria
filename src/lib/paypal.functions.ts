@@ -1,28 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
-const PAYPAL_API_BASE =
-  process.env.PAYPAL_MODE === "sandbox"
-    ? "https://api-m.sandbox.paypal.com"
-    : "https://api-m.paypal.com";
-
-async function getAccessToken(): Promise<string> {
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_SECRET_KEY;
-  if (!clientId || !clientSecret) throw new Error("PayPal credentials not configured");
-  const auth = btoa(`${clientId}:${clientSecret}`);
-  const res = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${auth}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: "grant_type=client_credentials",
-  });
-  if (!res.ok) throw new Error(`PayPal auth failed: ${await res.text()}`);
-  const data = (await res.json()) as { access_token: string };
-  return data.access_token;
-}
+import { PAYPAL_API_BASE, getAccessToken, getSubscriptionDetails } from "./paypal.server";
 
 async function createProduct(accessToken: string): Promise<string> {
   const res = await fetch(`${PAYPAL_API_BASE}/v1/catalogs/products`, {
@@ -63,6 +41,30 @@ async function resolveProductId(accessToken: string): Promise<string> {
 }
 
 type PlanType = "monthly" | "annual";
+
+const SITE_ORIGIN = "https://ayudasobria.com";
+
+// PayPal sends the payer back to these URLs, so never take them from the caller as-is:
+// keep the caller's origin only when it is this site (or its Lovable preview / local dev)
+// and always use our own path.
+function trustedReturnUrl(requested: unknown, path: string): string {
+  try {
+    const url = new URL(String(requested));
+    const host = url.hostname;
+    const trusted =
+      host === "ayudasobria.com" ||
+      host === "www.ayudasobria.com" ||
+      host === "localhost" ||
+      host.endsWith(".lovable.app") ||
+      host.endsWith(".lovableproject.com");
+    if (trusted && (url.protocol === "https:" || host === "localhost")) {
+      return `${url.origin}${path}`;
+    }
+  } catch {
+    /* fall through */
+  }
+  return `${SITE_ORIGIN}${path}`;
+}
 
 const PLAN_CONFIG: Record<PlanType, { interval: "MONTH" | "YEAR"; price: string; name: string }> = {
   monthly: { interval: "MONTH", price: "14.99", name: "Family Membership - Monthly" },
@@ -151,30 +153,25 @@ async function createSubscription(
   return { subscriptionId: data.id, approvalUrl: approval?.href ?? "" };
 }
 
-async function getSubscriptionDetails(accessToken: string, subscriptionId: string) {
-  const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/subscriptions/${subscriptionId}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (!res.ok) throw new Error(`PayPal get subscription failed: ${await res.text()}`);
-  return res.json() as Promise<{
-    status: string;
-    start_time?: string;
-    billing_info?: { next_billing_time?: string };
-  }>;
-}
-
 export const createMembershipSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { returnUrl: string; cancelUrl: string; planType?: PlanType }) => input)
   .handler(async ({ data, context }) => {
     const planType: PlanType = data.planType === "annual" ? "annual" : "monthly";
+    // Never open a second PayPal subscription for someone already paying for one: a
+    // pending row may be a paid checkout whose return page never loaded.
+    const { reconcileUserMemberships } = await import("./membership-sync.server");
+    const existing = await reconcileUserMemberships(context.userId);
+    if (existing.some((row) => row.status === "active")) {
+      throw new Error("Ya tienes una membresía activa.");
+    }
     const accessToken = await getAccessToken();
     const planId = await resolvePlanId(accessToken, planType);
     const { subscriptionId, approvalUrl } = await createSubscription(
       accessToken,
       planId,
-      data.returnUrl,
-      data.cancelUrl,
+      trustedReturnUrl(data.returnUrl, "/membresia/exito"),
+      trustedReturnUrl(data.cancelUrl, "/membresia/cancelado"),
     );
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -278,13 +275,8 @@ export const cancelMembershipSubscription = createServerFn({ method: "POST" })
 export const getMyMembership = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
-      .from("memberships")
-      .select("*")
-      .eq("user_id", context.userId)
-      .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
-    const rows = data ?? [];
+    const { reconcileUserMemberships } = await import("./membership-sync.server");
+    const rows = await reconcileUserMemberships(context.userId);
     // A newer abandoned "pending" checkout must not shadow a live membership.
     const active = rows.find((r) => r.status === "active");
     if (active) return active;
@@ -308,14 +300,10 @@ const COACHING_SESSIONS = {
 type SessionType = keyof typeof COACHING_SESSIONS;
 
 async function userHasActiveMembership(userId: string): Promise<boolean> {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { membershipAllowsRecordingAccess } = await import("@/lib/zoom/recording-access");
-  const { data } = await supabaseAdmin
-    .from("memberships")
-    .select("status, access_ends_at")
-    .eq("user_id", userId)
-    .in("status", ["active", "cancelled"]);
-  return membershipAllowsRecordingAccess(data ?? [], new Date().toISOString());
+  const { reconcileUserMemberships } = await import("./membership-sync.server");
+  const rows = await reconcileUserMemberships(userId);
+  return membershipAllowsRecordingAccess(rows, new Date().toISOString());
 }
 
 export const getCoachingPricing = createServerFn({ method: "GET" }).handler(async () => {
@@ -366,8 +354,20 @@ export const createCoachingOrder = createServerFn({ method: "POST" })
     }) => input,
   )
   .handler(async ({ data }) => {
+    if (!Object.hasOwn(COACHING_SESSIONS, data.sessionType)) {
+      throw new Error("Invalid session type");
+    }
     const cfg = COACHING_SESSIONS[data.sessionType];
-    if (!cfg) throw new Error("Invalid session type");
+    const customerEmail = String(data.customerEmail ?? "")
+      .trim()
+      .toLowerCase()
+      .slice(0, 254);
+    const customerName = String(data.customerName ?? "")
+      .trim()
+      .slice(0, 120);
+    if (!customerName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+      throw new Error("Completa tu nombre y un correo válido.");
+    }
 
     // Detect signed-in member for pricing
     let userId: string | null = null;
@@ -409,8 +409,8 @@ export const createCoachingOrder = createServerFn({ method: "POST" })
           locale: "es-ES",
           shipping_preference: "NO_SHIPPING",
           user_action: "PAY_NOW",
-          return_url: data.returnUrl,
-          cancel_url: data.cancelUrl,
+          return_url: trustedReturnUrl(data.returnUrl, "/coaching-pago/exito"),
+          cancel_url: trustedReturnUrl(data.cancelUrl, "/coaching-pago"),
         },
       }),
     });
@@ -425,8 +425,8 @@ export const createCoachingOrder = createServerFn({ method: "POST" })
       session_type: data.sessionType,
       amount: Number(price),
       status: "pending",
-      customer_email: data.customerEmail,
-      customer_name: data.customerName,
+      customer_email: customerEmail,
+      customer_name: customerName,
     });
     if (error) throw new Error(`DB insert failed: ${error.message}`);
 
@@ -434,33 +434,110 @@ export const createCoachingOrder = createServerFn({ method: "POST" })
   });
 
 export const captureCoachingOrder = createServerFn({ method: "POST" })
-  .inputValidator((input: { orderId: string }) => input)
+  .inputValidator((input: { orderId: string }) => {
+    // PayPal order ids are short uppercase alphanumerics. Anything else must never reach
+    // the URL below: "../" segments would point the merchant's token at other endpoints.
+    const orderId = String(input?.orderId ?? "");
+    if (!/^[A-Z0-9]{10,30}$/.test(orderId)) throw new Error("Orden inválida.");
+    return { orderId };
+  })
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Only capture orders this site created.
+    const { data: order, error: orderError } = await supabaseAdmin
+      .from("coaching_orders")
+      .select("id, status, session_type, amount, customer_email, customer_name")
+      .eq("paypal_order_id", data.orderId)
+      .maybeSingle();
+    if (orderError) throw new Error("No pudimos verificar la orden.");
+    if (!order) throw new Error("Orden no encontrada.");
+    if (order.status === "completed") return { success: true };
+
     const accessToken = await getAccessToken();
-    const res = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders/${data.orderId}/capture`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-    });
-    if (!res.ok && res.status !== 422)
-      throw new Error(`PayPal capture failed: ${await res.text()}`);
-    const result = (await res.json()) as {
+    const res = await fetch(
+      `${PAYPAL_API_BASE}/v2/checkout/orders/${encodeURIComponent(data.orderId)}/capture`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      },
+    );
+    const result = (await res.json().catch(() => ({}))) as {
       status?: string;
       details?: Array<{ issue?: string }>;
     };
+    if (!res.ok && res.status !== 422) {
+      console.error("PayPal capture failed", res.status, JSON.stringify(result).slice(0, 500));
+      throw new Error("No pudimos confirmar el pago con PayPal.");
+    }
     // A refresh/re-run of the success page re-captures; PayPal answers 422
     // ORDER_ALREADY_CAPTURED, which is a completed payment, not a failure.
-    const alreadyCaptured =
-      res.status === 422 &&
-      (result.details ?? []).some((d) => d.issue === "ORDER_ALREADY_CAPTURED");
+    const issues = (result.details ?? []).map((d) => d.issue);
+    const alreadyCaptured = res.status === 422 && issues.includes("ORDER_ALREADY_CAPTURED");
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (result.status === "COMPLETED" || alreadyCaptured) {
-      const { error: updateErr } = await supabaseAdmin
+      // Only the request that flips pending → completed sends the emails.
+      const { data: flipped, error: updateErr } = await supabaseAdmin
         .from("coaching_orders")
         .update({ status: "completed", captured_at: new Date().toISOString() })
-        .eq("paypal_order_id", data.orderId);
-      if (updateErr) throw new Error(`DB update failed: ${updateErr.message}`);
+        .eq("id", order.id)
+        .eq("status", "pending")
+        .select("id");
+      if (updateErr) throw new Error("No pudimos guardar el pago. Escríbenos y lo verificamos.");
+      if (flipped?.length) await notifyCoachingPaid(order);
       return { success: true };
     }
-    return { success: false, status: result.status ?? "UNKNOWN" };
+    return {
+      success: false,
+      status: result.status ?? "UNKNOWN",
+      declined: issues.includes("INSTRUMENT_DECLINED"),
+    };
   });
+
+async function notifyCoachingPaid(order: {
+  id: string;
+  session_type: string;
+  amount: number;
+  customer_email: string | null;
+  customer_name: string | null;
+}) {
+  const { sendSiteEmail, escapeHtml, adminEmail } = await import("./site-email.server");
+  const label =
+    order.session_type in COACHING_SESSIONS
+      ? COACHING_SESSIONS[order.session_type as SessionType].label
+      : order.session_type;
+  const name = order.customer_name ?? "";
+  const email = order.customer_email ?? "";
+  const amount = `US$${Number(order.amount).toFixed(2)}`;
+  try {
+    await sendSiteEmail({
+      to: adminEmail(),
+      replyTo: email || undefined,
+      subject: `Coaching pagado — ${name || email} (${amount})`,
+      html: `<p>Nuevo pago de coaching en AyudaSobria. Escribe a la familia para coordinar el horario.</p>
+        <p><strong>Nombre:</strong> ${escapeHtml(name || "—")}<br>
+        <strong>Correo:</strong> ${escapeHtml(email || "—")}<br>
+        <strong>Sesión:</strong> ${escapeHtml(label)}<br>
+        <strong>Monto:</strong> ${amount}<br>
+        <strong>Orden:</strong> ${escapeHtml(order.id)}</p>`,
+      idempotencyKey: `coaching-paid-admin-${order.id}`,
+    });
+  } catch (error) {
+    console.error("Coaching admin email failed", error);
+  }
+  if (!email) return;
+  try {
+    await sendSiteEmail({
+      to: email,
+      subject: "Recibimos tu pago — coaching familiar AyudaSobria",
+      html: `<div style="max-width:600px;font-family:Arial,sans-serif;color:#1f2937;line-height:1.55">
+        <p>Hola ${escapeHtml(name || "")},</p>
+        <p>Gracias. Recibimos tu pago de <strong>${amount}</strong> por <strong>${escapeHtml(label)}</strong>.</p>
+        <p>Matt te escribirá a este correo para coordinar el horario de tu sesión. Si necesitas algo antes, responde a este mensaje o llama al (458) 298-8011.</p>
+        <p>Con respeto,<br>Matt Brown<br>AyudaSobria</p></div>`,
+      replyTo: adminEmail(),
+      idempotencyKey: `coaching-paid-customer-${order.id}`,
+    });
+  } catch (error) {
+    console.error("Coaching customer email failed", error);
+  }
+}

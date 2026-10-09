@@ -32,10 +32,10 @@ export const Route = createFileRoute("/terminos")({
         </p>
         <h2>Cuentas, membresía y pagos</h2>
         <p>
-          Las cuentas, membresías y pagos pueden administrarse mediante el portal seguro de
-          SoberHelpline. Los precios, periodo de prueba, renovación, cancelación y cualquier
-          política de reembolso se muestran antes de confirmar una compra. No compartas tus
-          credenciales.
+          Las membresías y el coaching se pagan con PayPal en este sitio. Los precios, la
+          renovación, la cancelación y cualquier política de reembolso se muestran antes de
+          confirmar una compra. Puedes cancelar tu membresía en cualquier momento desde la página de
+          membresía. No compartas tus credenciales.
         </p>
         <h2>Comunidad y contenido</h2>
         <p>

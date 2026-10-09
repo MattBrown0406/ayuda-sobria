@@ -1,3 +1,9 @@
+// Null-prototype lookup: "constructor" or "toString" in a URL must 404, not match
+// Object.prototype.
+function slugMap<T>(entries: Iterable<readonly [string, T]>): Record<string, T> {
+  return Object.assign(Object.create(null) as Record<string, T>, Object.fromEntries(entries));
+}
+
 // Auto-generated. Spanish topic pages for AyudaSobria.
 export interface Topic {
   slug: string;
@@ -967,4 +973,4 @@ export const TOPICS: Topic[] = [
       "Guía en español para familias sobre por qué la fuerza de voluntad no basta. Aprende qué esperar, qué decir y qué paso concreto puede tomar tu familia esta semana.",
   },
 ];
-export const TOPIC_MAP: Record<string, Topic> = Object.fromEntries(TOPICS.map((t) => [t.slug, t]));
+export const TOPIC_MAP: Record<string, Topic> = slugMap(TOPICS.map((t) => [t.slug, t]));

@@ -82,6 +82,65 @@ export function nextMondayOccurrence(now: Date): { occurrenceDate: string; start
   return { occurrenceDate, startsAt: zonedDateTimeToUtc(occurrenceDate).toISOString() };
 }
 
+/** Monday 10:00 PM Pacific: tonight's meeting is over, so next Monday's link is created. */
+export const ZOOM_CREATE_HOUR = 22;
+
+/** ISO weekday (1 = Monday … 7 = Sunday), hour and minute in Pacific time. */
+export function pacificClock(now: Date): { isoWeekday: number; hour: number; minute: number } {
+  const values: Record<string, string> = {};
+  for (const part of new Intl.DateTimeFormat("en-US", {
+    timeZone: ZOOM_TIMEZONE,
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(now)) {
+    if (part.type !== "literal") values[part.type] = part.value;
+  }
+  const isoWeekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(values.weekday) + 1;
+  if (isoWeekday < 1) throw new Error("Unsupported weekday");
+  return { isoWeekday, hour: Number(values.hour), minute: Number(values.minute) };
+}
+
+export interface WeeklyAutomationPlan {
+  /** Create (or confirm) the meeting nextMondayOccurrence() points at. */
+  schedule: boolean;
+  /** Register everyone who opted into weekly registration and email their link. */
+  autoRegister: boolean;
+  /** Same-day reminders for tonight's registrants. */
+  reminders: boolean;
+  /** Tuesday-morning attendance report for the previous night. */
+  weeklyReport: boolean;
+}
+
+/**
+ * What the every-15-minutes tick should do at this instant (Pacific time):
+ * - Monday 8:00–9:59 PM: nothing. Tonight's meeting is running and its link must stay current.
+ * - Monday from 10:00 PM: create next Monday's meeting with a new link. Every other tick
+ *   confirms it exists, so a missed or failed run is recovered on the next tick.
+ * - Thursday from 3:00 PM until Monday's start: weekly auto-registration, once an hour
+ *   (it is idempotent per person; hourly retries catch failures without hammering Zoom).
+ * - Monday 4:00–7:59 PM: reminders (each registration is reminded once).
+ * - Tuesday 10 AM hour: the weekly report (the email provider dedupes per meeting).
+ */
+export function weeklyAutomationPlan(now: Date): WeeklyAutomationPlan {
+  const { isoWeekday, hour, minute } = pacificClock(now);
+  const monday = isoWeekday === 1;
+  const meetingInProgress = monday && hour >= ZOOM_HOUR && hour < ZOOM_CREATE_HOUR;
+  const registrationWindow =
+    (isoWeekday === 4 && hour >= 15) ||
+    isoWeekday === 5 ||
+    isoWeekday === 6 ||
+    isoWeekday === 7 ||
+    (monday && hour < ZOOM_HOUR);
+  return {
+    schedule: !meetingInProgress,
+    autoRegister: registrationWindow && minute < 15,
+    reminders: monday && hour >= 16 && hour < ZOOM_HOUR,
+    weeklyReport: isoWeekday === 2 && hour === 10,
+  };
+}
+
 export function validTimezone(value: string): boolean {
   try {
     new Intl.DateTimeFormat("en", { timeZone: value }).format();

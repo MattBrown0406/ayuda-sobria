@@ -99,7 +99,8 @@ export function createZoomClient(options: ZoomClientOptions): ZoomApi {
         body: JSON.stringify({
           topic: input.topic,
           type: 2,
-          start_time: input.startTime,
+          // Zoom documents start_time as yyyy-MM-ddTHH:mm:ssZ; drop JavaScript's milliseconds.
+          start_time: new Date(input.startTime).toISOString().replace(/\.\d{3}Z$/, "Z"),
           duration: 75,
           timezone: input.timezone,
           settings: {
@@ -193,10 +194,12 @@ export function zoomClientFromEnv(fetchImpl?: typeof fetch): ZoomApi {
   const accountId = process.env.ZOOM_ACCOUNT_ID;
   const clientId = process.env.ZOOM_CLIENT_ID;
   const clientSecret = process.env.ZOOM_CLIENT_SECRET;
-  const hostUserId = process.env.ZOOM_HOST_USER_ID;
-  if (!accountId || !clientId || !clientSecret || !hostUserId)
+  // The meetings live in the soberhelpline.com Zoom account. "me" is the user that owns
+  // the Server-to-Server OAuth app; set ZOOM_HOST_USER_ID only to host under someone else.
+  const hostUserId = process.env.ZOOM_HOST_USER_ID?.trim() || "me";
+  if (!accountId || !clientId || !clientSecret)
     throw new Error(
-      "Zoom credentials and a dedicated ZOOM_HOST_USER_ID for La Sobremesa are required",
+      "Zoom is not configured: set ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID and ZOOM_CLIENT_SECRET (the soberhelpline.com Server-to-Server OAuth app)",
     );
   return createZoomClient({
     accountId,
@@ -205,4 +208,18 @@ export function zoomClientFromEnv(fetchImpl?: typeof fetch): ZoomApi {
     hostUserId,
     fetchImpl,
   });
+}
+
+/** A ZoomApi whose every call fails with the configuration error, so callers can report it. */
+export function unavailableZoomApi(reason: string): ZoomApi {
+  const fail = async (): Promise<never> => {
+    throw new Error(reason);
+  };
+  return {
+    findMeeting: fail,
+    createMeeting: fail,
+    findRegistrant: fail,
+    addRegistrant: fail,
+    removeRegistrant: fail,
+  };
 }

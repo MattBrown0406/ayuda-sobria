@@ -80,7 +80,10 @@ export function parseParticipantEvent(value: unknown, leaving: boolean): ZoomPar
     text(participant.email) ||
     participantName
   ).slice(0, 255);
-  const joinedAt = text(participant.join_time);
+  // Zoom's participant_left payload carries leave_time but no join_time; the store
+  // closes the open attendance row for this participant instead.
+  const leftAt = leaving ? nullableText(participant.leave_time) : null;
+  const joinedAt = text(participant.join_time) || (leaving ? (leftAt ?? "") : "");
   if (
     !meetingId ||
     !participantName ||
@@ -96,7 +99,7 @@ export function parseParticipantEvent(value: unknown, leaving: boolean): ZoomPar
     participantName,
     participantEmail: nullableText(participant.email),
     joinedAt,
-    leftAt: leaving ? nullableText(participant.leave_time) : null,
+    leftAt,
     durationSeconds:
       leaving && typeof participant.duration === "number"
         ? Math.max(0, Math.round(participant.duration))
@@ -206,7 +209,19 @@ export function createWebhookHandler(deps: {
         await deps.store.ingestRecordingCompleted(parseRecordingCompleted(payload));
       }
       await deps.store.completeWebhookEvent(AYUDA_ZOOM_SERIES_KEY, eventId.slice(0, 255), leaseId);
-    } catch {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      // A payload we can't parse will never parse: acknowledge it so Zoom stops
+      // retrying (and doesn't disable the subscription). Only transient errors retry.
+      if (message.startsWith("INVALID_")) {
+        console.error("Zoom webhook payload ignored", eventType, message);
+        await deps.store.completeWebhookEvent(
+          AYUDA_ZOOM_SERIES_KEY,
+          eventId.slice(0, 255),
+          leaseId,
+        );
+        return Response.json({ ok: true, ignored: true });
+      }
       await deps.store.releaseWebhookEvent(AYUDA_ZOOM_SERIES_KEY, eventId.slice(0, 255), leaseId);
       return Response.json({ error: "Webhook processing failed" }, { status: 500 });
     }

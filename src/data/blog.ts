@@ -1,3 +1,10 @@
+
+// Null-prototype lookup: "constructor" or "toString" in a URL must 404, not match
+// Object.prototype.
+function slugMap<T>(entries: Iterable<readonly [string, T]>): Record<string, T> {
+  return Object.assign(Object.create(null) as Record<string, T>, Object.fromEntries(entries));
+}
+
 // Auto-generated from Spanish rewrites of SoberHelpline blog posts.
 export interface BlogPost {
   slug: string;
@@ -831,4 +838,4 @@ export const BLOG_POSTS: BlogPost[] = [
   }
 ];
 
-export const BLOG_BY_SLUG: Record<string, BlogPost> = Object.fromEntries(BLOG_POSTS.map(p => [p.slug, p]));
+export const BLOG_BY_SLUG: Record<string, BlogPost> = slugMap(BLOG_POSTS.map(p => [p.slug, p]));

@@ -1,5 +1,7 @@
 # Paridad de Zoom — informe de implementación
 
+> **Superseded scheduling (2026-10-09):** the weekly lifecycle is now run by the database cron job `la-sobremesa-weekly-tick` calling `/api/zoom/tick` every 15 minutes; next Monday's meeting is created Monday 10:00 PM Pacific. The GitHub workflow is manual-only. See `docs/lovable-apply-2026-10-09.md`.
+
 ## Alcance y coexistencia
 
 Este cambio porta a AyudaSobria el ciclo de vida semanal de Zoom observado en SoberHelpline, sin copiar ni enlazar el directorio de proveedores. Son dos reuniones distintas:

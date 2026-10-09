@@ -1,3 +1,9 @@
+// Null-prototype lookup: "constructor" or "toString" in a URL must 404, not match
+// Object.prototype.
+function slugMap<T>(entries: Iterable<readonly [string, T]>): Record<string, T> {
+  return Object.assign(Object.create(null) as Record<string, T>, Object.fromEntries(entries));
+}
+
 export interface State {
   slug: string;
   name: string;
@@ -113,7 +119,7 @@ export const STATES: State[] = [
     ],
   },
 ];
-export const STATE_MAP: Record<string, State> = Object.fromEntries(STATES.map((s) => [s.slug, s]));
+export const STATE_MAP: Record<string, State> = slugMap(STATES.map((s) => [s.slug, s]));
 
 export const COUNTRIES: Country[] = [
   { slug: "mexico", name: "México", region: "Central" },
@@ -136,6 +142,4 @@ export const COUNTRIES: Country[] = [
   { slug: "uruguay", name: "Uruguay", region: "Sur" },
   { slug: "venezuela", name: "Venezuela", region: "Sur" },
 ];
-export const COUNTRY_MAP: Record<string, Country> = Object.fromEntries(
-  COUNTRIES.map((c) => [c.slug, c]),
-);
+export const COUNTRY_MAP: Record<string, Country> = slugMap(COUNTRIES.map((c) => [c.slug, c]));
