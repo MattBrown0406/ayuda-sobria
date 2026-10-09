@@ -143,6 +143,16 @@ On https://ayudasobria.com/registro, "Próxima La Sobremesa" should now show the
   education and recordings pages; that ships with the next app build. Coaching booking
   stays on soberhelpline.com, which has Matt's real time slots.
 
+## La Sobremesa in the Sober Helpline app (Spanish)
+
+- People using the app in Spanish see La Sobremesa at 8:00 PM; English users keep
+  The Family Squares at 7:00 PM.
+- "Reservar" in the app calls `https://ayudasobria.com/api/zoom/app-register`. That
+  registers the person and returns their personal link; it uses `AYUDA_SYNC_SECRET`.
+- To make this work, publish AyudaSobria in Lovable and set `AYUDA_SYNC_SECRET`.
+- People who reserve from the app appear in /admin with "País o estado: App Sober
+  Helpline".
+
 ## Please confirm
 
 - **Zoom host: decided.** Matt hosts both Monday meetings himself, using one Zoom host.
