@@ -118,9 +118,8 @@ On https://ayudasobria.com/registro, "Próxima La Sobremesa" should now show the
 
 ## Please confirm
 
-- **Zoom host.** The meetings default to the Zoom app owner, probably the same person who
-  hosts the English 7:00 PM meeting. If the English meeting runs past 8:00 PM, that host
-  must end it before starting La Sobremesa, unless the account allows concurrent meetings.
-  To use a different host, set `ZOOM_HOST_USER_ID` to that user's email.
+Zoom host: decided. Matt hosts both Monday meetings (one Zoom host), and ends the 7:00 PM meeting in time for the 8:00 PM one.
+
+
 - **Membership price.** It is still US$14.99/month and US$149/year here, while
   soberhelpline.com charges US$9.99.
