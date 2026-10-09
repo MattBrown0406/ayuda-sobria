@@ -15,6 +15,13 @@
       "when": 1788487530026,
       "tag": "0001_reconcile_zoom_recordings_and_registration_claim",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791586597333,
+      "tag": "0002_sober_helpline_app_bridge",
+      "breakpoints": true
     }
   ]
 }

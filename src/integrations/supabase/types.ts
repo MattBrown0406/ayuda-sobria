@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_member_access: {
+        Row: {
+          email: string
+          expires_at: string | null
+          source: string
+          synced_at: string
+          tier: string
+        }
+        Insert: {
+          email: string
+          expires_at?: string | null
+          source: string
+          synced_at?: string
+          tier: string
+        }
+        Update: {
+          email?: string
+          expires_at?: string | null
+          source?: string
+          synced_at?: string
+          tier?: string
+        }
+        Relationships: []
+      }
       coaching_orders: {
         Row: {
           amount: number
@@ -557,6 +581,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auth_user_id_by_email: { Args: { p_email: string }; Returns: string }
       claim_zoom_followups: {
         Args: { _limit: number; _now: string }
         Returns: {
