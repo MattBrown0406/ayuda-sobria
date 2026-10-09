@@ -14,30 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      app_member_access: {
-        Row: {
-          email: string
-          expires_at: string | null
-          source: string
-          synced_at: string
-          tier: string
-        }
-        Insert: {
-          email: string
-          expires_at?: string | null
-          source: string
-          synced_at?: string
-          tier: string
-        }
-        Update: {
-          email?: string
-          expires_at?: string | null
-          source?: string
-          synced_at?: string
-          tier?: string
-        }
-        Relationships: []
-      }
       coaching_orders: {
         Row: {
           amount: number
@@ -324,39 +300,6 @@ export type Database = {
           },
         ]
       }
-      zoom_automation_state: {
-        Row: {
-          cron_secret: string
-          id: number
-          last_error: string | null
-          last_success_at: string | null
-          last_tick_at: string | null
-          last_tick_ok: boolean | null
-          last_tick_summary: Json | null
-          updated_at: string
-        }
-        Insert: {
-          cron_secret: string
-          id?: number
-          last_error?: string | null
-          last_success_at?: string | null
-          last_tick_at?: string | null
-          last_tick_ok?: boolean | null
-          last_tick_summary?: Json | null
-          updated_at?: string
-        }
-        Update: {
-          cron_secret?: string
-          id?: number
-          last_error?: string | null
-          last_success_at?: string | null
-          last_tick_at?: string | null
-          last_tick_ok?: boolean | null
-          last_tick_summary?: Json | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       zoom_followup_queue: {
         Row: {
           claimed_at: string | null
@@ -614,7 +557,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      auth_user_id_by_email: { Args: { p_email: string }; Returns: string }
       claim_zoom_followups: {
         Args: { _limit: number; _now: string }
         Returns: {
