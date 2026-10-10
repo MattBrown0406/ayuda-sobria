@@ -1,0 +1,186 @@
+AYUDASOBRIA.COM — SUPABASE MIGRATION (2026-10-10 audit)
+=======================================================
+
+There is 1 new migration:
+
+  supabase/migrations/20261010030000_registration_privacy_and_rate_limits.sql
+
+What it does:
+  1. Registration privacy: if someone types an email that is already registered for
+     a meeting, that person's saved answers, consent and weekly registration are no
+     longer changed. Weekly registration from the form is now turned on only by the
+     "Sí, regístrame cada semana" link emailed to that address.
+  2. Rate limits that work across all servers (new table public_rate_limits and
+     function hit_rate_limit) for the registration form, coaching checkout and app
+     sign-in links.
+  3. The Tuesday weekly report is sent once per meeting (new column
+     zoom_automation_state.last_report_occurrence_id).
+  4. Removes the old trigger that automatically made any new account with
+     matt@soberhelpline.com an admin. Existing admin roles (yours) are NOT changed.
+  5. Removes browser access to the meeting/registration tables (all server code uses
+     the service role; nothing in the site needs this access).
+
+HOW TO APPLY (Lovable)
+----------------------
+Paste this into Lovable chat:
+
+  Apply the migration file supabase/migrations/20261010030000_registration_privacy_and_rate_limits.sql
+  exactly as written, without changing it. Then run read-only checks:
+  confirm the function public.hit_rate_limit exists, the table public.public_rate_limits
+  exists, and the column zoom_automation_state.last_report_occurrence_id exists.
+
+Then publish the site.
+
+Apply it before or together with publishing: the site works without it, but the
+weekly report and the new rate limits only fully work once it is applied.
+
+If Lovable asks for the SQL itself, the full text is below.
+
+#####################################################################
+# FILE: 20261010030000_registration_privacy_and_rate_limits.sql
+#####################################################################
+
+-- =====================================================================
+-- AyudaSobria audit 2026-10-09: registration privacy, rate limits, admin
+-- grant, browser privileges, weekly report once. Re-runnable.
+--
+-- 1. claim_zoom_registration: a public form submission for an email that is
+--    already registered no longer changes that person's stored data, consent
+--    or weekly registration (anyone can type anyone's email). Their new
+--    answers still reach Matt by email. Weekly registration from the form is
+--    turned on only through the signed link in the confirmation email.
+-- 2. public_rate_limits + hit_rate_limit(): rate limits that hold across all
+--    server instances (the in-memory ones only held per Worker isolate).
+-- 3. zoom_automation_state.last_report_occurrence_id: the Tuesday report is
+--    sent once per meeting even though the tick runs every 15 minutes.
+-- 4. The grant_admin_for_matt trigger gave admin to ANY new auth user with
+--    that email, before it was confirmed. Admin is granted by user id only.
+--    (Signing in still requires a confirmed email, so no existing role is touched.)
+-- 5. The browser roles never need these tables (all server code uses the
+--    service role); RLS stays, privileges go.
+-- =====================================================================
+
+-- 1 ------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.claim_zoom_registration(
+  _occurrence_id uuid, _full_name text, _email text, _phone text, _location text,
+  _relationship text, _situation text, _submitted_question text,
+  _auto_register boolean, _request_follow_up boolean,
+  _preferred_contact_date date, _preferred_contact_time text, _preferred_timezone text,
+  _consent_confidentiality boolean, _consent_updates boolean
+) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  row_data public.meeting_registrations;
+  was_claimed boolean := false;
+  is_new boolean := false;
+  meeting_starts timestamptz;
+BEGIN
+  IF NOT _consent_confidentiality THEN
+    RAISE EXCEPTION 'confidentiality consent required';
+  END IF;
+
+  INSERT INTO public.meeting_registrations (
+    occurrence_id, full_name, email, phone, location, relationship, situation,
+    submitted_question, auto_register, request_follow_up, preferred_contact_date,
+    preferred_contact_time, preferred_timezone, consent_confidentiality, consent_updates,
+    zoom_registration_status
+  ) VALUES (
+    _occurrence_id, _full_name, lower(trim(_email)), _phone, _location, _relationship, _situation,
+    _submitted_question, _auto_register, _request_follow_up, _preferred_contact_date,
+    _preferred_contact_time, _preferred_timezone, _consent_confidentiality, _consent_updates,
+    'registering'
+  )
+  ON CONFLICT DO NOTHING
+  RETURNING * INTO row_data;
+
+  IF row_data.id IS NOT NULL THEN
+    was_claimed := true;
+    is_new := true;
+  ELSE
+    -- Already registered for this meeting: leave the stored row as it is.
+    SELECT * INTO row_data FROM public.meeting_registrations
+    WHERE occurrence_id = _occurrence_id AND lower(email) = lower(trim(_email))
+    ORDER BY created_at DESC LIMIT 1
+    FOR UPDATE;
+
+    IF row_data.zoom_registration_status = 'failed'
+       OR (row_data.zoom_registration_status = 'registering'
+           AND row_data.updated_at < now() - interval '15 minutes') THEN
+      UPDATE public.meeting_registrations
+        SET zoom_registration_status = 'registering', zoom_failure_reason = NULL, updated_at = now()
+        WHERE id = row_data.id RETURNING * INTO row_data;
+      was_claimed := true;
+    END IF;
+  END IF;
+
+  IF is_new AND _request_follow_up THEN
+    SELECT starts_at INTO meeting_starts FROM public.zoom_occurrences WHERE id = _occurrence_id;
+    INSERT INTO public.zoom_followup_queue (registration_id, sequence_step, send_after)
+    VALUES (
+      row_data.id, 1,
+      GREATEST(COALESCE(meeting_starts, now()) + interval '1 day', now())
+    )
+    ON CONFLICT (registration_id, sequence_step) DO NOTHING;
+  END IF;
+
+  RETURN jsonb_build_object('claimed', was_claimed, 'value', to_jsonb(row_data));
+END; $$;
+REVOKE ALL ON FUNCTION public.claim_zoom_registration(uuid, text, text, text, text, text, text, text, boolean, boolean, date, text, text, boolean, boolean) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.claim_zoom_registration(uuid, text, text, text, text, text, text, text, boolean, boolean, date, text, text, boolean, boolean) TO service_role;
+
+-- 2 ------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.public_rate_limits (
+  bucket_key text NOT NULL,
+  window_start timestamptz NOT NULL,
+  hits integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (bucket_key, window_start)
+);
+ALTER TABLE public.public_rate_limits ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON TABLE public.public_rate_limits FROM PUBLIC, anon, authenticated;
+GRANT ALL ON TABLE public.public_rate_limits TO service_role;
+
+-- True while bucket_key has had at most p_limit hits in the current fixed window.
+CREATE OR REPLACE FUNCTION public.hit_rate_limit(p_key text, p_limit integer, p_window_seconds integer)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_window timestamptz := to_timestamp(
+    floor(extract(epoch FROM now()) / greatest(p_window_seconds, 1)) * greatest(p_window_seconds, 1)
+  );
+  v_hits integer;
+BEGIN
+  INSERT INTO public.public_rate_limits (bucket_key, window_start, hits)
+  VALUES (left(p_key, 200), v_window, 1)
+  ON CONFLICT (bucket_key, window_start)
+    DO UPDATE SET hits = public.public_rate_limits.hits + 1
+  RETURNING hits INTO v_hits;
+  -- Housekeeping: drop windows older than a day now and then.
+  IF random() < 0.01 THEN
+    DELETE FROM public.public_rate_limits WHERE window_start < now() - interval '1 day';
+  END IF;
+  RETURN v_hits <= p_limit;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.hit_rate_limit(text, integer, integer) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.hit_rate_limit(text, integer, integer) TO service_role;
+
+-- 3 ------------------------------------------------------------------
+ALTER TABLE public.zoom_automation_state
+  ADD COLUMN IF NOT EXISTS last_report_occurrence_id text;
+
+-- 4 ------------------------------------------------------------------
+-- Existing admin roles are left alone (Matt's included); only the automatic grant goes.
+DROP FUNCTION IF EXISTS public.grant_admin_for_matt() CASCADE;
+
+-- 5 ------------------------------------------------------------------
+REVOKE ALL ON TABLE
+  public.meeting_registrations, public.zoom_occurrences, public.zoom_webhook_events,
+  public.zoom_attendance, public.zoom_recordings, public.zoom_recording_files,
+  public.zoom_followup_queue
+FROM anon, authenticated;
+REVOKE ALL ON TABLE public.memberships, public.coaching_orders, public.profiles, public.user_roles FROM anon;
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON TABLE public.user_roles, public.memberships, public.coaching_orders
+FROM authenticated;

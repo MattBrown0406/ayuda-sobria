@@ -33,6 +33,7 @@ import { Route as RecursosRouteImport } from './routes/recursos'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as RespuestasFamiliaRouteImport } from './routes/respuestas-familia'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SemanalRouteImport } from './routes/semanal'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as TerminosRouteImport } from './routes/terminos'
@@ -65,6 +66,7 @@ import { Route as ApiZoomAutomationRouteImport } from './routes/api.zoom.automat
 import { Route as ApiZoomBajaRouteImport } from './routes/api.zoom.baja'
 import { Route as ApiZoomRegisterRouteImport } from './routes/api.zoom.register'
 import { Route as ApiZoomScheduleRouteImport } from './routes/api.zoom.schedule'
+import { Route as ApiZoomSemanalRouteImport } from './routes/api.zoom.semanal'
 import { Route as ApiZoomTickRouteImport } from './routes/api.zoom.tick'
 import { Route as ApiZoomWebhookRouteImport } from './routes/api.zoom.webhook'
 import { Route as ApoyoFamiliarStateIndexRouteImport } from './routes/apoyo-familiar.$state.index'
@@ -189,6 +191,11 @@ const RespuestasFamiliaRoute = RespuestasFamiliaRouteImport.update({
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SemanalRoute = SemanalRouteImport.update({
+  id: '/semanal',
+  path: '/semanal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -351,6 +358,11 @@ const ApiZoomScheduleRoute = ApiZoomScheduleRouteImport.update({
   path: '/api/zoom/schedule',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiZoomSemanalRoute = ApiZoomSemanalRouteImport.update({
+  id: '/api/zoom/semanal',
+  path: '/api/zoom/semanal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiZoomTickRoute = ApiZoomTickRouteImport.update({
   id: '/api/zoom/tick',
   path: '/api/zoom/tick',
@@ -403,6 +415,7 @@ export interface FileRoutesByFullPath {
   '/registro': typeof RegistroRoute
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
+  '/semanal': typeof SemanalRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/terminos': typeof TerminosRoute
@@ -435,6 +448,7 @@ export interface FileRoutesByFullPath {
   '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
   '/api/zoom/schedule': typeof ApiZoomScheduleRoute
+  '/api/zoom/semanal': typeof ApiZoomSemanalRoute
   '/api/zoom/tick': typeof ApiZoomTickRoute
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
@@ -457,6 +471,7 @@ export interface FileRoutesByTo {
   '/proveedores': typeof ProveedoresRoute
   '/registro': typeof RegistroRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/semanal': typeof SemanalRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/terminos': typeof TerminosRoute
@@ -488,6 +503,7 @@ export interface FileRoutesByTo {
   '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
   '/api/zoom/schedule': typeof ApiZoomScheduleRoute
+  '/api/zoom/semanal': typeof ApiZoomSemanalRoute
   '/api/zoom/tick': typeof ApiZoomTickRoute
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
@@ -520,6 +536,7 @@ export interface FileRoutesById {
   '/registro': typeof RegistroRoute
   '/respuestas-familia': typeof RespuestasFamiliaRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
+  '/semanal': typeof SemanalRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/terminos': typeof TerminosRoute
@@ -552,6 +569,7 @@ export interface FileRoutesById {
   '/api/zoom/baja': typeof ApiZoomBajaRoute
   '/api/zoom/register': typeof ApiZoomRegisterRoute
   '/api/zoom/schedule': typeof ApiZoomScheduleRoute
+  '/api/zoom/semanal': typeof ApiZoomSemanalRoute
   '/api/zoom/tick': typeof ApiZoomTickRoute
   '/api/zoom/webhook': typeof ApiZoomWebhookRoute
   '/apoyo-familiar/$state/$city': typeof ApoyoFamiliarStateCityRoute
@@ -585,6 +603,7 @@ export interface FileRouteTypes {
     | '/registro'
     | '/respuestas-familia'
     | '/robots.txt'
+    | '/semanal'
     | '/sitemap.xml'
     | '/sobre-nosotros'
     | '/terminos'
@@ -617,6 +636,7 @@ export interface FileRouteTypes {
     | '/api/zoom/baja'
     | '/api/zoom/register'
     | '/api/zoom/schedule'
+    | '/api/zoom/semanal'
     | '/api/zoom/tick'
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
@@ -639,6 +659,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/registro'
     | '/robots.txt'
+    | '/semanal'
     | '/sitemap.xml'
     | '/sobre-nosotros'
     | '/terminos'
@@ -670,6 +691,7 @@ export interface FileRouteTypes {
     | '/api/zoom/baja'
     | '/api/zoom/register'
     | '/api/zoom/schedule'
+    | '/api/zoom/semanal'
     | '/api/zoom/tick'
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
@@ -701,6 +723,7 @@ export interface FileRouteTypes {
     | '/registro'
     | '/respuestas-familia'
     | '/robots.txt'
+    | '/semanal'
     | '/sitemap.xml'
     | '/sobre-nosotros'
     | '/terminos'
@@ -733,6 +756,7 @@ export interface FileRouteTypes {
     | '/api/zoom/baja'
     | '/api/zoom/register'
     | '/api/zoom/schedule'
+    | '/api/zoom/semanal'
     | '/api/zoom/tick'
     | '/api/zoom/webhook'
     | '/apoyo-familiar/$state/$city'
@@ -765,6 +789,7 @@ export interface RootRouteChildren {
   RegistroRoute: typeof RegistroRoute
   RespuestasFamiliaRoute: typeof RespuestasFamiliaRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SemanalRoute: typeof SemanalRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
   TerminosRoute: typeof TerminosRoute
@@ -778,6 +803,7 @@ export interface RootRouteChildren {
   ApiZoomBajaRoute: typeof ApiZoomBajaRoute
   ApiZoomRegisterRoute: typeof ApiZoomRegisterRoute
   ApiZoomScheduleRoute: typeof ApiZoomScheduleRoute
+  ApiZoomSemanalRoute: typeof ApiZoomSemanalRoute
   ApiZoomTickRoute: typeof ApiZoomTickRoute
   ApiZoomWebhookRoute: typeof ApiZoomWebhookRoute
   ApiPublicHooksWeeklyReportRoute: typeof ApiPublicHooksWeeklyReportRoute
@@ -951,6 +977,13 @@ declare module '@tanstack/react-router' {
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/semanal': {
+      id: '/semanal'
+      path: '/semanal'
+      fullPath: '/semanal'
+      preLoaderRoute: typeof SemanalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -1177,6 +1210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiZoomScheduleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/zoom/semanal': {
+      id: '/api/zoom/semanal'
+      path: '/api/zoom/semanal'
+      fullPath: '/api/zoom/semanal'
+      preLoaderRoute: typeof ApiZoomSemanalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/zoom/tick': {
       id: '/api/zoom/tick'
       path: '/api/zoom/tick'
@@ -1375,6 +1415,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegistroRoute: RegistroRoute,
   RespuestasFamiliaRoute: RespuestasFamiliaRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SemanalRoute: SemanalRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,
   TerminosRoute: TerminosRoute,
@@ -1388,6 +1429,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiZoomBajaRoute: ApiZoomBajaRoute,
   ApiZoomRegisterRoute: ApiZoomRegisterRoute,
   ApiZoomScheduleRoute: ApiZoomScheduleRoute,
+  ApiZoomSemanalRoute: ApiZoomSemanalRoute,
   ApiZoomTickRoute: ApiZoomTickRoute,
   ApiZoomWebhookRoute: ApiZoomWebhookRoute,
   ApiPublicHooksWeeklyReportRoute: ApiPublicHooksWeeklyReportRoute,

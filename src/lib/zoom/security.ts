@@ -51,3 +51,15 @@ export function verifyOptOutToken(secret: string, email: string, token: string):
   if (!secret || !email || !/^[0-9a-f]{64}$/.test(token)) return false;
   return safeEqualUtf8(token, optOutToken(secret, email));
 }
+
+/** Signs the "yes, register me every week" confirmation link for an email address. */
+export function optInToken(secret: string, email: string): string {
+  return createHmac("sha256", secret)
+    .update(`la-sobremesa-optin:v1:${email.trim().toLowerCase()}`)
+    .digest("hex");
+}
+
+export function verifyOptInToken(secret: string, email: string, token: string): boolean {
+  if (!secret || !email || !/^[0-9a-f]{64}$/.test(token)) return false;
+  return safeEqualUtf8(token, optInToken(secret, email));
+}

@@ -45,18 +45,15 @@ type PlanType = "monthly" | "annual";
 const SITE_ORIGIN = "https://ayudasobria.com";
 
 // PayPal sends the payer back to these URLs, so never take them from the caller as-is:
-// keep the caller's origin only when it is this site (or its Lovable preview / local dev)
+// keep the caller's origin only when it is this site (or local dev)
 // and always use our own path.
 function trustedReturnUrl(requested: unknown, path: string): string {
   try {
     const url = new URL(String(requested));
     const host = url.hostname;
+    // Only this site (and local dev): anyone can create a *.lovable.app subdomain.
     const trusted =
-      host === "ayudasobria.com" ||
-      host === "www.ayudasobria.com" ||
-      host === "localhost" ||
-      host.endsWith(".lovable.app") ||
-      host.endsWith(".lovableproject.com");
+      host === "ayudasobria.com" || host === "www.ayudasobria.com" || host === "localhost";
     if (trusted && (url.protocol === "https:" || host === "localhost")) {
       return `${url.origin}${path}`;
     }
@@ -446,6 +443,18 @@ export const createCoachingOrder = createServerFn({ method: "POST" })
       /* guest checkout */
     }
 
+    // Every call creates a PayPal order and a database row: cap per visitor.
+    {
+      const { getRequestHeader } = await import("@tanstack/react-start/server");
+      const { limitKey, withinRateLimit } = await import("./rate-limit.server");
+      const ip =
+        getRequestHeader("cf-connecting-ip") ||
+        getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() ||
+        "unknown";
+      if (!(await withinRateLimit(limitKey("coaching-order-ip", ip), 10, 3600))) {
+        throw new Error("Demasiados intentos. Espera un momento e inténtalo de nuevo.");
+      }
+    }
     const price = isMember ? cfg.memberPrice : cfg.nonMemberPrice;
     const accessToken = await getAccessToken();
     const res = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {

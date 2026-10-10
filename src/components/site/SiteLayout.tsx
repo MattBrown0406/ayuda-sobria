@@ -267,7 +267,6 @@ function Footer() {
         <p className="mx-auto max-w-7xl px-4 text-xs text-muted-foreground">
           <Link
             to="/admin"
-            aria-label="Admin login"
             className="text-muted-foreground no-underline hover:text-muted-foreground focus:outline-none"
           >
             © {new Date().getFullYear()} AyudaSobria.
@@ -343,8 +342,8 @@ export function CTAStrip() {
         <p className="rounded-lg border border-destructive/30 bg-background p-4 text-sm text-muted-foreground">
           <strong className="text-foreground">¿Hay peligro inmediato o sobredosis?</strong> Llama al
           911 o al servicio local de emergencias. En Estados Unidos, llama o envía texto al 988
-          (oprime 2 para español) para una crisis suicida o de salud mental. Estos servicios no
-          sustituyen atención de emergencia.
+          (oprime 2 para español) para una crisis suicida o de salud mental. Nuestro coaching y La
+          Sobremesa no sustituyen la atención de emergencia.
         </p>
       </div>
       <div className="mx-auto grid max-w-7xl gap-4 px-4 pb-10 pt-4 md:grid-cols-3">
@@ -362,7 +361,7 @@ export function CTAStrip() {
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Cuando no puedes esperar
           </p>
-          <p className="mt-1 text-lg font-semibold">Coaching privado desde US$150 (USD)</p>
+          <p className="mt-1 text-lg font-semibold">Coaching privado: US$150 (US$125 miembros)</p>
         </Link>
         <Link
           to="/intervencion"

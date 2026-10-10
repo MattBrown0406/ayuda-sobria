@@ -117,7 +117,9 @@ export function createSupabaseZoomStore(
     },
 
     async getUpcomingReadyOccurrence(now) {
-      const grace = new Date(new Date(now).getTime() - 2 * 60 * 60 * 1000).toISOString();
+      // Tonight's meeting stays "upcoming" only while it runs (75 minutes), even if
+      // Zoom's meeting.ended webhook is late: never register anyone for a past call.
+      const grace = new Date(new Date(now).getTime() - 75 * 60 * 1000).toISOString();
       const { data, error } = await client
         .from("zoom_occurrences")
         .select("*")
@@ -424,20 +426,43 @@ export function createSupabaseZoomStore(
       }
     },
 
-    async listRecurringRegistrants(occurrenceId: string) {
-      const { data, error } = await client
-        .from("meeting_registrations")
-        .select(
-          "full_name,email,phone,location,relationship,preferred_timezone,consent_updates,auto_register,occurrence_id,created_at",
-        )
-        // The newest row per email decides, including this occurrence's: someone who
-        // unticked weekly registration (or used the opt-out link) is not re-added.
-        // registerForOccurrence is a no-op for people already registered this week.
-        // Rows without a meeting come from the old email-only form, which never asked
-        // for weekly registration (the column's default of true is not consent).
-        .not("occurrence_id", "is", null)
-        .order("created_at", { ascending: false })
-        .limit(5000);
+    async listRecurringRegistrants(_occurrenceId: string) {
+      // Opted in = any of the person's rows says so (from the weekly job or the signed
+      // confirm link). The opt-out link clears every row of that email, so a later
+      // registration without the box ticked (form or app) never silently opts out.
+      // Rows without a meeting come from the old email-only form, which never asked
+      // for weekly registration (the column's default of true is not consent).
+      // Paged: PostgREST caps a response at 1,000 rows.
+      const data: Array<
+        Record<string, unknown> & {
+          full_name: string | null;
+          email: string | null;
+          phone: string | null;
+          location: string | null;
+          relationship: string | null;
+          preferred_timezone: string | null;
+          consent_updates: boolean;
+          auto_register: boolean;
+        }
+      > = [];
+      let error: { message: string } | null = null;
+      for (let from = 0; from < 20_000; from += 1000) {
+        const page = await client
+          .from("meeting_registrations")
+          .select(
+            "full_name,email,phone,location,relationship,preferred_timezone,consent_updates,auto_register,occurrence_id,created_at",
+          )
+          .eq("auto_register", true)
+          .not("occurrence_id", "is", null)
+          .order("created_at", { ascending: false })
+          .range(from, from + 999);
+        if (page.error) {
+          error = page.error;
+          break;
+        }
+        data.push(...((page.data ?? []) as typeof data));
+        if ((page.data ?? []).length < 1000) break;
+      }
       assertNoError(error);
       const seen = new Set<string>();
       return (data ?? []).flatMap((row) => {

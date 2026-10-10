@@ -94,8 +94,14 @@ export const Route = createFileRoute("/api/registro")({
             { status: 400 },
           );
         }
-        // Rate limit per IP.
-        if (isRateLimited(clientIp(request))) {
+        // Rate limit per IP (this instance, and across all instances).
+        const { limitKey, requestIp, withinRateLimit } = await import("@/lib/rate-limit.server");
+        const sharedAllowed = await withinRateLimit(
+          limitKey("registro-ip", requestIp(request)),
+          5,
+          600,
+        );
+        if (isRateLimited(clientIp(request)) || !sharedAllowed) {
           return Response.json(
             { error: "Demasiados intentos. Espera unos minutos e inténtalo de nuevo." },
             { status: 429 },

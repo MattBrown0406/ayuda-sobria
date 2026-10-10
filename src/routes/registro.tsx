@@ -31,7 +31,8 @@ function RegistroPage() {
   const [submitted, setSubmitted] = useState(false);
   const [registrationResult, setRegistrationResult] = useState<{
     startsAt?: string;
-    registrationId?: string;
+    /** The Zoom registration went through (the response never says if it was new). */
+    ok?: boolean;
     emailSent?: boolean;
     /** The email fallback reached Matt; he sends the link personally. */
     adminNotified?: boolean;
@@ -113,13 +114,14 @@ function RegistroPage() {
   }
 
   if (submitted) {
-    const handedToMatt = !registrationResult?.registrationId && registrationResult?.adminNotified;
+    const zoomRegistered = Boolean(registrationResult?.ok && registrationResult?.startsAt);
+    const handedToMatt = !zoomRegistered && registrationResult?.adminNotified;
     return (
       <>
         <PageHero
-          eyebrow={registrationResult?.registrationId ? "Registro guardado" : "Solicitud recibida"}
+          eyebrow={zoomRegistered ? "Registro guardado" : "Solicitud recibida"}
           title={
-            registrationResult?.registrationId
+            zoomRegistered
               ? "Tu registro en Zoom está listo"
               : handedToMatt
                 ? "Recibimos tu registro"
@@ -148,6 +150,9 @@ function RegistroPage() {
             {registrationResult?.emailSent ? (
               <>
                 Enviamos la información a <strong className="text-foreground">{form.email}</strong>.
+                {form.autoRegister && zoomRegistered
+                  ? " Para recibir tu enlace cada semana, confirma el registro semanal con el botón de ese correo."
+                  : ""}
               </>
             ) : handedToMatt ? (
               <>
@@ -322,9 +327,9 @@ function RegistroPage() {
               onChange={(e) => update("autoRegister", e.target.checked)}
             />
             <span>
-              Quiero quedar registrado/a automáticamente para las próximas reuniones de La
-              Sobremesa. Cada jueves recibirás por correo tu enlace personal para el lunes
-              siguiente.
+              Quiero quedar registrada automáticamente para las próximas reuniones de La Sobremesa.
+              Te enviaremos un correo para confirmarlo; después, cada jueves recibirás tu enlace
+              personal para el lunes siguiente.
             </span>
           </label>
 
@@ -369,7 +374,9 @@ function RegistroPage() {
               onChange={(e) => update("consentConfidentiality", e.target.checked)}
             />
             <span>
-              Entiendo que debo respetar la privacidad y confidencialidad de las demás familias. *
+              Entiendo que debo respetar la privacidad y confidencialidad de las demás familias, y
+              que la reunión se graba (las grabaciones son privadas y solo se comparten con miembros
+              las que Matt decide publicar). *
             </span>
           </label>
 
@@ -437,6 +444,12 @@ function RegistroPage() {
               </li>
               <li>
                 <strong className="text-foreground">Formato:</strong> Zoom, cámara opcional
+              </li>
+              <li>
+                <strong className="text-foreground">Grabación:</strong> la reunión se graba; ver{" "}
+                <a href="/privacidad" className="underline">
+                  privacidad
+                </a>
               </li>
               <li>
                 <strong className="text-foreground">Idioma:</strong> español

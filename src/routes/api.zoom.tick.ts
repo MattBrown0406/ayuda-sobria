@@ -13,7 +13,7 @@ export const Route = createFileRoute("/api/zoom/tick")({
           { zoomClientFromEnv, unavailableZoomApi },
           { registrationMailerFromEnv },
           { createSupabaseZoomStore },
-          { readCronSecret, recordTick },
+          { readCronSecret, recordTick, readLastReportOccurrence, recordReportSent },
           { buildWeeklyReport, sendWeeklyReportEmail },
           { supabaseAdmin },
           { syncAppMembers, appSyncSecret },
@@ -62,7 +62,12 @@ export const Route = createFileRoute("/api/zoom/tick")({
           weeklyReport: async (now) => {
             const report = await buildWeeklyReport(supabaseAdmin, now);
             if (!report) return { skipped: "no meeting in the last week" };
+            // The 10 AM hour has four ticks: send once per meeting, retry if one fails.
+            if ((await readLastReportOccurrence(supabaseAdmin)) === report.occurrenceId) {
+              return { skipped: "already sent", occurrenceDate: report.occurrenceDate };
+            }
             await sendWeeklyReportEmail(report);
+            await recordReportSent(supabaseAdmin, report.occurrenceId);
             return { sent: true, occurrenceDate: report.occurrenceDate };
           },
           appMemberSync: (now) => syncAppMembers(supabaseAdmin, appSyncSecret(), now),

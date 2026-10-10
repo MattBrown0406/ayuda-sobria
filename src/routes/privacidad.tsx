@@ -61,6 +61,14 @@ export const Route = createFileRoute("/privacidad")({
           mercadeo y puedes darte de baja respondiendo <strong>STOP</strong> (ver{" "}
           <a href="/terminos-sms">términos SMS</a>).
         </p>
+        <h2>Grabación de La Sobremesa</h2>
+        <p>
+          La Sobremesa se graba en la nube de Zoom. Las grabaciones quedan privadas: Matt revisa
+          cada una y solo comparte con los miembros, en la página Grabaciones, las que decide
+          publicar. Puedes participar con la cámara apagada y con el nombre que prefieras. Si
+          quieres que no se publique una grabación en la que apareces, escríbenos a
+          matt@soberhelpline.com.
+        </p>
         <h2>Limitaciones de seguridad</h2>
         <p>
           Aplicamos medidas razonables para proteger la información, pero ningún sistema de internet

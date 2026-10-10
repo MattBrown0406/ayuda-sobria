@@ -19,7 +19,9 @@ import { assertAdminRoleResult } from "../src/lib/zoom/admin-auth.ts";
 import { membershipAllowsRecordingAccess } from "../src/lib/zoom/recording-access.ts";
 import {
   endpointValidationToken,
+  optInToken,
   optOutToken,
+  verifyOptInToken,
   verifyOptOutToken,
   zoomWebhookSignature,
 } from "../src/lib/zoom/security.ts";
@@ -604,7 +606,7 @@ test("confirmations carry the personal link and the app, and only form sign-ups 
   assert.equal(sent.length, 2);
   assert.deepEqual(sent[0].to, ["ana@example.com"]);
   assert.match(sent[0].subject, /La Sobremesa/);
-  assert.match(sent[0].html, /Ya estás registrado\/a, Ana López/);
+  assert.match(sent[0].html, /Ya estás registrada, Ana López/);
   assert.match(sent[0].html, /zoom\.test\/registrant-1/);
   assert.match(sent[0].html, /apps\.apple\.com\/us\/app\/sober-helpline\/id6780034996/);
   assert.match(sent[0].html, /en inglés y en español/);
@@ -638,7 +640,7 @@ test("confirmations carry the personal link and the app, and only form sign-ups 
     occurrence: store.ready,
   });
   assert.match(sent[3].subject, /Recordatorio: La Sobremesa/);
-  assert.match(sent[3].html, /Ya estás registrado\/a para <strong>La Sobremesa<\/strong> del/);
+  assert.match(sent[3].html, /Ya estás registrada para <strong>La Sobremesa<\/strong> del/);
   assert.match(sent[3].html, /Te espero en la reunión\.<br>Matt Brown/);
 });
 
@@ -922,4 +924,82 @@ test("participant_left without join_time parses (Zoom omits it on leave events)"
   );
   assert.equal(event.leftAt, "2026-10-20T04:10:00Z");
   assert.equal(event.participantKey, "u1");
+});
+
+test("the public form never turns weekly registration on; the email carries a signed confirm link", async () => {
+  const sent: Array<{ to: string[]; html: string }> = [];
+  const mailer = createRegistrationMailer({
+    resendApiKey: "resend",
+    lovableApiKey: "lovable",
+    from: "AyudaSobria <registro@ayudasobria.com>",
+    adminTo: "matt@soberhelpline.com",
+    optOutSecret: "secret",
+    fetchImpl: async (_input, init) => {
+      sent.push(JSON.parse(String(init?.body)));
+      return Response.json({ id: "email" });
+    },
+  });
+  const store = new MemoryAutomationStore();
+  await registerForOccurrence({
+    registration: { ...baseRegistration, autoRegister: true },
+    store,
+    zoom: zoomMock(),
+    mailer,
+  });
+  assert.equal(store.claimedInput?.autoRegister, false, "stored without weekly registration");
+  assert.match(
+    sent[0].html,
+    /https:\/\/ayudasobria\.com\/semanal\?correo=ana%40example\.com&amp;t=[0-9a-f]{64}/,
+  );
+  assert.match(sent[0].html, /Sí, regístrame cada semana/);
+  const token = optInToken("secret", "ana@example.com");
+  assert.equal(verifyOptInToken("secret", "ana@example.com", token), true);
+  assert.equal(
+    verifyOptOutToken("secret", "ana@example.com", token),
+    false,
+    "opt-in and opt-out tokens differ",
+  );
+});
+
+test("asking again re-sends the link to the registered mailbox, with the same response", async () => {
+  const keys: string[] = [];
+  const mailer = createRegistrationMailer({
+    resendApiKey: "resend",
+    lovableApiKey: "lovable",
+    from: "AyudaSobria <registro@ayudasobria.com>",
+    adminTo: "matt@soberhelpline.com",
+    fetchImpl: async (_input, init) => {
+      keys.push(new Headers(init?.headers).get("Idempotency-Key") ?? "");
+      return Response.json({ id: "email" });
+    },
+  });
+  const store = new MemoryAutomationStore();
+  const zoom = zoomMock();
+  const now = new Date("2026-07-27T02:00:00Z");
+  const first = await registerForOccurrence({
+    registration: baseRegistration,
+    store,
+    zoom,
+    mailer,
+    now,
+  });
+  for (const row of store.rows.values()) row.confirmationEmailStatus = "sent";
+  const again = await registerForOccurrence({
+    registration: baseRegistration,
+    store,
+    zoom,
+    mailer,
+    now,
+  });
+  assert.equal(first.emailSent, true);
+  assert.equal(again.emailSent, true);
+  assert.equal(zoom.registrations.length, 1, "no second Zoom registrant");
+  const attendeeKeys = keys.filter((key) => key.startsWith("zoom-confirmation-"));
+  assert.equal(attendeeKeys.length, 2, "the link was sent again");
+  assert.notEqual(attendeeKeys[0], attendeeKeys[1], "a fresh idempotency key for the resend");
+  assert.equal(
+    keys.filter((key) => key.startsWith("zoom-admin-registration-")).length,
+    1,
+    "no second admin notice",
+  );
 });

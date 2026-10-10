@@ -32,6 +32,13 @@ export async function completeAppHandoff(): Promise<boolean> {
   }
   const token = url.searchParams.get("sso_token");
   if (!token) return false;
+  // Only links the app itself opens (they always carry from_app=1) sign anyone in; a
+  // token pasted into some other link must not log a visitor into another account.
+  if (url.searchParams.get("from_app") !== "1") {
+    url.searchParams.delete("sso_token");
+    window.history.replaceState(window.history.state, "", url.toString());
+    return false;
+  }
   // Never leave the token in history, bookmarks or shared links.
   url.searchParams.delete("sso_token");
   window.history.replaceState(window.history.state, "", url.toString());

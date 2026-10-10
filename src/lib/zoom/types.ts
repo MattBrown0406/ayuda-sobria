@@ -96,8 +96,11 @@ export interface RegistrationStore {
   failConfirmationEmail(id: string, reason: string): Promise<void>;
 }
 
-/** "manual" = the person submitted the form; "automatic" = the weekly re-registration job. */
-export type RegistrationSource = "manual" | "automatic";
+/**
+ * "manual" = the person submitted the form; "automatic" = the weekly re-registration
+ * job; "app" = "Reservar" in the Sober Helpline app (verified email, no resend).
+ */
+export type RegistrationSource = "manual" | "automatic" | "app";
 
 export interface ConfirmationDelivery {
   registrationId: string;
@@ -105,6 +108,10 @@ export interface ConfirmationDelivery {
   occurrence: Occurrence;
   joinUrl: string;
   source: RegistrationSource;
+  /** The form asked for weekly registration: the email carries the signed confirm link. */
+  weeklyOptInRequested?: boolean;
+  /** Set when re-sending the link to someone already registered (new idempotency key). */
+  resendKey?: string;
 }
 
 export interface RegistrationMailer {

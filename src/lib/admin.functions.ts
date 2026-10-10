@@ -228,7 +228,7 @@ export const adminDeleteRegistration = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: registration, error: registrationError } = await supabaseAdmin
       .from("meeting_registrations")
-      .select("id,occurrence_id,zoom_registrant_id,zoom_registration_status")
+      .select("id,email,occurrence_id,zoom_registrant_id,zoom_registration_status")
       .eq("id", data.id)
       .single();
     if (registrationError || !registration) {
@@ -255,6 +255,14 @@ export const adminDeleteRegistration = createServerFn({ method: "POST" })
     }
     const { error } = await supabaseAdmin.from("meeting_registrations").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
+    // Removing someone must also stop next week's automatic re-registration.
+    if (registration.email) {
+      const { error: optOutError } = await supabaseAdmin
+        .from("meeting_registrations")
+        .update({ auto_register: false, updated_at: new Date().toISOString() })
+        .eq("email", String(registration.email).trim().toLowerCase());
+      if (optOutError) throw new Error(optOutError.message);
+    }
     return { ok: true };
   });
 

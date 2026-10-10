@@ -29,3 +29,27 @@ export async function recordTick(client: Client, summary: WeeklyTickSummary): Pr
     .eq("id", 1);
   if (error) throw new Error(error.message);
 }
+
+/** The meeting the Tuesday report was last sent for (so 4 ticks send it once). */
+export async function readLastReportOccurrence(client: Client): Promise<string | null> {
+  const { data, error } = await client
+    .from("zoom_automation_state")
+    .select("last_report_occurrence_id")
+    .eq("id", 1)
+    .maybeSingle();
+  // Before the column exists (migration not applied yet) fall back to "not sent":
+  // the email provider's idempotency key still dedupes the report per meeting.
+  if (error) {
+    console.error("Report state unavailable", error.message);
+    return null;
+  }
+  return data?.last_report_occurrence_id ?? null;
+}
+
+export async function recordReportSent(client: Client, occurrenceId: string): Promise<void> {
+  const { error } = await client
+    .from("zoom_automation_state")
+    .update({ last_report_occurrence_id: occurrenceId, updated_at: new Date().toISOString() })
+    .eq("id", 1);
+  if (error) throw new Error(error.message);
+}

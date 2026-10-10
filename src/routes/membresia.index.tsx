@@ -26,8 +26,13 @@ export const Route = createFileRoute("/membresia/")({
     ],
     links: [{ rel: "canonical", href: "https://ayudasobria.com/membresia" }],
   }),
+  // Keep the app's parameters as they arrive (the root hand-off reads sso_token) and
+  // let the server render the page without prices when it was opened from the app.
+  validateSearch: (s: Record<string, unknown>) => s as AppParams,
   component: MembresiaPage,
 });
+
+type AppParams = { from_app?: unknown; app_links?: unknown; sso_token?: unknown };
 
 type Membership = Awaited<ReturnType<typeof getMyMembership>>;
 
@@ -40,7 +45,9 @@ function MembresiaPage() {
   const [error, setError] = useState<string | null>(null);
   const [membershipError, setMembershipError] = useState(false);
   const [appAccess, setAppAccess] = useState<{ tier: string } | null>(null);
-  const [fromApp, setFromApp] = useState(false);
+  const search = Route.useSearch();
+  // From the URL on the first (server) render, then also from this tab's earlier visit.
+  const [fromApp, setFromApp] = useState(String(search.from_app ?? "") === "1");
   const appAccessFn = useServerFn(getMyAppAccess);
 
   const createFn = useServerFn(createMembershipSubscription);
@@ -136,12 +143,14 @@ function MembresiaPage() {
   const isActive = membership?.status === "active";
   // Members of the Sober Helpline app already have member benefits here.
   const appMember = !isActive && Boolean(appAccess);
-  useEffect(() => setFromApp(openedFromApp()), []);
+  useEffect(() => {
+    if (openedFromApp()) setFromApp(true);
+  }, []);
 
   return (
     <>
       <PageHero
-        eyebrow="Desde US$9.99 al mes"
+        eyebrow={fromApp ? "Membresía" : "Desde US$9.99 al mes"}
         title="Membresía familiar"
         description="Ahorra en sesiones privadas de coaching familiar y administra tu plan en línea."
       />
@@ -160,51 +169,62 @@ function MembresiaPage() {
               membresía. El foro, los webinarios y las herramientas premium todavía no forman parte
               de este plan.
             </p>
-            <h2>Precio</h2>
-            <p>
-              <strong>Mensual:</strong> US$9.99 al mes. <strong>Anual:</strong> US$100 al año
-              (ahorra ~17%). Todos los precios están en dólares estadounidenses (USD). Tu banco o
-              PayPal se encargará de la conversión si pagas desde otro país.
-            </p>
-            <p>
-              Los miembros activos pagan <strong>US$125</strong> por sesión de coaching privada
-              (US$150 para no-miembros).
-            </p>
+            {!fromApp && (
+              <>
+                <h2>Precio</h2>
+                <p>
+                  <strong>Mensual:</strong> US$9.99 al mes. <strong>Anual:</strong> US$100 al año
+                  (ahorra ~17%). Todos los precios están en dólares estadounidenses (USD). Tu banco
+                  o PayPal se encargará de la conversión si pagas desde otro país.
+                </p>
+                <p>
+                  Los miembros activos pagan <strong>US$125</strong> por sesión de coaching privada
+                  (US$150 para no-miembros).
+                </p>
+              </>
+            )}
           </Prose>
         </div>
         <aside className="rounded-lg border border-border bg-card p-6 shadow-sm h-fit">
-          <p className="text-sm text-muted-foreground">Elige tu plan</p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => setPlanType("monthly")}
-              className={`rounded-md border p-3 text-left text-sm ${planType === "monthly" ? "border-primary bg-primary/5" : "border-input"}`}
-            >
-              <div className="font-semibold">Mensual</div>
-              <div className="text-xs text-muted-foreground">US$9.99/mes</div>
-            </button>
-            <button
-              type="button"
-              onClick={() => setPlanType("annual")}
-              className={`rounded-md border p-3 text-left text-sm ${planType === "annual" ? "border-primary bg-primary/5" : "border-input"}`}
-            >
-              <div className="font-semibold">Anual</div>
-              <div className="text-xs text-muted-foreground">US$100/año</div>
-            </button>
-          </div>
-          <p className="mt-3 text-2xl font-bold">
-            {planType === "monthly" ? "US$9.99" : "US$100"}
-            <span className="text-sm font-normal text-muted-foreground">
-              {planType === "monthly" ? "/mes" : "/año"}
-            </span>
-          </p>
+          {/* Opened from the Sober Helpline app: no prices or plan choice (App Store 3.1.1). */}
+          {!fromApp && (
+            <>
+              <p className="text-sm text-muted-foreground">Elige tu plan</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPlanType("monthly")}
+                  className={`rounded-md border p-3 text-left text-sm ${planType === "monthly" ? "border-primary bg-primary/5" : "border-input"}`}
+                >
+                  <div className="font-semibold">Mensual</div>
+                  <div className="text-xs text-muted-foreground">US$9.99/mes</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlanType("annual")}
+                  className={`rounded-md border p-3 text-left text-sm ${planType === "annual" ? "border-primary bg-primary/5" : "border-input"}`}
+                >
+                  <div className="font-semibold">Anual</div>
+                  <div className="text-xs text-muted-foreground">US$100/año</div>
+                </button>
+              </div>
+              <p className="mt-3 text-2xl font-bold">
+                {planType === "monthly" ? "US$9.99" : "US$100"}
+                <span className="text-sm font-normal text-muted-foreground">
+                  {planType === "monthly" ? "/mes" : "/año"}
+                </span>
+              </p>
+            </>
+          )}
 
           {session === undefined && <p className="mt-4 text-sm text-muted-foreground">Cargando…</p>}
 
           {session === null && (
             <>
               <p className="mt-4 text-sm text-muted-foreground">
-                Necesitas una cuenta para suscribirte. Es gratis y toma menos de un minuto.
+                {fromApp
+                  ? "Ingresa con tu cuenta para ver los beneficios de tu membresía."
+                  : "Necesitas una cuenta para suscribirte. Es gratis y toma menos de un minuto."}
               </p>
               <Link
                 to="/auth"

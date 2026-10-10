@@ -14,7 +14,7 @@ const HOTLINES: Record<string, { name: string; number: string }[]> = {
     { name: "Línea 106 (Bogotá)", number: "106" },
   ],
   peru: [{ name: "Línea 113 (opción 5)", number: "113" }],
-  "costa-rica": [{ name: "IAFA", number: "800-423-2323" }],
+  "costa-rica": [{ name: "IAFA", number: "800-4232-800" }],
   "republica-dominicana": [{ name: "Línea Vida", number: "*462" }],
   "puerto-rico": [{ name: "ASSMCA Línea PAS", number: "1-800-981-0023" }],
 };
@@ -54,7 +54,9 @@ function CountryPage() {
       ? "Sudamérica"
       : country.region === "Caribe"
         ? "Caribe"
-        : "Centroamérica";
+        : country.slug === "mexico"
+          ? "Norteamérica"
+          : "Centroamérica";
   return (
     <>
       <PageHero

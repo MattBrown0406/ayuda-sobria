@@ -16,9 +16,12 @@ const FAQS = [
   },
   {
     q: "¿Es confidencial?",
-    a: "Tratamos lo compartido con privacidad. En una reunión grupal no podemos garantizar la conducta de cada participante, y pueden existir excepciones legales o de seguridad.",
+    a: "Tratamos lo compartido con privacidad. En una reunión grupal no podemos garantizar la conducta de cada participante, y pueden existir excepciones legales o de seguridad. La Sobremesa se graba en Zoom. Las grabaciones quedan privadas; Matt revisa cada una y solo comparte con los miembros, en Grabaciones, las que decide publicar. Si prefieres no aparecer, entra con la cámara apagada y el nombre que quieras.",
   },
-  { q: "¿Cuánto cuesta el coaching privado?", a: "Desde US$150 (USD) la sesión de 60 minutos." },
+  {
+    q: "¿Cuánto cuesta el coaching privado?",
+    a: "US$150 (USD) la sesión de 60 minutos; US$125 para miembros.",
+  },
 ];
 
 export const Route = createFileRoute("/faq")({

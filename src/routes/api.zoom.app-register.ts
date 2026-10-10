@@ -67,6 +67,7 @@ export const Route = createFileRoute("/api/zoom/app-register")({
             store: createSupabaseZoomStore(supabaseAdmin),
             zoom: zoomClientFromEnv(),
             mailer: registrationMailerFromEnv(),
+            source: "app",
           });
           const joinUrl = result.registration.zoomJoinUrl;
           if (!joinUrl) throw new Error("registration has no join link");

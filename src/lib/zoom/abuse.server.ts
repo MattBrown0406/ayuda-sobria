@@ -43,7 +43,16 @@ export async function checkPublicRegistrationAbuse(input: {
       ),
     };
   }
-  if (isRateLimited(clientIp(input.request))) {
+  const { limitKey, requestIp, withinRateLimit } = await import("../rate-limit.server.ts");
+  // Per visitor only: a per-address limit would let anyone lock a person out of
+  // registering by spamming her email. Resends to one mailbox are capped hourly by
+  // their idempotency key instead.
+  const ipAllowed = await withinRateLimit(
+    limitKey("register-ip", requestIp(input.request)),
+    10,
+    600,
+  );
+  if (isRateLimited(clientIp(input.request)) || !ipAllowed) {
     return {
       allowed: false,
       response: Response.json(

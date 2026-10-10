@@ -168,8 +168,12 @@ function CoachingReservationPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Tu nombre</label>
+            <label htmlFor="coaching-name" className="block text-sm font-medium">
+              Tu nombre
+            </label>
             <input
+              id="coaching-name"
+              autoComplete="name"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -177,8 +181,12 @@ function CoachingReservationPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Correo electrónico</label>
+            <label htmlFor="coaching-email" className="block text-sm font-medium">
+              Correo electrónico
+            </label>
             <input
+              id="coaching-email"
+              autoComplete="email"
               required
               type="email"
               value={email}

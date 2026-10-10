@@ -329,6 +329,7 @@ export type Database = {
           cron_secret: string
           id: number
           last_error: string | null
+          last_report_occurrence_id: string | null
           last_success_at: string | null
           last_tick_at: string | null
           last_tick_ok: boolean | null
@@ -339,6 +340,7 @@ export type Database = {
           cron_secret: string
           id?: number
           last_error?: string | null
+          last_report_occurrence_id?: string | null
           last_success_at?: string | null
           last_tick_at?: string | null
           last_tick_ok?: boolean | null
@@ -349,6 +351,7 @@ export type Database = {
           cron_secret?: string
           id?: number
           last_error?: string | null
+          last_report_occurrence_id?: string | null
           last_success_at?: string | null
           last_tick_at?: string | null
           last_tick_ok?: boolean | null
@@ -614,6 +617,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      hit_rate_limit: {
+        Args: { p_key: string; p_limit: number; p_window_seconds: number }
+        Returns: boolean
+      }
       auth_user_id_by_email: { Args: { p_email: string }; Returns: string }
       claim_zoom_followups: {
         Args: { _limit: number; _now: string }

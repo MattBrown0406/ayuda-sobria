@@ -58,7 +58,8 @@ function CityPage() {
           </li>
           <li>
             <strong className="text-foreground">2. Reserva una sesión privada.</strong> Si no puedes
-            esperar al lunes, agenda coaching familiar uno a uno desde US$150 (USD).
+            esperar al lunes, agenda coaching familiar uno a uno: US$150 (USD), US$125 para
+            miembros.
           </li>
           <li>
             <strong className="text-foreground">3. Evalúa la intervención.</strong> Si hay rechazo

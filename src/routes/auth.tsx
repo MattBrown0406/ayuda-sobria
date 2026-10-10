@@ -42,7 +42,20 @@ function AuthPage() {
 
   useEffect(() => {
     // The recovery link signs the person in; stay here so they can set a new password.
-    if (search.reset) return;
+    if (search.reset) {
+      // An expired or already-used link (email scanners often open it first) arrives
+      // with an error and no session: say so and offer a new link instead of a form
+      // that can never save.
+      const hash = typeof window !== "undefined" ? window.location.hash : "";
+      const expired = /error_code=|error=/.test(hash);
+      void supabase.auth.getSession().then(({ data }) => {
+        if (expired || !data.session) {
+          setMode("forgot");
+          setError("El enlace para cambiar la contraseña venció o ya se usó. Pide uno nuevo aquí.");
+        }
+      });
+      return;
+    }
     if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) {
       setMode("update");
       return;
@@ -264,6 +277,8 @@ function AuthPage() {
 function authErrorMessage(err: unknown): string {
   const msg = err instanceof Error ? err.message : "";
   if (/invalid login credentials/i.test(msg)) return "Correo o contraseña incorrectos.";
+  if (/auth session missing|session.*expired|otp.*expired/i.test(msg))
+    return "El enlace para cambiar la contraseña venció. Pide uno nuevo con «¿Olvidaste tu contraseña?».";
   if (/already registered/i.test(msg))
     return "Ya existe una cuenta con este correo. Intenta ingresar.";
   if (/email not confirmed/i.test(msg))

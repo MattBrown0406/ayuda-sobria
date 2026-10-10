@@ -137,7 +137,12 @@ function AdminPage() {
   }, []);
 
   async function handleDelete(id: string) {
-    if (!confirm("Revoke Zoom access and delete this registration? This cannot be undone.")) return;
+    if (
+      !confirm(
+        "Revoke Zoom access, delete this registration, and stop weekly auto-registration for this email? This cannot be undone.",
+      )
+    )
+      return;
     try {
       await del({ data: { id } });
       toast.success("Registration deleted");

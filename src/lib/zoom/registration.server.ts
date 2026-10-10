@@ -94,6 +94,8 @@ async function deliverConfirmation(input: {
   source: RegistrationSource;
   store: RegistrationStore;
   mailer?: RegistrationMailer;
+  weeklyOptInRequested?: boolean;
+  resendKey?: string;
 }) {
   if (!input.mailer) {
     await input.store.failConfirmationEmail(input.recordId, "Email is not configured");
@@ -106,10 +108,15 @@ async function deliverConfirmation(input: {
       occurrence: input.occurrence,
       joinUrl: input.joinUrl,
       source: input.source,
+      weeklyOptInRequested: input.weeklyOptInRequested,
+      resendKey: input.resendKey,
     });
     await input.store.completeConfirmationEmail(input.recordId);
     return { emailSent: true, emailConfigured: true };
   } catch (error) {
+    // A re-send that fails (e.g. the provider refusing a third send in the same hour)
+    // must not mark the confirmation that was already delivered as failed.
+    if (input.resendKey) return { emailSent: true, emailConfigured: true };
     await input.store.failConfirmationEmail(
       input.recordId,
       error instanceof Error ? error.message.slice(0, 500) : "Confirmation email failed",
@@ -128,11 +135,18 @@ export async function registerForOccurrence(input: {
   source?: RegistrationSource;
 }) {
   const source: RegistrationSource = input.source ?? "manual";
+  // Anyone can type anyone's email into the public form, so the form never turns
+  // weekly registration on by itself: the confirmation email carries a signed link.
+  const weeklyOptInRequested = source === "manual" && input.registration.autoRegister;
   const occurrence = input.registration.occurrenceId
     ? await input.store.getReadyOccurrence(input.registration.occurrenceId)
     : await input.store.getUpcomingReadyOccurrence((input.now ?? new Date()).toISOString());
   if (!occurrence?.zoomMeetingId) throw new Error("OCCURRENCE_NOT_AVAILABLE");
-  const registrationInput = { ...input.registration, occurrenceId: occurrence.id };
+  const registrationInput = {
+    ...input.registration,
+    occurrenceId: occurrence.id,
+    autoRegister: source === "automatic" ? input.registration.autoRegister : false,
+  };
   const claim = await input.store.claimRegistration(registrationInput);
   if (!claim.claimed) {
     if (claim.value.status === "registered" && claim.value.zoomJoinUrl) {
@@ -140,7 +154,13 @@ export async function registerForOccurrence(input: {
         emailSent: claim.value.confirmationEmailStatus === "sent",
         emailConfigured: Boolean(input.mailer),
       };
-      if (claim.value.confirmationEmailStatus !== "sent") {
+      if (claim.value.confirmationEmailStatus !== "sent" || source === "manual") {
+        // Someone asking again (e.g. the Thursday email got lost) gets the link again;
+        // it only ever goes to the registered mailbox. At most one resend an hour.
+        const resendKey =
+          claim.value.confirmationEmailStatus === "sent"
+            ? `r${Math.floor((input.now ?? new Date()).getTime() / 3_600_000)}`
+            : undefined;
         delivery = await deliverConfirmation({
           recordId: claim.value.id,
           registration: registrationInput,
@@ -149,8 +169,11 @@ export async function registerForOccurrence(input: {
           source,
           store: input.store,
           mailer: input.mailer,
+          weeklyOptInRequested,
+          resendKey,
         });
-      } else if (
+      }
+      if (
         source === "manual" &&
         input.mailer?.sendAdminUpdate &&
         (registrationInput.question ||
@@ -158,7 +181,7 @@ export async function registerForOccurrence(input: {
           registrationInput.requestFollowUp)
       ) {
         // Already registered (usually by weekly auto-registration) but wrote to us again:
-        // the database kept the new answers; make sure Matt sees them.
+        // the stored row is left as it was, so Matt gets the new answers by email.
         try {
           await input.mailer.sendAdminUpdate({
             registrationId: claim.value.id,
@@ -166,6 +189,7 @@ export async function registerForOccurrence(input: {
             occurrence,
             joinUrl: claim.value.zoomJoinUrl,
             source,
+            weeklyOptInRequested,
           });
         } catch (error) {
           console.error(
@@ -206,6 +230,7 @@ export async function registerForOccurrence(input: {
       source,
       store: input.store,
       mailer: input.mailer,
+      weeklyOptInRequested,
     });
     return {
       registration,
@@ -256,11 +281,10 @@ export function createRegistrationHandler(deps: {
         ...deps,
         now: deps.now?.(),
       });
+      // Same shape whether or not this email was already registered: the response
+      // must not reveal who attends.
       return Response.json({
         ok: true,
-        created: result.created,
-        recovered: result.recovered ?? false,
-        registrationId: result.registration.id,
         occurrenceDate: result.occurrence.occurrenceDate,
         startsAt: result.occurrence.startsAt,
         // Personalized Zoom links are delivered only to the submitted mailbox. Never expose

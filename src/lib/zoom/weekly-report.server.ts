@@ -101,17 +101,35 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
 
   // Auto-registrants with no attendance in the last 4 weeks (28 days). The weekly job
   // adds a fresh row every Monday, so judge each person by their oldest row (when they
-  // first signed up) and only count people whose newest row still opts in.
+  // first signed up); anyone with an opted-in row counts (the opt-out clears them all).
   const cutoff = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000).toISOString();
-  const [autoResult, recentAttendanceResult] = await Promise.all([
-    client
+  const rows: Array<{
+    full_name: string | null;
+    email: string;
+    created_at: string;
+    auto_register: boolean;
+  }> = [];
+  let rowsError: { message: string } | null = null;
+  // Paged: PostgREST caps a response at 1,000 rows.
+  for (let from = 0; from < 20_000; from += 1000) {
+    const page = await client
       .from("meeting_registrations")
       .select("full_name, email, created_at, auto_register")
       .not("occurrence_id", "is", null)
       .order("created_at", { ascending: false })
-      .limit(5000),
-    client.from("zoom_attendance").select("participant_email, joined_at").gte("joined_at", cutoff),
-  ]);
+      .range(from, from + 999);
+    if (page.error) {
+      rowsError = page.error;
+      break;
+    }
+    rows.push(...(page.data ?? []));
+    if ((page.data ?? []).length < 1000) break;
+  }
+  const autoResult = { data: rows, error: rowsError };
+  const recentAttendanceResult = await client
+    .from("zoom_attendance")
+    .select("participant_email, joined_at")
+    .gte("joined_at", cutoff);
   if (autoResult.error) throw new Error(autoResult.error.message);
   if (recentAttendanceResult.error) throw new Error(recentAttendanceResult.error.message);
 
@@ -125,15 +143,17 @@ export async function buildWeeklyReport(client: Client, now: Date): Promise<Week
     const email = normalizeEmail(row.email);
     if (!email) continue;
     const person = people.get(email);
-    // Rows arrive newest first: the first one decides the current opt-in.
+    // Opted in if any row says so (the opt-out link clears all of them).
     if (!person) {
       people.set(email, {
         name: row.full_name,
         optedIn: row.auto_register === true,
         firstSeen: row.created_at,
       });
-    } else if (Date.parse(row.created_at) < Date.parse(person.firstSeen)) {
-      person.firstSeen = row.created_at;
+    } else {
+      if (row.auto_register === true) person.optedIn = true;
+      if (Date.parse(row.created_at) < Date.parse(person.firstSeen))
+        person.firstSeen = row.created_at;
     }
   }
   const staleAutoRegistrants: string[] = [];

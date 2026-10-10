@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CalendarDays, Clock, ExternalLink, LockKeyhole, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,6 +39,10 @@ const dateFormatter = new Intl.DateTimeFormat("es-US", {
 function GrabacionesPage() {
   const getRecordings = useServerFn(getMemberZoomRecordings);
   const [state, setState] = useState<PageState>({ name: "loading" });
+  const waitingForSignIn = useRef(true);
+  useEffect(() => {
+    waitingForSignIn.current = state.name === "unauthenticated" || state.name === "loading";
+  }, [state.name]);
 
   async function loadRecordings() {
     setState({ name: "loading" });
@@ -76,6 +80,16 @@ function GrabacionesPage() {
 
   useEffect(() => {
     void loadRecordings();
+    // Members arriving from the Sober Helpline app are signed in a moment after this
+    // page first checks (the root exchanges the app's token); look again then.
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      // supabase-js also fires SIGNED_IN when the tab regains focus: only reload when
+      // the page is actually waiting for a sign-in, or on sign-out.
+      if (event === "SIGNED_OUT" || (event === "SIGNED_IN" && waitingForSignIn.current)) {
+        void loadRecordings();
+      }
+    });
+    return () => sub.subscription.unsubscribe();
     // La sesión y la biblioteca se comprueban al abrir esta página privada.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

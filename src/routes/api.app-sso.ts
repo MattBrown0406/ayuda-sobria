@@ -14,6 +14,10 @@ export const Route = createFileRoute("/api/app-sso")({
         if (!/^[0-9a-f-]{36}$/i.test(token)) {
           return Response.json({ error: "invalid token" }, { status: 400 });
         }
+        const { limitKey, requestIp, withinRateLimit } = await import("@/lib/rate-limit.server");
+        if (!(await withinRateLimit(limitKey("app-sso-ip", requestIp(request)), 30, 600))) {
+          return Response.json({ error: "too many requests" }, { status: 429 });
+        }
         const [{ supabaseAdmin }, { appSyncSecret, redeemAppSsoToken }] = await Promise.all([
           import("@/integrations/supabase/client.server"),
           import("@/lib/app-bridge.server"),

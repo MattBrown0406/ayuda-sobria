@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { optOutToken } from "./security.ts";
+import { optInToken, optOutToken } from "./security.ts";
 import { meetingCalendar, meetingLabel } from "./time.ts";
 import type { ConfirmationDelivery, RegistrationInput, RegistrationMailer } from "./types.ts";
 
@@ -46,6 +46,19 @@ export function optOutUrl(secret: string | undefined, email: string): string | u
   return `https://ayudasobria.com/baja?${params}`;
 }
 
+/** Link that turns weekly auto-registration on (sent only to the address itself). */
+export function optInUrl(secret: string | undefined, email: string): string | undefined {
+  if (!secret) return undefined;
+  const params = new URLSearchParams({ correo: email.trim().toLowerCase() });
+  params.set("t", optInToken(secret, email));
+  return `https://ayudasobria.com/semanal?${params}`;
+}
+
+function optInBlock(url: string | undefined) {
+  if (!url) return "";
+  return `<p style="margin-top:20px">Pediste recibir tu enlace automáticamente cada semana. Para activarlo, confírmalo aquí: <a href="${escapeHtml(url)}" style="color:#166534;font-weight:bold">Sí, regístrame cada semana</a>.</p>`;
+}
+
 function optOutBlock(url: string | undefined) {
   if (!url) return "";
   return `<p style="font-size:12px;color:#6b7280;margin-top:24px">¿Ya no quieres recibir tu enlace cada semana? <a href="${escapeHtml(url)}" style="color:#6b7280">Cancela el registro automático</a>.</p>`;
@@ -56,7 +69,12 @@ function signature() {
 }
 
 /** The admin notification lists everything the person typed into the form. */
-function adminDetailRows(registration: RegistrationInput, occurrenceDate: string, id: string) {
+function adminDetailRows(
+  registration: RegistrationInput,
+  occurrenceDate: string,
+  id: string,
+  weeklyRequested = false,
+) {
   const yesNo = (value: boolean) => (value ? "Sí" : "No");
   const followUp = registration.requestFollowUp
     ? `Sí · ${registration.preferredContactDate ?? "sin fecha"} · ${registration.preferredContactTime ?? "sin hora"} · ${registration.preferredTimezone ?? "sin zona horaria"}`
@@ -69,7 +87,12 @@ function adminDetailRows(registration: RegistrationInput, occurrenceDate: string
     ["Relación", registration.relationship ?? "—"],
     ["Situación", registration.situation ?? "—"],
     ["Pregunta", registration.question ?? "—"],
-    ["Registro automático semanal", yesNo(registration.autoRegister)],
+    [
+      "Registro automático semanal",
+      weeklyRequested
+        ? "Pedido (pendiente de confirmar por correo)"
+        : yesNo(registration.autoRegister),
+    ],
     ["Pide que Matt le contacte", followUp],
     ["Acepta correos de seguimiento", yesNo(registration.consentUpdates)],
     ["Reunión", occurrenceDate],
@@ -114,7 +137,11 @@ async function sendGatewayEmail(
   if (!response.ok) throw new Error(`Email provider failed (${response.status})`);
 }
 
-export function renderConfirmationEmail(input: ConfirmationDelivery, unsubscribeUrl?: string) {
+export function renderConfirmationEmail(
+  input: ConfirmationDelivery,
+  unsubscribeUrl?: string,
+  optInLink?: string,
+) {
   const safeName = escapeHtml(input.registration.fullName);
   const safeJoinUrl = escapeHtml(input.joinUrl);
   const meetingDate = escapeHtml(
@@ -123,7 +150,7 @@ export function renderConfirmationEmail(input: ConfirmationDelivery, unsubscribe
   const automatic = input.source === "automatic";
   const heading = automatic
     ? `Tu lugar de esta semana está reservado, ${safeName}`
-    : `Ya estás registrado/a, ${safeName}`;
+    : `Ya estás registrada, ${safeName}`;
   const intro = automatic
     ? `<p>Como pediste, te registramos automáticamente para <strong>La Sobremesa</strong> del ${meetingDate}. Cada semana el enlace es nuevo; este es el tuyo para esta reunión:</p>`
     : `<p>Tu lugar para <strong>La Sobremesa</strong> está confirmado para el ${meetingDate}.</p>
@@ -137,10 +164,12 @@ export function renderConfirmationEmail(input: ConfirmationDelivery, unsubscribe
           ${intro}
           ${joinButton(safeJoinUrl)}
           <p>Con conexión lenta, apaga la cámara y usa solo audio. Cierra otras aplicaciones. Si se corta, vuelve a abrir tu enlace personal. El acceso telefónico solo está disponible si aparece en tu invitación; pueden aplicarse cargos.</p>
+          <p style="font-size:13px;color:#6b7280">La reunión se graba en Zoom. Las grabaciones son privadas y solo se comparten con miembros las que Matt decide publicar. Puedes entrar con la cámara apagada y el nombre que prefieras.</p>
           <p>¿Necesitas ayuda para entrar? Llama al <strong>${SUPPORT_PHONE}</strong>.</p>
           ${appStoreBlock()}
           ${signature()}
           ${input.registration.autoRegister ? optOutBlock(unsubscribeUrl) : ""}
+          ${input.weeklyOptInRequested ? optInBlock(optInLink) : ""}
         </div>`,
   };
 }
@@ -159,9 +188,10 @@ export function renderReminderEmail(input: {
     subject: `Recordatorio: La Sobremesa — ${meetingDate}`,
     html: `<div style="${WRAPPER_STYLE}">
           <h1 style="color:#166534">Nos vemos en La Sobremesa, ${safeName}</h1>
-          <p>Ya estás registrado/a para <strong>La Sobremesa</strong> del ${meetingDate}. Me da mucho gusto que nos acompañes a la mesa.</p>
+          <p>Ya estás registrada para <strong>La Sobremesa</strong> del ${meetingDate}. Me da mucho gusto que nos acompañes a la mesa.</p>
           ${joinButton(safeJoinUrl)}
           <p>Con conexión lenta, apaga la cámara y usa solo audio. Cierra otras aplicaciones. Si se corta, vuelve a abrir tu enlace personal. El acceso telefónico solo está disponible si aparece en tu invitación; pueden aplicarse cargos.</p>
+          <p style="font-size:13px;color:#6b7280">La reunión se graba en Zoom. Las grabaciones son privadas y solo se comparten con miembros las que Matt decide publicar. Puedes entrar con la cámara apagada y el nombre que prefieras.</p>
           <p style="font-size:13px;color:#6b7280">Tu enlace es personal para esta reunión. Si necesitas ayuda, llama al ${SUPPORT_PHONE}.</p>
           <p style="margin-top:24px">Te espero en la reunión.<br>Matt Brown<br>AyudaSobria</p>
           ${optOutBlock(input.unsubscribeUrl)}
@@ -175,6 +205,7 @@ export function createRegistrationMailer(options: MailerOptions): RegistrationMa
       const email = renderConfirmationEmail(
         input,
         optOutUrl(options.optOutSecret, input.registration.email),
+        optInUrl(options.optOutSecret, input.registration.email),
       );
       await sendGatewayEmail(
         options,
@@ -189,12 +220,13 @@ export function createRegistrationMailer(options: MailerOptions): RegistrationMa
             },
           ],
         },
-        `zoom-confirmation-${input.registrationId}`,
+        `zoom-confirmation-${input.registrationId}${input.resendKey ? `-${input.resendKey}` : ""}`,
       );
 
       // Only a person who just signed up through the form is "new". The weekly
       // automatic re-registration of existing attendees must not page the admin.
-      if (input.source === "automatic") return;
+      // A re-sent link is not a new sign-up either.
+      if (input.source === "automatic" || input.resendKey) return;
 
       // Admin notification is useful but must not turn a successfully delivered attendee
       // confirmation into a false client-facing failure.
@@ -209,6 +241,7 @@ export function createRegistrationMailer(options: MailerOptions): RegistrationMa
               input.registration,
               input.occurrence.occurrenceDate,
               input.registrationId,
+              input.weeklyOptInRequested,
             )}</div>`,
           },
           `zoom-admin-registration-${input.registrationId}`,
@@ -241,11 +274,12 @@ export function createRegistrationMailer(options: MailerOptions): RegistrationMa
         {
           to: [options.adminTo],
           reply_to: input.registration.email,
-          subject: `La Sobremesa — nuevos datos de ${input.registration.fullName} (ya registrado/a)`,
+          subject: `La Sobremesa — nuevos datos de ${input.registration.fullName} (ya registrada)`,
           html: `<div style="${WRAPPER_STYLE}"><p>Esta persona ya estaba registrada para esta reunión y volvió a enviar el formulario:</p>${adminDetailRows(
             input.registration,
             input.occurrence.occurrenceDate,
             input.registrationId,
+            input.weeklyOptInRequested,
           )}</div>`,
         },
         `zoom-admin-update-${input.registrationId}-${fingerprint}`,
