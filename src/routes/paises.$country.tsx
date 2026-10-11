@@ -108,6 +108,15 @@ function CountryPage() {
             </p>
           </section>
         )}
+        <section className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+          <h2 className="text-xl font-semibold">Cuidado con los «anexos»</h2>
+          <p className="mt-2 text-muted-foreground">
+            Algunos centros, conocidos como «anexos», se llevan a la persona a la fuerza. El
+            encierro, los golpes o el aislamiento no son tratamiento. Una intervención profesional
+            se hace con respeto y con la decisión de la persona; nunca es un «levantón». Si alguien
+            corre peligro dentro de un centro, comunícate con las autoridades de salud de tu país.
+          </p>
+        </section>
         <section>
           <h2 className="text-xl font-semibold">Qué NO necesitas para empezar</h2>
           <ul className="mt-3 space-y-2 text-muted-foreground">

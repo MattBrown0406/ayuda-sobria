@@ -1,4 +1,4 @@
-import { MessageSquareHeart, Users, PlayCircle, Video, Languages } from "lucide-react";
+import { MessageSquareHeart, Users, ShieldCheck, Video, Languages } from "lucide-react";
 import appLogo from "@/assets/sober-helpline-app.png.asset.json";
 
 const APP_STORE_URL = "https://apps.apple.com/us/app/sober-helpline/id6780034996";
@@ -29,9 +29,9 @@ const features = [
     body: "Entra desde la app a las reuniones semanales y gratuitas de apoyo familiar.",
   },
   {
-    icon: PlayCircle,
-    title: "Mira las reuniones que te perdiste",
-    body: "Acceso a las grabaciones de reuniones anteriores, cuando tú puedas verlas.",
+    icon: ShieldCheck,
+    title: "Límites y registro diario",
+    body: "Escribe los límites que vas a sostener y lleva un registro breve de cómo va tu familia cada día.",
   },
   {
     icon: Video,

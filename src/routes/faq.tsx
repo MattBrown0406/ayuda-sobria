@@ -16,7 +16,7 @@ const FAQS = [
   },
   {
     q: "¿Es confidencial?",
-    a: "Tratamos lo compartido con privacidad. En una reunión grupal no podemos garantizar la conducta de cada participante, y pueden existir excepciones legales o de seguridad. La Sobremesa se graba en Zoom. Las grabaciones quedan privadas; Matt revisa cada una y solo comparte con los miembros, en Grabaciones, las que decide publicar. Si prefieres no aparecer, entra con la cámara apagada y el nombre que quieras.",
+    a: "Tratamos lo compartido con privacidad. En una reunión grupal no podemos garantizar la conducta de cada participante, y pueden existir excepciones legales o de seguridad. La Sobremesa no se graba: lo que compartes queda entre las familias presentes.",
   },
   {
     q: "¿Cuánto cuesta el coaching privado?",

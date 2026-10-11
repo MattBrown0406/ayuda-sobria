@@ -215,6 +215,9 @@ function RegistroPage() {
           onSubmit={onSubmit}
           className="rounded-2xl border border-border bg-card p-6 space-y-5"
         >
+          <p className="rounded-md bg-secondary px-3 py-2 text-sm text-foreground">
+            No te pedimos tu estatus migratorio; puedes usar solo tu primer nombre.
+          </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Nombre" required>
               <input
@@ -222,7 +225,7 @@ function RegistroPage() {
                 value={form.nombre}
                 onChange={(e) => update("nombre", e.target.value)}
                 className={inputCls}
-                placeholder="Tu nombre"
+                placeholder="Tu nombre (puede ser solo el primero)"
               />
             </Field>
             <Field label="Correo electrónico" required>
@@ -374,9 +377,7 @@ function RegistroPage() {
               onChange={(e) => update("consentConfidentiality", e.target.checked)}
             />
             <span>
-              Entiendo que debo respetar la privacidad y confidencialidad de las demás familias, y
-              que la reunión se graba (las grabaciones son privadas y solo se comparten con miembros
-              las que Matt decide publicar). *
+              Entiendo que debo respetar la privacidad y confidencialidad de las demás familias. *
             </span>
           </label>
 
@@ -444,12 +445,6 @@ function RegistroPage() {
               </li>
               <li>
                 <strong className="text-foreground">Formato:</strong> Zoom, cámara opcional
-              </li>
-              <li>
-                <strong className="text-foreground">Grabación:</strong> la reunión se graba; ver{" "}
-                <a href="/privacidad" className="underline">
-                  privacidad
-                </a>
               </li>
               <li>
                 <strong className="text-foreground">Idioma:</strong> español

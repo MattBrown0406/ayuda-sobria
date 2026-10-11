@@ -85,6 +85,18 @@ function PressureLevel() {
           suicida o de salud mental. El coaching y la intervención no sustituyen la respuesta de
           emergencia.
         </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Ante una sobredosis, llama: en la mayoría de los estados de EE. UU., las leyes del Buen
+          Samaritano protegen de cargos por posesión de drogas a quien pide ayuda. La naloxona
+          (Narcan) se vende sin receta en las farmacias.
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Línea Nacional de Ayuda de SAMHSA (EE. UU.):{" "}
+          <a href="tel:+18006624357" className="font-semibold text-foreground underline">
+            1-800-662-4357
+          </a>{" "}
+          — gratis, confidencial, las 24 horas y en español; no pregunta por tu estatus migratorio.
+        </p>
       </div>
       <div className="mt-10 grid gap-6 md:grid-cols-3">
         {items.map((it) => (

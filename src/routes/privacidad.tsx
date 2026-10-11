@@ -29,6 +29,9 @@ export const Route = createFileRoute("/privacidad")({
           <li>Preferencias de contacto y evidencia de consentimiento.</li>
           <li>La información que decides compartir sobre tu situación familiar.</li>
         </ul>
+        <p>
+          <strong>No te pedimos tu estatus migratorio; puedes usar solo tu primer nombre.</strong>
+        </p>
         <h2>Cómo la usamos</h2>
         <p>
           Solo la usamos para responderte, agendar sesiones y enviarte información que solicitaste.
@@ -63,11 +66,8 @@ export const Route = createFileRoute("/privacidad")({
         </p>
         <h2>Grabación de La Sobremesa</h2>
         <p>
-          La Sobremesa se graba en la nube de Zoom. Las grabaciones quedan privadas: Matt revisa
-          cada una y solo comparte con los miembros, en la página Grabaciones, las que decide
-          publicar. Puedes participar con la cámara apagada y con el nombre que prefieras. Si
-          quieres que no se publique una grabación en la que apareces, escríbenos a
-          matt@soberhelpline.com.
+          La Sobremesa no se graba: lo que compartes queda entre las familias presentes. Puedes
+          participar con la cámara apagada y con el nombre que prefieras.
         </p>
         <h2>Limitaciones de seguridad</h2>
         <p>

@@ -112,7 +112,8 @@ export function createZoomClient(options: ZoomClientOptions): ZoomApi {
             join_before_host: false,
             mute_upon_entry: false,
             audio: "both",
-            auto_recording: "cloud",
+            // Recording is suspended: families share private stories here.
+            auto_recording: "none",
           },
         }),
       });

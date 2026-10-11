@@ -164,7 +164,7 @@ export function renderConfirmationEmail(
           ${intro}
           ${joinButton(safeJoinUrl)}
           <p>Con conexión lenta, apaga la cámara y usa solo audio. Cierra otras aplicaciones. Si se corta, vuelve a abrir tu enlace personal. El acceso telefónico solo está disponible si aparece en tu invitación; pueden aplicarse cargos.</p>
-          <p style="font-size:13px;color:#6b7280">La reunión se graba en Zoom. Las grabaciones son privadas y solo se comparten con miembros las que Matt decide publicar. Puedes entrar con la cámara apagada y el nombre que prefieras.</p>
+          <p style="font-size:13px;color:#6b7280">La Sobremesa no se graba: lo que compartes queda entre las familias presentes. Puedes entrar con la cámara apagada y el nombre que prefieras.</p>
           <p>¿Necesitas ayuda para entrar? Llama al <strong>${SUPPORT_PHONE}</strong>.</p>
           ${appStoreBlock()}
           ${signature()}
@@ -191,7 +191,7 @@ export function renderReminderEmail(input: {
           <p>Ya estás registrada para <strong>La Sobremesa</strong> del ${meetingDate}. Me da mucho gusto que nos acompañes a la mesa.</p>
           ${joinButton(safeJoinUrl)}
           <p>Con conexión lenta, apaga la cámara y usa solo audio. Cierra otras aplicaciones. Si se corta, vuelve a abrir tu enlace personal. El acceso telefónico solo está disponible si aparece en tu invitación; pueden aplicarse cargos.</p>
-          <p style="font-size:13px;color:#6b7280">La reunión se graba en Zoom. Las grabaciones son privadas y solo se comparten con miembros las que Matt decide publicar. Puedes entrar con la cámara apagada y el nombre que prefieras.</p>
+          <p style="font-size:13px;color:#6b7280">La Sobremesa no se graba: lo que compartes queda entre las familias presentes. Puedes entrar con la cámara apagada y el nombre que prefieras.</p>
           <p style="font-size:13px;color:#6b7280">Tu enlace es personal para esta reunión. Si necesitas ayuda, llama al ${SUPPORT_PHONE}.</p>
           <p style="margin-top:24px">Te espero en la reunión.<br>Matt Brown<br>AyudaSobria</p>
           ${optOutBlock(input.unsubscribeUrl)}

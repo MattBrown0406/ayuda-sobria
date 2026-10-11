@@ -160,7 +160,6 @@ function MembresiaPage() {
             <h2>Qué incluye actualmente</h2>
             <ul>
               <li>Precio preferencial de US$125 por sesión privada de coaching.</li>
-              <li>Acceso a las grabaciones publicadas de La Sobremesa en Grabaciones.</li>
               <li>Administración del plan y cancelación en línea.</li>
               <li>Cancelación en cualquier momento.</li>
             </ul>
@@ -267,7 +266,7 @@ function MembresiaPage() {
           {session && appMember && (
             <p className="mt-4 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
               ✓ Tu membresía de la app Sober Helpline te da los beneficios de miembro aquí: el
-              precio de US$125 en coaching y las grabaciones. No necesitas otra membresía.
+              precio de US$125 en coaching. No necesitas otra membresía.
             </p>
           )}
 

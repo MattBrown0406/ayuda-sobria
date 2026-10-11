@@ -191,7 +191,7 @@ function EmptyState() {
     <MessageCard
       icon={<Video className="h-7 w-7" />}
       title="Todavía no hay grabaciones publicadas"
-      description="Tu acceso está confirmado. Cuando el equipo revise y publique una reunión, aparecerá aquí."
+      description="Por ahora La Sobremesa no se graba, para proteger la privacidad de las familias. Si en el futuro publicamos material educativo, aparecerá aquí."
     >
       <Link to="/circulo-familiar" className="text-sm font-medium text-primary hover:underline">
         Conocer más sobre La Sobremesa

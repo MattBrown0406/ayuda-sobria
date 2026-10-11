@@ -34,6 +34,19 @@ export const Route = createFileRoute("/intervencion")({
           <li>Existe riesgo real de seguridad, salud o consecuencias legales.</li>
           <li>La familia está dividida sobre qué hacer.</li>
         </ul>
+        <h2>Tu seguridad primero</h2>
+        <p>
+          Si tu pareja o tu ser querido te amenaza, te golpea o te controla, tu seguridad va
+          primero. No organices una intervención ni pongas un límite sin un plan de seguridad. En
+          EE. UU.: Línea Nacional contra la Violencia Doméstica,{" "}
+          <a href="tel:+18007997233">1-800-799-7233</a> (atienden en español y no preguntan tu
+          estatus migratorio).
+        </p>
+        <p>
+          Cuidado con los «anexos» o centros que se llevan a la persona a la fuerza. El encierro,
+          los golpes o el aislamiento no son tratamiento. Una intervención profesional se hace con
+          respeto y con la decisión de la persona; nunca es un «levantón».
+        </p>
         <h2>Cómo trabajamos</h2>
         <ol>
           <li>Evaluación inicial con la familia.</li>

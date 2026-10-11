@@ -29,7 +29,6 @@ function Header() {
   const [open, setOpen] = useState(false);
   const links = [
     { to: "/circulo-familiar", label: "La Sobremesa" },
-    { to: "/grabaciones", label: "Grabaciones" },
     { to: "/coaching-familiar", label: "Coaching" },
     { to: "/intervencion", label: "Intervención" },
     { to: "/blog", label: "Blog" },
@@ -344,6 +343,25 @@ export function CTAStrip() {
           911 o al servicio local de emergencias. En Estados Unidos, llama o envía texto al 988
           (oprime 2 para español) para una crisis suicida o de salud mental. Nuestro coaching y La
           Sobremesa no sustituyen la atención de emergencia.
+        </p>
+        <p className="mt-2 rounded-lg border border-border bg-background p-4 text-sm text-muted-foreground">
+          Ante una sobredosis, llama: en la mayoría de los estados de EE. UU., las leyes del Buen
+          Samaritano protegen de cargos por posesión de drogas a quien pide ayuda. La naloxona
+          (Narcan) se vende sin receta en las farmacias.
+        </p>
+        <p className="mt-2 rounded-lg border border-border bg-background p-4 text-sm text-muted-foreground">
+          Si tu pareja o tu ser querido te amenaza, te golpea o te controla, tu seguridad va
+          primero. No organices una intervención ni pongas un límite sin un plan de seguridad. En
+          EE. UU.: Línea Nacional contra la Violencia Doméstica,{" "}
+          <a href="tel:+18007997233">1-800-799-7233</a> (atienden en español y no preguntan tu
+          estatus migratorio).
+        </p>
+        <p className="mt-2 rounded-lg border border-border bg-background p-4 text-sm text-muted-foreground">
+          Línea Nacional de Ayuda de SAMHSA (EE. UU.):{" "}
+          <a href="tel:+18006624357" className="font-semibold text-foreground underline">
+            1-800-662-4357
+          </a>{" "}
+          — gratis, confidencial, las 24 horas y en español; no pregunta por tu estatus migratorio.
         </p>
       </div>
       <div className="mx-auto grid max-w-7xl gap-4 px-4 pb-10 pt-4 md:grid-cols-3">
