@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BLOG_POSTS } from "@/data/blog";
 import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
+import { ReadingPaths } from "@/components/site/ReadingPaths";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -33,6 +34,8 @@ function BlogIndex() {
         description="Más de 130 artículos en español para entender la adicción, poner límites y acompañar la recuperación de un ser querido."
       />
       <div className="mx-auto max-w-5xl px-4 py-12">
+        <ReadingPaths />
+        <h2 className="text-2xl font-semibold tracking-tight">Todos los artículos</h2>
         <p className="text-sm text-muted-foreground">
           {posts.length} artículos. Todos escritos para la familia, no para la persona con adicción.
         </p>
@@ -44,7 +47,7 @@ function BlogIndex() {
                 params={{ slug: p.slug }}
                 className="block rounded-xl border border-border bg-card p-5 transition hover:border-primary hover:shadow-sm"
               >
-                <h2 className="text-lg font-semibold leading-snug">{p.title}</h2>
+                <h3 className="text-lg font-semibold leading-snug">{p.title}</h3>
                 <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.description}</p>
                 <p className="mt-3 text-xs font-medium uppercase tracking-wide text-primary">
                   Leer artículo →

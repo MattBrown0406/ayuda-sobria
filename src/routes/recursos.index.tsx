@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { TOPICS } from "@/data/topics";
 import { PageHero, CTAStrip } from "@/components/site/SiteLayout";
+import { ReadingPaths } from "@/components/site/ReadingPaths";
 
 export const Route = createFileRoute("/recursos/")({
   head: () => ({
@@ -14,7 +15,8 @@ export const Route = createFileRoute("/recursos/")({
       { property: "og:title", content: "Recursos para familias — AyudaSobria" },
       {
         property: "og:description",
-        content: "Más de 170 guías en español para familias afectadas por la adicción.",
+        content:
+          "Biblioteca en español sobre adicción, recaída, límites, tratamiento y recuperación familiar.",
       },
       { property: "og:url", content: "https://ayudasobria.com/recursos" },
     ],
@@ -28,6 +30,13 @@ export const Route = createFileRoute("/recursos/")({
         description="Guías en español sobre adicción, límites, tratamiento, recaída, salud mental y recuperación familiar."
       />
       <div className="mx-auto max-w-6xl px-4 py-12">
+        <ReadingPaths />
+        <p className="mb-8">
+          <Link to="/blog" className="text-primary underline underline-offset-4">
+            Ver todos los artículos para familias
+          </Link>
+        </p>
+        <h2 className="mb-5 text-2xl font-semibold tracking-tight">Directorio de temas</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {TOPICS.map((t) => (
             <Link
