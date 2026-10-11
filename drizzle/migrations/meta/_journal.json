@@ -36,6 +36,13 @@
       "when": 1791586636055,
       "tag": "0004_registration_resubmission_and_followup_timing",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791742532807,
+      "tag": "0005_registration_privacy_and_rate_limits",
+      "breakpoints": true
     }
   ]
 }
