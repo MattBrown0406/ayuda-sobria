@@ -42,7 +42,11 @@ export const Route = createFileRoute("/blog/$slug")({
             url,
             mainEntityOfPage: url,
             inLanguage: "es",
-            author: { "@id": "https://ayudasobria.com/#organization" },
+            author: {
+              "@type": "Person",
+              name: "Matt Brown",
+              url: "https://ayudasobria.com/sobre-nosotros",
+            },
             publisher: { "@id": "https://ayudasobria.com/#organization" },
             image: "https://ayudasobria.com/og-ayudasobria.png",
             isPartOf: { "@id": "https://ayudasobria.com/#website" },
@@ -93,7 +97,13 @@ function BlogPost() {
         </ol>
       </nav>
       <PageHero eyebrow="Blog" title={post.title} description={post.description} />
-      <article className="mx-auto max-w-3xl px-4 py-12 text-base leading-relaxed text-foreground/90 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-1 [&_a]:text-primary [&_a]:underline [&_blockquote]:mt-4 [&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_strong]:font-semibold [&_hr]:my-8 [&_hr]:border-border">
+      <p className="mx-auto max-w-3xl px-4 pt-8 text-sm font-medium text-muted-foreground">
+        Por{" "}
+        <Link to="/sobre-nosotros" className="text-primary underline">
+          Matt Brown
+        </Link>
+      </p>
+      <article className="mx-auto max-w-3xl px-4 pb-12 pt-4 text-base leading-relaxed text-foreground/90 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-1 [&_a]:text-primary [&_a]:underline [&_blockquote]:mt-4 [&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_strong]:font-semibold [&_hr]:my-8 [&_hr]:border-border">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
         <hr className="my-10" />
         <p className="text-sm text-muted-foreground">
