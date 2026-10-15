@@ -33,6 +33,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "hijos-y-pareja",
     title: "Hijos, pareja y vida familiar",
     slugs: [
+      "creci-con-un-padre-alcoholico-ahora-soy-mama",
       "hija-de-padre-alcoholico-relaciones-de-pareja",
       "alcoholism-in-the-home-why-children-adapt-long-before-adults-notice",
       "parentification-when-children-become-caretakers-addiction-families",
