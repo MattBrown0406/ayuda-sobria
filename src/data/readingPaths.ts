@@ -38,6 +38,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
       "alcoholism-in-the-home-why-children-adapt-long-before-adults-notice",
       "parentification-when-children-become-caretakers-addiction-families",
       "how-to-talk-to-children-about-a-parents-addiction",
+      "como-hablar-con-mis-hijos-sobre-el-alcoholismo-de-su-papa",
       "addiction-marriage-family-protection",
       "mi-hijo-fuma-marihuana-que-hago",
     ],
