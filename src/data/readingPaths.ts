@@ -40,6 +40,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
       "how-to-talk-to-children-about-a-parents-addiction",
       "como-hablar-con-mis-hijos-sobre-el-alcoholismo-de-su-papa",
       "addiction-marriage-family-protection",
+      "mi-esposo-toma-mucho-y-mi-familia-dice-que-aguante",
       "mi-hijo-fuma-marihuana-que-hago",
     ],
   },
