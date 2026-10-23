@@ -41,6 +41,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
       "como-hablar-con-mis-hijos-sobre-el-alcoholismo-de-su-papa",
       "addiction-marriage-family-protection",
       "mi-esposo-toma-mucho-y-mi-familia-dice-que-aguante",
+      "mi-esposo-se-pone-agresivo-cuando-toma",
       "mi-hijo-fuma-marihuana-que-hago",
     ],
   },
