@@ -42,6 +42,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
       "addiction-marriage-family-protection",
       "mi-esposo-toma-mucho-y-mi-familia-dice-que-aguante",
       "mi-esposo-se-pone-agresivo-cuando-toma",
+      "mi-esposa-toma-a-escondidas",
       "mi-hijo-fuma-marihuana-que-hago",
     ],
   },
