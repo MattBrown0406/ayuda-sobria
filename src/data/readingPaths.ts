@@ -50,6 +50,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "apoyo-familiar",
     title: "Apoyo y bienestar de la familia",
     slugs: [
+      "fe-y-adiccion-rezar-por-un-ser-querido-que-toma",
       "why-families-need-support-even-when-loved-one-refuses-help",
       "therapy-for-family-members-of-addicts",
       "al-anon-family-support-groups-addiction",
