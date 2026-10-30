@@ -62,6 +62,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "tratamiento",
     title: "Preguntas sobre el tratamiento",
     slugs: [
+      "tratamiento-para-el-alcoholismo-sin-seguro-medico",
       "rehab-admissions-process-family-guide",
       "questions-to-ask-treatment-center",
       "verify-rehab-accreditation-licensing",
