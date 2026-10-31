@@ -74,6 +74,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "regreso-a-casa",
     title: "Recuperación y regreso a casa",
     slugs: [
+      "como-apoyar-a-un-familiar-que-sale-de-rehabilitacion",
       "que-hacer-cuando-un-ser-querido-recae",
       "aftercare-planning-addiction-recovery-family-guide",
       "continuing-care-after-rehab-family-guide",
