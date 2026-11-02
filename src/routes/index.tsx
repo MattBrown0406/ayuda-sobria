@@ -28,6 +28,8 @@ export const Route = createFileRoute("/")({
           "No tienes que resolver esto a ciegas. Encuentra el nivel adecuado de apoyo familiar frente a la adicción.",
       },
       { property: "og:url", content: "https://ayudasobria.com/" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://ayudasobria.com/" }],
   }),
