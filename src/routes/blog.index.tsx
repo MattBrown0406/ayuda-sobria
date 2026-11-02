@@ -18,6 +18,8 @@ export const Route = createFileRoute("/blog/")({
         content: "Educación clara en español sobre adicción, recuperación y apoyo familiar.",
       },
       { property: "og:url", content: "https://ayudasobria.com/blog" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://ayudasobria.com/blog" }],
   }),
