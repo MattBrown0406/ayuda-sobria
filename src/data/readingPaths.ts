@@ -88,6 +88,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "educacion",
     title: "Educación y primeros pasos",
     slugs: [
+      "el-alcoholismo-es-una-enfermedad-o-falta-de-voluntad",
       "understanding-addiction-in-families",
       "why-families-need-education-before-answers",
       "understanding-addiction-without-crisis-education-matters",
