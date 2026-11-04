@@ -88,6 +88,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "educacion",
     title: "Educación y primeros pasos",
     slugs: [
+      "como-saber-si-alguien-usa-drogas-senales",
       "el-alcoholismo-es-una-enfermedad-o-falta-de-voluntad",
       "understanding-addiction-in-families",
       "why-families-need-education-before-answers",
