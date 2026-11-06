@@ -11,6 +11,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "conversaciones",
     title: "Conversaciones con un ser querido",
     slugs: [
+      "como-hablar-con-mi-hijo-sobre-el-fentanilo",
       "how-to-talk-to-loved-one-about-addiction",
       "how-to-have-productive-conversation-about-addiction",
       "how-to-talk-to-your-adult-child-about-addiction",
