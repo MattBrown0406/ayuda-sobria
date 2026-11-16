@@ -270,6 +270,64 @@ test("Zoom recovery matches equivalent provider timestamps with or without milli
   assert.equal(calls.filter((url) => url.includes("/meetings")).length, 1);
 });
 
+test("single-name registration passes Zoom's required last_name and delivers the personal Monday link (mocked only)", async () => {
+  for (const [fullName, expectedLastName] of [["Matt", "Matt"], ["Matt Brown", "Brown"]]) {
+    const store = new MemoryAutomationStore();
+    store.ready = {
+      ...store.ready,
+      occurrenceDate: "2026-11-09",
+      startsAt: "2026-11-10T04:00:00.000Z",
+    };
+    const requests: string[] = [];
+    const personalLink = "https://zoom.test/personal-monday";
+    const zoom = createZoomClient({
+      accountId: "test-account",
+      clientId: "test-client",
+      clientSecret: "test-secret",
+      hostUserId: "test-host",
+      fetchImpl: async (url, init) => {
+        const endpoint = String(url);
+        requests.push(`${init?.method}:${endpoint}`);
+        if (endpoint.startsWith("https://zoom.us/oauth/token")) {
+          return Response.json({ access_token: "mock-token", expires_in: 3600 });
+        }
+        assert.match(endpoint, /\/meetings\/m-occ-1\/registrants/);
+        if (init?.method === "GET") return Response.json({ registrants: [] });
+        assert.equal(init?.method, "POST");
+        const body = JSON.parse(String(init.body));
+        if (!body.last_name) {
+          return Response.json({ code: 300, message: "The parameter is required: last_name." }, { status: 400 });
+        }
+        assert.equal(body.first_name, "Matt");
+        assert.equal(body.last_name, expectedLastName);
+        return Response.json({ registrant_id: "mock-registrant", join_url: personalLink });
+      },
+    });
+    const confirmations: Array<{ joinUrl: string; startsAt: string; fullName: string }> = [];
+    const mailer: RegistrationMailer = {
+      async sendConfirmation(input) {
+        confirmations.push({
+          joinUrl: input.joinUrl,
+          startsAt: input.occurrence.startsAt,
+          fullName: input.registration.fullName,
+        });
+      },
+      async sendReminder() {},
+      async sendFollowup() {},
+    };
+    const handler = createRegistrationHandler({ store, zoom, mailer });
+    const response = await handler(new Request("https://ayudasobria.com/api/zoom/register", {
+      method: "POST",
+      body: JSON.stringify({ ...baseRegistration, occurrenceId: "", fullName }),
+    }));
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).emailSent, true);
+    assert.equal(store.claimedInput?.fullName, fullName);
+    assert.deepEqual(confirmations, [{ joinUrl: personalLink, startsAt: "2026-11-10T04:00:00.000Z", fullName }]);
+    assert.equal(requests.filter((request) => request.startsWith("POST:https://api.zoom.us/")).length, 1);
+  }
+});
+
 test("scheduler requires its separate automation secret", async () => {
   const store = new MemoryScheduleStore();
   const zoom = zoomMock();

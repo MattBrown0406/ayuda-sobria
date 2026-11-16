@@ -172,7 +172,9 @@ export function createZoomClient(options: ZoomClientOptions): ZoomApi {
         body: JSON.stringify({
           email: input.email,
           first_name: input.firstName,
-          last_name: input.lastName || "",
+          // Zoom requires a nonempty last_name even when the form contains one name.
+          // Reuse that name only in Zoom's required field; keep the saved full name intact.
+          last_name: input.lastName?.trim() || input.firstName.trim(),
           auto_approve: true,
         }),
       });
