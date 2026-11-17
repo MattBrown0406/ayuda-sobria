@@ -23,6 +23,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "limites",
     title: "Límites y relaciones familiares",
     slugs: [
+      "como-poner-limites-a-un-alcoholico-sin-sentir-culpa",
       "how-to-set-healthy-boundaries-with-an-addicted-family-member",
       "holding-boundaries-addiction-families",
       "how-to-stop-enabling-addiction",
