@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Deliver Ecosystem Spine events through the server-only helper after successful registration handling; best-effort delivery keeps hub outages from breaking registration and centralizes secret access.
