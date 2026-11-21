@@ -42,7 +42,9 @@ export const Route = createFileRoute("/api/zoom/register")({
           request,
         });
         if (!abuse.allowed) {
-          return abuse.trapped ? Response.json({ ok: true, accepted: false }) : abuse.response!;
+          if (abuse.trapped) return Response.json({ ok: true, accepted: false });
+          if (abuse.response) return abuse.response;
+          return Response.json({ error: "Solicitud inválida." }, { status: 400 });
         }
 
         try {
@@ -55,12 +57,30 @@ export const Route = createFileRoute("/api/zoom/register")({
               "Zoom registration mailer is not configured (RESEND_API_KEY/LOVABLE_API_KEY missing); confirmations will not be sent",
             );
           }
-          return createRegistrationHandler({
+          const response = await createRegistrationHandler({
             store: createSupabaseZoomStore(supabaseAdmin),
             zoom: zoomClientFromEnv(),
             mailer,
             now: () => new Date(),
           })(request);
+          if (response.ok) {
+            const b = body as Record<string, unknown>;
+            const { sendSpineEvent } = await import("@/lib/spine.server");
+            const name = typeof b.fullName === "string" ? b.fullName : typeof b.nombre === "string" ? b.nombre : "";
+            const phone = typeof b.phone === "string" ? b.phone : typeof b.telefono === "string" ? b.telefono : "";
+            await sendSpineEvent({
+              email: typeof b.email === "string" ? b.email : "",
+              event: "lead_captured",
+              ...(name ? { name } : {}),
+              ...(phone ? { phone } : {}),
+              props: {
+                source: "zoom_sobremesa_registration",
+                language: "es",
+                marketing_consent: b.newsletter === true,
+              },
+            });
+          }
+          return response;
         } catch (error) {
           console.error(
             "Zoom registration configuration error",

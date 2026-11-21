@@ -175,6 +175,20 @@ export const Route = createFileRoute("/api/registro")({
             { status: 502 },
           );
         }
+        const { sendSpineEvent } = await import("@/lib/spine.server");
+        const phone = clean(record.telefono, 50);
+        await sendSpineEvent({
+          email,
+          event: "lead_captured",
+          name: nombre,
+          ...(phone ? { phone } : {}),
+          props: {
+            source: "registro_form",
+            language: "es",
+            request_followup: Boolean(record.requestFollowUp),
+            marketing_consent: record.newsletter === true,
+          },
+        });
         return Response.json({
           ok: true,
           emailSent: false,

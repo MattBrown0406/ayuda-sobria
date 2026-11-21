@@ -20,6 +20,8 @@ export const Route = createFileRoute("/registro")({
           "Reunión semanal en español para familias afectadas por la adicción. Cada lunes 8:00 PM PT por Zoom.",
       },
       { name: "robots", content: "noindex, follow" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "https://ayudasobria.com/registro" },
     ],
     links: [{ rel: "canonical", href: "https://ayudasobria.com/registro" }],
@@ -58,6 +60,7 @@ function RegistroPage() {
     preferredTimezone: "America/Los_Angeles",
     consentConfidentiality: false,
     consentSms: true,
+    newsletter: false,
     website: "",
   });
 
@@ -395,6 +398,18 @@ function RegistroPage() {
                 política de privacidad
               </a>
               .
+            </span>
+          </label>
+
+          <label className="flex items-start gap-3 text-sm text-muted-foreground">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={form.newsletter}
+              onChange={(e) => update("newsletter", e.target.checked)}
+            />
+            <span>
+              Quiero recibir el boletín de AyudaSobria por correo. Puedo darme de baja cuando quiera.
             </span>
           </label>
 
