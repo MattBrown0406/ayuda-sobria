@@ -37,6 +37,7 @@ export const READING_COLLECTIONS: readonly ReadingCollection[] = [
     id: "hijos-y-pareja",
     title: "Hijos, pareja y vida familiar",
     slugs: [
+      "mi-esposo-maneja-borracho-con-los-ninos",
       "mi-hijo-vapea-que-hago",
       "mi-hijo-adulto-consume-drogas-y-vive-en-casa",
       "alcoholico-funcional-senales-y-que-hacer",
